@@ -8,8 +8,8 @@ import (
 )
 
 type DBTX interface {
+	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
-	QueryContext(context.Context, string, ...interface{}) (*sql.Rows, error)
 	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
 }
 type repository struct {
@@ -20,23 +20,77 @@ func NewRepository(db DBTX) Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) CreateUser(ctx context.Context, user *User, profile *Profile) (*User, error) {
+func (r *repository) CreateUser(ctx context.Context, user *User, profile *Profile) (*User, *Profile, error) {
 	var lastInsertedID string
-	query := "INSERT INTO users (email, password, role) VALUES($1, $2, $3) returning id"
 
-	err := r.db.QueryRowContext(ctx, query, user.Email, user.Password, user.Role).Scan(&lastInsertedID)
+	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
-		return &User{}, err
+		return nil, nil, err
 	}
 
-	query = "INSERT INTO profile (name, gender, users_id) VALUES($1, $2, $3) returning name"
-	if _, err := r.db.ExecContext(ctx, query, profile.Name, profile.Gender, lastInsertedID); err != nil {
-		return nil, err
+	defer tx.Rollback()
+
+	query := "INSERT INTO users (email, password, role) VALUES($1, $2, $3) returning id"
+
+	if err = tx.QueryRowContext(ctx, query, user.Email, user.Password, user.Role).Scan(&lastInsertedID); err != nil {
+		return nil, nil, err
+	}
+
+	query = "INSERT INTO profile (name, gender, users_id) VALUES($1, $2, $3)"
+	if _, err = tx.ExecContext(ctx, query, profile.Name, profile.Gender, lastInsertedID); err != nil {
+		return nil, nil, err
 	}
 
 	parseUUID, _ := uuid.Parse(lastInsertedID)
 
 	user.ID = parseUUID
 
-	return user, nil
+	if err = tx.Commit(); err != nil {
+		return nil, nil, err
+	}
+
+	return user, profile, nil
+}
+
+func (r *repository) GetUserByEmail(ctx context.Context, email *string) (*User, error) {
+	user := User{}
+	query := "SELECT id, email, password, role FROM users WHERE email = $1"
+
+	if err := r.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Email, &user.Password, &user.Role); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *repository) GetUserProfileById(ctx context.Context, id *uuid.UUID) (*User, *Profile, error) {
+	user := User{}
+	profile := Profile{}
+
+	query := "SELECT u.id, u.email, u.role, p.name, p.gender FROM users as u JOIN profile as p ON u.id = p.users_id WHERE u.id = $1"
+
+	if err := r.db.QueryRowContext(ctx, query, id).Scan(&user.ID, &user.Email, &user.Role, &profile.Name, &profile.Gender); err != nil {
+		return nil, nil, err
+	}
+
+	return &user, &profile, nil
+}
+
+func (r *repository) InsertRoleStudent(ctx context.Context, userId *uuid.UUID) error {
+
+	query := "INSERT INTO student(users_id) VALUES ($1)"
+	if _, err := r.db.ExecContext(ctx, query, userId); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) InsertRoleTeacher(ctx context.Context, userId *uuid.UUID) error {
+
+	query := "INSERT INTO teacher(users_id) VALUES ($1)"
+	if _, err := r.db.ExecContext(ctx, query, userId); err != nil {
+		return err
+	}
+
+	return nil
 }
