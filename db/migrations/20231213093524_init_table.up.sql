@@ -34,7 +34,7 @@ CREATE TABLE teacher(
 CREATE TABLE class(
     id UUID DEFAULT uuid_generate_v4(),
     teacher_id UUID not null,
-    name VARCHAR(50),
+    class_name VARCHAR(50),
     PRIMARY KEY (id),
     FOREIGN KEY (teacher_id) REFERENCES teacher(id)
 );
@@ -52,7 +52,7 @@ CREATE TABLE student(
 CREATE TABLE assessment(
     id UUID DEFAULT uuid_generate_v4(),
     student_id UUID not null,
-    value int,
+    assessment_value int,
     code_assessment varchar(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
