@@ -24,3 +24,18 @@ func LoadEnv(path string) (config Config, err error) {
 	err = viper.Unmarshal(&config)
 	return
 }
+
+func LoadJWTKey(path string) (key string, err error) {
+	viper.AddConfigPath(path)
+	viper.SetConfigFile(".env")
+
+	viper.AutomaticEnv()
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
+	}
+
+	key = viper.GetString("JWTSecret")
+	return
+}

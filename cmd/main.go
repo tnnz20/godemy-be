@@ -1,26 +1,30 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/gofiber/fiber/v2/middleware/cors"
-
-	"github.com/tnnz20/godemy-be/internal/user"
-	"github.com/tnnz20/godemy-be/router"
-
 	"github.com/tnnz20/godemy-be/config"
 	"github.com/tnnz20/godemy-be/db"
+	"github.com/tnnz20/godemy-be/internal/user"
+	"github.com/tnnz20/godemy-be/router"
 )
 
 func main() {
 
-	// Load env
+	// Load DB env
 	env, err := config.LoadEnv(".")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("Failed to load env: %s", err)
+	}
+
+	// JWT Key
+	jwtKey, err := config.LoadJWTKey(".")
+	if err != nil {
+		log.Fatalf("Failed to load env: %s", err)
 	}
 
 	// Db connection
@@ -32,7 +36,7 @@ func main() {
 	validate := validator.New()
 
 	userRep := user.NewRepository(dbConn.GetDB())
-	userSvc := user.NewService(userRep)
+	userSvc := user.NewService(userRep, &jwtKey)
 	userHandler := user.NewHandler(userSvc, validate)
 
 	app := fiber.New()
@@ -40,4 +44,5 @@ func main() {
 
 	router.SetupRoutes(app, userHandler)
 	log.Fatal(app.Listen(":5000"))
+
 }
