@@ -1,6 +1,8 @@
 package router
 
 import (
+	"github.com/tnnz20/godemy-be/internal/auth"
+	"github.com/tnnz20/godemy-be/internal/teacher"
 	"github.com/tnnz20/godemy-be/internal/user"
 	"github.com/tnnz20/godemy-be/middleware"
 
@@ -8,10 +10,26 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
-func SetupRoutes(app *fiber.App, userHandler *user.Handler) {
-	user := app.Group("/users", logger.New())
-	user.Post("/register", userHandler.CreateUser)
-	user.Post("/sign-in", userHandler.SignIn)
+func apiRoutes(app *fiber.App, route string) (api fiber.Router) {
+	api = app.Group("/api/"+route, logger.New())
+	return
+}
 
-	user.Get("/user/", middleware.Protected(), userHandler.GetUserProfileById)
+func UserRoutes(app *fiber.App, userHandler *user.Handler) {
+	user := apiRoutes(app, "user")
+	user.Post("/sign-up", userHandler.CreateUser)
+
+	user.Get("/profile", middleware.Protected(), userHandler.GetUserProfileById)
+}
+
+func AuthRoutes(app *fiber.App, authHandler *auth.Handler) {
+	auth := apiRoutes(app, "auth")
+	auth.Post("/sign-in", authHandler.SignIn)
+}
+
+func TeacherRoutes(app *fiber.App, teacherHandler *teacher.Handler) {
+	teacher := apiRoutes(app, "teacher")
+
+	teacher.Get("/", middleware.Protected(), teacherHandler.GetTeacherIdByUserId)
+	teacher.Post("/class", middleware.Protected(), teacherHandler.CreateClass)
 }

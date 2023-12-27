@@ -9,6 +9,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/tnnz20/godemy-be/config"
 	"github.com/tnnz20/godemy-be/db"
+
+	"github.com/tnnz20/godemy-be/internal/auth"
+	"github.com/tnnz20/godemy-be/internal/teacher"
 	"github.com/tnnz20/godemy-be/internal/user"
 	"github.com/tnnz20/godemy-be/router"
 )
@@ -35,14 +38,29 @@ func main() {
 
 	validate := validator.New()
 
-	userRep := user.NewRepository(dbConn.GetDB())
-	userSvc := user.NewService(userRep, &jwtKey)
-	userHandler := user.NewHandler(userSvc, validate)
-
 	app := fiber.New()
 	app.Use(cors.New())
 
-	router.SetupRoutes(app, userHandler)
+	// User
+	userRepo := user.NewRepository(dbConn.GetDB())
+	userSvc := user.NewService(userRepo)
+	userHandler := user.NewHandler(userSvc, validate)
+
+	router.UserRoutes(app, userHandler)
+
+	// Auth
+	authSvc := auth.NewService(userRepo, &jwtKey)
+	authHandler := auth.NewHandler(authSvc, validate)
+
+	router.AuthRoutes(app, authHandler)
+
+	// Teacher
+	teacherRepo := teacher.NewRepository(dbConn.GetDB())
+	teacherSvc := teacher.NewService(teacherRepo)
+	teacherHandler := teacher.NewHandler(teacherSvc, validate)
+
+	router.TeacherRoutes(app, teacherHandler)
+
 	log.Fatal(app.Listen(":5000"))
 
 }
