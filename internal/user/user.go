@@ -24,11 +24,6 @@ type Profile struct {
 	ProfileImg string    `json:"profile_img"`
 }
 
-type Teacher struct {
-	ID     uuid.UUID `json:"id"`
-	UserId uuid.UUID `json:"user_id"`
-}
-
 type Student struct {
 	ID        uuid.UUID `json:"id"`
 	UserId    uuid.UUID `json:"user_id"`
@@ -36,37 +31,30 @@ type Student struct {
 	Threshold int       `json:"threshold"`
 }
 
-type CreateUserReq struct {
+type CreateUserRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Name     string `json:"name" validate:"required"`
 	Password string `json:"password" validate:"required"`
 	Gender   string `json:"gender" validate:"required,oneof='Laki-Laki' 'Perempuan'" `
+	Role     string `json:"role" validate:"required,oneof='student' 'teacher'"`
 }
 
-type CreateUserRes struct {
+type CreateUserResponse struct {
 	ID    uuid.UUID `json:"id"`
 	Name  string    `json:"name"`
 	Email string    `json:"email"`
 	Role  string    `json:"role"`
 }
 
-type GetUserProfileByIdReq struct {
+type GetUserProfileByIdRequest struct {
 	ID uuid.UUID `json:"id" validate:"required,uuid4"`
 }
-type GetUserProfileByIdRes struct {
+type GetUserProfileByIdResponse struct {
 	ID     uuid.UUID `json:"id"`
 	Email  string    `json:"email"`
 	Role   string    `json:"role"`
 	Name   string    `json:"name"`
 	Gender string    `json:"gender"`
-}
-
-type SignInReq struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=6"`
-}
-type SignInRes struct {
-	Token string `json:"access_token"`
 }
 
 type Repository interface {
@@ -78,7 +66,7 @@ type Repository interface {
 }
 
 type Service interface {
-	CreateUser(c context.Context, req *CreateUserReq, isTeacher bool) (*CreateUserRes, error)
-	GetUserProfileById(ctx context.Context, req *GetUserProfileByIdReq) (*GetUserProfileByIdRes, error)
-	SignIn(ctx context.Context, req *SignInReq) (*SignInRes, error)
+	CreateUser(ctx context.Context, req *CreateUserRequest) (*CreateUserResponse, error)
+	GetUserProfileById(ctx context.Context, req *GetUserProfileByIdRequest) (*GetUserProfileByIdResponse, error)
+	GetUserByEmail(ctx context.Context, email *string) (*User, error)
 }
