@@ -43,7 +43,7 @@ func (s *service) SignIn(c context.Context, req *AuthRequest) (*AuthResponse, er
 
 	claims["id"] = user.ID
 	claims["role"] = user.Role
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
 
 	token, err := t.SignedString([]byte(*s.jwtKey))
 	if err != nil {
