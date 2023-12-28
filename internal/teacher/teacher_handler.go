@@ -131,7 +131,7 @@ func (h *Handler) GetAllClassByTeacherId(c *fiber.Ctx) error {
 	}
 
 	req := &GetClassByTeacherIdRequest{
-		ID: teacher.ID,
+		TeacherId: teacher.ID,
 	}
 
 	// Validate Teacher ID

@@ -38,7 +38,7 @@ type CreateClassResponse struct {
 }
 
 type GetClassByTeacherIdRequest struct {
-	ID uuid.UUID `json:"id" validate:"required,uuid4"`
+	TeacherId uuid.UUID `json:"id" validate:"required,uuid4"`
 }
 
 type GetClassByTeacherIdResponse struct {
@@ -49,7 +49,7 @@ type GetClassByTeacherIdResponse struct {
 
 // TODO: create repository list student by class (class_name query)
 type Repository interface {
-	GetTeacherIdByUserId(ctx context.Context, id *uuid.UUID) (*Teacher, error)
+	GetTeacherIdByUserId(ctx context.Context, userId *uuid.UUID) (*Teacher, error)
 	CreateClass(ctx context.Context, class *Class) (*Class, error)
 	GetAllClassByTeacherId(ctx context.Context, teacherId *uuid.UUID) (*[]Class, error)
 }

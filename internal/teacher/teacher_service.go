@@ -61,7 +61,7 @@ func (s *service) GetAllClassByTeacherId(c context.Context, req *GetClassByTeach
 	ctx, cancel := context.WithTimeout(c, s.timeout)
 	defer cancel()
 
-	classes, err := s.TeacherRepository.GetAllClassByTeacherId(ctx, &req.ID)
+	classes, err := s.TeacherRepository.GetAllClassByTeacherId(ctx, &req.TeacherId)
 	if err != nil {
 		return nil, err
 	} else if len(*classes) == 0 {

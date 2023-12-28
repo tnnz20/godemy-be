@@ -21,15 +21,15 @@ func NewRepository(db DBTX) Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) GetTeacherIdByUserId(ctx context.Context, id *uuid.UUID) (*Teacher, error) {
+func (r *repository) GetTeacherIdByUserId(ctx context.Context, userId *uuid.UUID) (*Teacher, error) {
 	var teacher = &Teacher{}
 
 	query := "SELECT id FROM teacher WHERE users_id = $1"
-	if err := r.db.QueryRowContext(ctx, query, id).Scan(&teacher.ID); err != nil {
+	if err := r.db.QueryRowContext(ctx, query, userId).Scan(&teacher.ID); err != nil {
 		return nil, err
 	}
 
-	teacher.UserId = *id
+	teacher.UserId = *userId
 
 	return teacher, nil
 }
