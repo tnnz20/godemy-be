@@ -48,11 +48,7 @@ func (h *Handler) GetTeacherIdByUserId(c *fiber.Ctx) error {
 		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status":  "success",
-		"message": "Success retrieve teacher id",
-		"data":    res,
-	})
+	return util.SuccessResponse(c, fiber.StatusOK, "Teacher Id successfully retrieved.", res)
 }
 
 func (h *Handler) CreateClass(c *fiber.Ctx) error {
@@ -99,9 +95,5 @@ func (h *Handler) CreateClass(c *fiber.Ctx) error {
 		util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"status":  "success",
-		"message": "Class successfully created.",
-		"data":    res,
-	})
+	return util.SuccessResponse(c, fiber.StatusCreated, "Class successfully created.", res)
 }

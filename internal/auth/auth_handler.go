@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/tnnz20/godemy-be/util"
 )
 
 type Handler struct {
@@ -19,46 +20,26 @@ func NewHandler(s Service, validate *validator.Validate) *Handler {
 	}
 }
 
-// TODO: Update Response Handler
 func (h *Handler) SignIn(c *fiber.Ctx) error {
 	var req AuthRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
 	if err := h.Validate.Struct(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
 	res, err := h.AuthService.SignIn(c.Context(), &req)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  "error",
-				"message": "User not found",
-			})
+			return util.ErrorResponse(c, fiber.StatusNotFound, "User not found.")
 		} else if err.Error() == "Invalid Password" {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"status":  "error",
-				"message": err.Error(),
-			})
+			return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 		}
 
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status":  "success",
-		"message": "Success Login",
-		"data":    res,
-	})
+	return util.SuccessResponse(c, fiber.StatusOK, "Successfully Sign-in.", res)
 }

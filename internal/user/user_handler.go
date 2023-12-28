@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/tnnz20/godemy-be/util"
 )
 
 type Handler struct {
@@ -21,7 +22,6 @@ func NewHandler(s Service, validate *validator.Validate) *Handler {
 	}
 }
 
-// TODO: Update Response Handler
 func (h *Handler) CreateUser(c *fiber.Ctx) error {
 	var req CreateUserRequest
 
@@ -32,45 +32,26 @@ func (h *Handler) CreateUser(c *fiber.Ctx) error {
 	} else if roleQuery == "" {
 		req.Role = "student"
 	} else {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Invalid Role",
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, "Invalid Role.")
 	}
 
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 	if err := h.Validate.Struct(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
 	if user, err := h.UserService.GetUserByEmail(c.Context(), &req.Email); err != sql.ErrNoRows && user.Email == req.Email {
-		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Email already exists",
-		})
+		return util.ErrorResponse(c, fiber.StatusConflict, "Email already exists.")
 	}
 
 	res, err := h.UserService.CreateUser(c.Context(), &req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": err.Error(),
-		})
+		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"status":  "success",
-		"message": "User successfully registered.",
-		"data":    res,
-	})
+	return util.SuccessResponse(c, fiber.StatusCreated, "User successfully created.", res)
 }
 
 func (h *Handler) GetUserProfileById(c *fiber.Ctx) error {
@@ -85,23 +66,16 @@ func (h *Handler) GetUserProfileById(c *fiber.Ctx) error {
 	}
 
 	if err := h.Validate.Struct(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Invalid ID",
-		})
+		return util.ErrorResponse(c, fiber.StatusBadRequest, "Invalid Id.")
 	}
 
 	res, err := h.UserService.GetUserProfileById(c.Context(), req)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status":  "error",
-			"message": "User ID not found",
-		})
+		if err == sql.ErrNoRows {
+			util.ErrorResponse(c, fiber.StatusNotFound, "User Id not found.")
+		}
+		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status":  "success",
-		"message": "User profile successfully retrieved.",
-		"data":    res,
-	})
+	return util.SuccessResponse(c, fiber.StatusOK, "User profile successfully retrieved.", res)
 }

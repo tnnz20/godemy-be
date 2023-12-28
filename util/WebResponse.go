@@ -9,4 +9,16 @@ func ErrorResponse(c *fiber.Ctx, statusCode int, message string) error {
 	})
 }
 
-// TODO: Create Success response
+func SuccessResponse(c *fiber.Ctx, statusCode int, message, data interface{}) error {
+	if data != nil {
+		return c.Status(statusCode).JSON(fiber.Map{
+			"status":  "success",
+			"message": message,
+			"data":    data,
+		})
+	}
+	return c.Status(statusCode).JSON(fiber.Map{
+		"status":  "success",
+		"message": message,
+	})
+}

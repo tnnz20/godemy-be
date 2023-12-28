@@ -35,7 +35,7 @@ func (s *service) SignIn(c context.Context, req *AuthRequest) (*AuthResponse, er
 	}
 
 	if err := util.CheckPassword(req.Password, user.Password); err != nil {
-		return nil, fmt.Errorf("Invalid Password")
+		return nil, fmt.Errorf("Invalid Password.")
 	}
 
 	t := jwt.New(jwt.SigningMethodHS256)
