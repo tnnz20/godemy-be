@@ -37,14 +37,26 @@ type CreateClassResponse struct {
 	ClassName string    `json:"class_name"`
 }
 
-// TODO: create repository for get class by teacherId
+type GetClassByTeacherIdRequest struct {
+	ID uuid.UUID `json:"id" validate:"required,uuid4"`
+}
+
+type GetClassByTeacherIdResponse struct {
+	ID        uuid.UUID `json:"id"`
+	TeacherId uuid.UUID `json:"teacher_id"`
+	ClassName string    `json:"class_name"`
+}
+
+// TODO: create repository list student by class (class_name query)
 type Repository interface {
 	GetTeacherIdByUserId(ctx context.Context, id *uuid.UUID) (*Teacher, error)
 	CreateClass(ctx context.Context, class *Class) (*Class, error)
+	GetAllClassByTeacherId(ctx context.Context, teacherId *uuid.UUID) (*[]Class, error)
 }
 
-// TODO: create service for get class by teacherId
+// TODO: create service list student by class (class_name query)
 type Service interface {
 	GetTeacherIdByUserId(ctx context.Context, req *GetTeacherIdByUserIdRequest) (*GetTeacherIdByUserIdResponse, error)
 	CreateClass(ctx context.Context, req *CreateClassRequest) (*CreateClassResponse, error)
+	GetAllClassByTeacherId(ctx context.Context, req *GetClassByTeacherIdRequest) (*[]GetClassByTeacherIdResponse, error)
 }

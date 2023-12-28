@@ -18,7 +18,6 @@ func apiRoutes(app *fiber.App, route string) (api fiber.Router) {
 func UserRoutes(app *fiber.App, userHandler *user.Handler) {
 	user := apiRoutes(app, "user")
 	user.Post("/sign-up", userHandler.CreateUser)
-
 	user.Get("/profile", middleware.Protected(), userHandler.GetUserProfileById)
 }
 
@@ -28,8 +27,9 @@ func AuthRoutes(app *fiber.App, authHandler *auth.Handler) {
 }
 
 func TeacherRoutes(app *fiber.App, teacherHandler *teacher.Handler) {
-	teacher := apiRoutes(app, "teacher")
-
-	teacher.Get("/", middleware.Protected(), teacherHandler.GetTeacherIdByUserId)
-	teacher.Post("/class", middleware.Protected(), teacherHandler.CreateClass)
+	teacher := apiRoutes(app, "teachers")
+	teacher.Get("/teacher", middleware.Protected(), teacherHandler.GetTeacherIdByUserId)
+	teacher.Get("/teacher/classes", middleware.Protected(), teacherHandler.GetAllClassByTeacherId)
+	teacher.Post("teacher/classes", middleware.Protected(), teacherHandler.CreateClass)
+	// teacher.Get("/teacher/classes/class", middleware.Protected(), teacherHandler.GetListStudentByClassName)
 }

@@ -22,6 +22,11 @@ func NewHandler(s Service, validate *validator.Validate) *Handler {
 	}
 }
 
+const (
+	unauthorizedMsg = "Unauthorized not a teacher."
+	notFoundMsg     = "Teacher not found."
+)
+
 func (h *Handler) GetTeacherIdByUserId(c *fiber.Ctx) error {
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
@@ -29,7 +34,7 @@ func (h *Handler) GetTeacherIdByUserId(c *fiber.Ctx) error {
 	role := claims["role"].(string)
 
 	if role != "teacher" {
-		return util.ErrorResponse(c, fiber.StatusUnauthorized, "Unauthorized not a teacher.")
+		return util.ErrorResponse(c, fiber.StatusUnauthorized, unauthorizedMsg)
 	}
 	parseId, _ := uuid.Parse(id)
 	req := &GetTeacherIdByUserIdRequest{
@@ -43,7 +48,7 @@ func (h *Handler) GetTeacherIdByUserId(c *fiber.Ctx) error {
 	res, err := h.TeacherService.GetTeacherIdByUserId(c.Context(), req)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return util.ErrorResponse(c, fiber.StatusNotFound, "Teacher not found.")
+			return util.ErrorResponse(c, fiber.StatusNotFound, notFoundMsg)
 		}
 		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -96,4 +101,51 @@ func (h *Handler) CreateClass(c *fiber.Ctx) error {
 	}
 
 	return util.SuccessResponse(c, fiber.StatusCreated, "Class successfully created.", res)
+}
+
+func (h *Handler) GetAllClassByTeacherId(c *fiber.Ctx) error {
+	user := c.Locals("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	id := claims["id"].(string)
+	role := claims["role"].(string)
+
+	if role != "teacher" {
+		return util.ErrorResponse(c, fiber.StatusUnauthorized, unauthorizedMsg)
+	}
+	parseId, _ := uuid.Parse(id)
+	UserId := &GetTeacherIdByUserIdRequest{
+		ID: parseId,
+	}
+
+	// Validate User ID
+	if err := h.Validate.Struct(UserId); err != nil {
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	teacher, err := h.TeacherService.GetTeacherIdByUserId(c.Context(), UserId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return util.ErrorResponse(c, fiber.StatusNotFound, notFoundMsg)
+		}
+		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	req := &GetClassByTeacherIdRequest{
+		ID: teacher.ID,
+	}
+
+	// Validate Teacher ID
+	if err := h.Validate.Struct(req); err != nil {
+		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	res, err := h.TeacherService.GetAllClassByTeacherId(c.Context(), req)
+	if err != nil {
+		if err.Error() == "null" {
+			return util.ErrorResponse(c, fiber.StatusNotFound, "No classes found from the given teacher id.")
+		}
+		return util.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return util.SuccessResponse(c, fiber.StatusOK, "Classes successfully retrieved.", res)
 }

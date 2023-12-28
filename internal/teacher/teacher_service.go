@@ -2,6 +2,7 @@ package teacher
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -54,4 +55,30 @@ func (s *service) GetTeacherIdByUserId(c context.Context, req *GetTeacherIdByUse
 	}
 
 	return res, nil
+}
+
+func (s *service) GetAllClassByTeacherId(c context.Context, req *GetClassByTeacherIdRequest) (*[]GetClassByTeacherIdResponse, error) {
+	ctx, cancel := context.WithTimeout(c, s.timeout)
+	defer cancel()
+
+	classes, err := s.TeacherRepository.GetAllClassByTeacherId(ctx, &req.ID)
+	if err != nil {
+		return nil, err
+	} else if len(*classes) == 0 {
+		return nil, fmt.Errorf("null")
+	}
+
+	var response []GetClassByTeacherIdResponse
+	for _, class := range *classes {
+		res := GetClassByTeacherIdResponse{
+			ID:        class.ID,
+			TeacherId: class.TeacherId,
+			ClassName: class.ClassName,
+		}
+		response = append(response, res)
+	}
+
+	fmt.Println("serivce", &response)
+	return &response, nil
+
 }
