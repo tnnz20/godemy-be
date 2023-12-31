@@ -28,18 +28,18 @@ func (s *service) CreateUser(c context.Context, req *CreateUserRequest) (*Create
 		return nil, err
 	}
 
-	user := &User{
+	userReq := &User{
 		Email:    req.Email,
 		Password: hashedPassword,
 		Role:     req.Role,
 	}
 
-	profile := &Profile{
+	profileReq := &Profile{
 		Name:   req.Name,
 		Gender: req.Gender,
 	}
 
-	userRes, profileRes, err := s.UserRepository.CreateUser(ctx, user, profile)
+	userRes, profileRes, err := s.UserRepository.CreateUser(ctx, userReq, profileReq)
 	if err != nil {
 		return nil, err
 	}
@@ -59,22 +59,22 @@ func (s *service) CreateUser(c context.Context, req *CreateUserRequest) (*Create
 		ID:    userRes.ID,
 		Email: userRes.Email,
 		Name:  profileRes.Name,
-		Role:  user.Role,
+		Role:  userRes.Role,
 	}
 
 	return res, nil
 }
 
-func (s *service) GetUserProfileById(c context.Context, req *GetUserProfileByIdRequest) (*GetUserProfileByIdResponse, error) {
+func (s *service) GetUserProfileByUserId(c context.Context, req *GetUserProfileByUserIdRequest) (*GetUserProfileByUserIdResponse, error) {
 	ctx, cancel := context.WithTimeout(c, s.timeout)
 	defer cancel()
 
-	userRes, profileRes, err := s.UserRepository.GetUserProfileById(ctx, &req.ID)
+	userRes, profileRes, err := s.UserRepository.GetUserProfileByUserId(ctx, &req.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &GetUserProfileByIdResponse{
+	res := &GetUserProfileByUserIdResponse{
 		ID:     userRes.ID,
 		Email:  userRes.Email,
 		Role:   userRes.Role,
@@ -85,20 +85,22 @@ func (s *service) GetUserProfileById(c context.Context, req *GetUserProfileByIdR
 	return res, nil
 }
 
-func (s *service) GetUserByEmail(c context.Context, email *string) (*User, error) {
+func (s *service) GetUserByEmail(c context.Context, req *GetUserByEmailRequest) (*GetUserByEmailResponse, error) {
 	ctx, cancel := context.WithTimeout(c, s.timeout)
 	defer cancel()
 
-	user, err := s.UserRepository.GetUserByEmail(ctx, email)
+	user, err := s.UserRepository.GetUserByEmail(ctx, &req.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &User{
-		ID:       user.ID,
-		Email:    user.Email,
-		Password: user.Email,
-		Role:     user.Role,
+	res := &GetUserByEmailResponse{
+		ID:         user.ID,
+		Email:      user.Email,
+		Password:   user.Email,
+		Role:       user.Role,
+		Ordered_at: user.Created_at,
+		Updated_at: user.Deleted_at,
 	}
 
 	return res, nil

@@ -5,8 +5,6 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"github.com/tnnz20/godemy-be/util"
 )
 
@@ -42,7 +40,11 @@ func (h *Handler) CreateUser(c *fiber.Ctx) error {
 		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
 
-	if user, err := h.UserService.GetUserByEmail(c.Context(), &req.Email); err != sql.ErrNoRows && user.Email == req.Email {
+	emailReq := &GetUserByEmailRequest{
+		Email: req.Email,
+	}
+
+	if user, err := h.UserService.GetUserByEmail(c.Context(), emailReq); err != sql.ErrNoRows && user.Email == req.Email {
 		return util.ErrorResponse(c, fiber.StatusConflict, "Email already exists.")
 	}
 
@@ -56,20 +58,17 @@ func (h *Handler) CreateUser(c *fiber.Ctx) error {
 
 func (h *Handler) GetUserProfileById(c *fiber.Ctx) error {
 
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	id := claims["id"].(string)
+	id, _ := util.JwtClaim(c)
 
-	parseId, _ := uuid.Parse(id)
-	req := &GetUserProfileByIdRequest{
-		ID: parseId,
+	req := &GetUserProfileByUserIdRequest{
+		UserId: id,
 	}
 
 	if err := h.Validate.Struct(req); err != nil {
 		return util.ErrorResponse(c, fiber.StatusBadRequest, "Invalid Id.")
 	}
 
-	res, err := h.UserService.GetUserProfileById(c.Context(), req)
+	res, err := h.UserService.GetUserProfileByUserId(c.Context(), req)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			util.ErrorResponse(c, fiber.StatusNotFound, "User Id not found.")

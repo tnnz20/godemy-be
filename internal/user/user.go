@@ -12,8 +12,9 @@ type User struct {
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
 	Role       string    `json:"role"`
-	Ordered_at time.Time `json:"ordered_at"`
+	Created_at time.Time `json:"created_at"`
 	Updated_at time.Time `json:"updated_at"`
+	Deleted_at time.Time `json:"deleted_at"`
 }
 
 type Profile struct {
@@ -22,13 +23,6 @@ type Profile struct {
 	Gender     string    `json:"gender"`
 	UserId     uuid.UUID `json:"user_id"`
 	ProfileImg string    `json:"profile_img"`
-}
-
-type Student struct {
-	ID        uuid.UUID `json:"id"`
-	UserId    uuid.UUID `json:"user_id"`
-	ClassId   uuid.UUID `json:"class_id"`
-	Threshold int       `json:"threshold"`
 }
 
 type CreateUserRequest struct {
@@ -46,10 +40,23 @@ type CreateUserResponse struct {
 	Role  string    `json:"role"`
 }
 
-type GetUserProfileByIdRequest struct {
-	ID uuid.UUID `json:"id" validate:"required,uuid4"`
+type GetUserByEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
-type GetUserProfileByIdResponse struct {
+
+type GetUserByEmailResponse struct {
+	ID         uuid.UUID `json:"id"`
+	Email      string    `json:"email"`
+	Password   string    `json:"password"`
+	Role       string    `json:"role"`
+	Ordered_at time.Time `json:"ordered_at"`
+	Updated_at time.Time `json:"updated_at"`
+}
+
+type GetUserProfileByUserIdRequest struct {
+	UserId uuid.UUID `json:"user_id" validate:"required,uuid4"`
+}
+type GetUserProfileByUserIdResponse struct {
 	ID     uuid.UUID `json:"id"`
 	Email  string    `json:"email"`
 	Role   string    `json:"role"`
@@ -60,13 +67,13 @@ type GetUserProfileByIdResponse struct {
 type Repository interface {
 	CreateUser(ctx context.Context, user *User, profile *Profile) (*User, *Profile, error)
 	GetUserByEmail(ctx context.Context, email *string) (*User, error)
-	GetUserProfileById(ctx context.Context, id *uuid.UUID) (*User, *Profile, error)
+	GetUserProfileByUserId(ctx context.Context, id *uuid.UUID) (*User, *Profile, error)
 	InsertRoleStudent(ctx context.Context, userId *uuid.UUID) error
 	InsertRoleTeacher(ctx context.Context, userId *uuid.UUID) error
 }
 
 type Service interface {
 	CreateUser(ctx context.Context, req *CreateUserRequest) (*CreateUserResponse, error)
-	GetUserProfileById(ctx context.Context, req *GetUserProfileByIdRequest) (*GetUserProfileByIdResponse, error)
-	GetUserByEmail(ctx context.Context, email *string) (*User, error)
+	GetUserByEmail(ctx context.Context, req *GetUserByEmailRequest) (*GetUserByEmailResponse, error)
+	GetUserProfileByUserId(ctx context.Context, req *GetUserProfileByUserIdRequest) (*GetUserProfileByUserIdResponse, error)
 }
