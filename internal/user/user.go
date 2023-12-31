@@ -22,7 +22,7 @@ type Profile struct {
 	Name       string    `json:"name"`
 	Gender     string    `json:"gender"`
 	UserId     uuid.UUID `json:"user_id"`
-	ProfileImg string    `json:"profile_img"`
+	ProfileImg *string   `json:"profile_img"`
 }
 
 type CreateUserRequest struct {
@@ -49,7 +49,7 @@ type GetUserByEmailResponse struct {
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
 	Role       string    `json:"role"`
-	Ordered_at time.Time `json:"ordered_at"`
+	Created_at time.Time `json:"created_at"`
 	Updated_at time.Time `json:"updated_at"`
 }
 
@@ -57,11 +57,12 @@ type GetUserProfileByUserIdRequest struct {
 	UserId uuid.UUID `json:"user_id" validate:"required,uuid4"`
 }
 type GetUserProfileByUserIdResponse struct {
-	ID     uuid.UUID `json:"id"`
-	Email  string    `json:"email"`
-	Role   string    `json:"role"`
-	Name   string    `json:"name"`
-	Gender string    `json:"gender"`
+	ID         uuid.UUID `json:"id"`
+	Email      string    `json:"email"`
+	Role       string    `json:"role"`
+	Name       string    `json:"name"`
+	Gender     string    `json:"gender"`
+	ProfileImg *string   `json:"profile_img"`
 }
 
 type Repository interface {

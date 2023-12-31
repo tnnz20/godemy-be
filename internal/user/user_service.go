@@ -75,11 +75,12 @@ func (s *service) GetUserProfileByUserId(c context.Context, req *GetUserProfileB
 	}
 
 	res := &GetUserProfileByUserIdResponse{
-		ID:     userRes.ID,
-		Email:  userRes.Email,
-		Role:   userRes.Role,
-		Name:   profileRes.Name,
-		Gender: profileRes.Gender,
+		ID:         userRes.ID,
+		Email:      userRes.Email,
+		Role:       userRes.Role,
+		Name:       profileRes.Name,
+		Gender:     profileRes.Gender,
+		ProfileImg: profileRes.ProfileImg,
 	}
 
 	return res, nil
@@ -97,9 +98,9 @@ func (s *service) GetUserByEmail(c context.Context, req *GetUserByEmailRequest) 
 	res := &GetUserByEmailResponse{
 		ID:         user.ID,
 		Email:      user.Email,
-		Password:   user.Email,
+		Password:   user.Password,
 		Role:       user.Role,
-		Ordered_at: user.Created_at,
+		Created_at: user.Created_at,
 		Updated_at: user.Deleted_at,
 	}
 

@@ -36,6 +36,7 @@ func (h *Handler) CreateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
+
 	if err := h.Validate.Struct(req); err != nil {
 		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}

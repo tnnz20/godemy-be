@@ -55,7 +55,8 @@ func (r *repository) CreateUser(ctx context.Context, user *User, profile *Profil
 
 func (r *repository) GetUserByEmail(ctx context.Context, email *string) (*User, error) {
 	user := User{}
-	query := "SELECT * FROM users WHERE email = $1"
+	query := `SELECT id, email, password, role, created_at, updated_at 
+			FROM users WHERE email = $1 AND deleted_at IS NULL`
 
 	if err := r.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Email,
 		&user.Password, &user.Role, &user.Created_at, &user.Updated_at); err != nil {
@@ -65,8 +66,8 @@ func (r *repository) GetUserByEmail(ctx context.Context, email *string) (*User, 
 }
 
 func (r *repository) GetUserProfileByUserId(ctx context.Context, userId *uuid.UUID) (*User, *Profile, error) {
-	user := User{}
-	profile := Profile{}
+	user := &User{}
+	profile := &Profile{}
 
 	query := `SELECT u.id, u.email, u.role, u.created_at, u.updated_at, 
 			p.name, p.gender, p.profile_img FROM users as u 
@@ -77,7 +78,7 @@ func (r *repository) GetUserProfileByUserId(ctx context.Context, userId *uuid.UU
 		return nil, nil, err
 	}
 
-	return &user, &profile, nil
+	return user, profile, nil
 }
 
 func (r *repository) InsertRoleStudent(ctx context.Context, userId *uuid.UUID) error {
