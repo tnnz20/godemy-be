@@ -38,8 +38,8 @@ func TeacherRoutes(app *fiber.App, teacherHandler *teacher.Handler) {
 func StudentRoutes(app *fiber.App, studentHandler *student.Handler) {
 	student := apiRoutes(app, "students")
 	student.Get("/student", middleware.Protected(), studentHandler.GetStudentByUserId)
-	// student.Patch("/student/threshold", middleware.Protected(), studentHandler.IncrementThreshold)
-	// student.Post("/student/assessment", middleware.Protected(), studentHandler.InsertAssessment)
+	student.Patch("/student/threshold", middleware.Protected(), studentHandler.IncrementThreshold)
+	student.Post("/student/assessment", middleware.Protected(), studentHandler.InsertAssessment)
 }
 
 func ClassRoutes(app *fiber.App, classHandler *class.Handler) {
