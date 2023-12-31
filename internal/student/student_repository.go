@@ -8,9 +8,7 @@ import (
 )
 
 type DBTX interface {
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
-	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
 }
 
 type repository struct {
