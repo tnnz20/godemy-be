@@ -11,6 +11,8 @@ import (
 	"github.com/tnnz20/godemy-be/db"
 
 	"github.com/tnnz20/godemy-be/internal/auth"
+	"github.com/tnnz20/godemy-be/internal/class"
+	"github.com/tnnz20/godemy-be/internal/student"
 	"github.com/tnnz20/godemy-be/internal/teacher"
 	"github.com/tnnz20/godemy-be/internal/user"
 	"github.com/tnnz20/godemy-be/router"
@@ -61,6 +63,19 @@ func main() {
 
 	router.TeacherRoutes(app, teacherHandler)
 
+	// Student
+	studentRepo := student.NewRepository(dbConn.GetDB())
+	studentSvc := student.NewService(studentRepo)
+	studentHandler := student.NewHandler(studentSvc, validate)
+
+	router.StudentRoutes(app, studentHandler)
+
+	// Class
+	classRepo := class.NewRepository(dbConn.GetDB())
+	classSvc := class.NewService(classRepo)
+	classHandler := class.NewHandler(classSvc, teacherSvc, studentSvc, validate)
+
+	router.ClassRoutes(app, classHandler)
 	log.Fatal(app.Listen(":5000"))
 
 }
