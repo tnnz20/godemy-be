@@ -8,7 +8,6 @@ import (
 )
 
 type DBTX interface {
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	QueryRowContext(context.Context, string, ...interface{}) *sql.Row
 	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
 }
@@ -32,22 +31,6 @@ func (r *repository) GetTeacherIdByUserId(ctx context.Context, userId *uuid.UUID
 	teacher.UserId = *userId
 
 	return teacher, nil
-}
-
-func (r *repository) CreateClass(ctx context.Context, class *Class) (*Class, error) {
-	var lastInsertedID string
-
-	query := "INSERT INTO class (teacher_id, class_name) VALUES($1, $2) returning id"
-
-	if err := r.db.QueryRowContext(ctx, query, class.TeacherId, class.ClassName).Scan(&lastInsertedID); err != nil {
-		return nil, err
-	}
-
-	parseUUID, _ := uuid.Parse(lastInsertedID)
-
-	class.ID = parseUUID
-
-	return class, nil
 }
 
 func (r *repository) GetAllClassByTeacherId(ctx context.Context, teacherId *uuid.UUID) (*[]Class, error) {

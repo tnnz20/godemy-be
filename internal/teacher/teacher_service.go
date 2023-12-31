@@ -18,33 +18,11 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (s *service) CreateClass(c context.Context, req *CreateClassRequest) (*CreateClassResponse, error) {
-	ctx, cancel := context.WithTimeout(c, s.timeout)
-	defer cancel()
-
-	classRequest := &Class{
-		TeacherId: req.TeacherId,
-		ClassName: req.ClassName,
-	}
-	classResponse, err := s.TeacherRepository.CreateClass(ctx, classRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	res := &CreateClassResponse{
-		ID:        classResponse.ID,
-		TeacherId: classResponse.TeacherId,
-		ClassName: classResponse.ClassName,
-	}
-
-	return res, nil
-}
-
 func (s *service) GetTeacherIdByUserId(c context.Context, req *GetTeacherIdByUserIdRequest) (*GetTeacherIdByUserIdResponse, error) {
 	ctx, cancel := context.WithTimeout(c, s.timeout)
 	defer cancel()
 
-	teacher, err := s.TeacherRepository.GetTeacherIdByUserId(ctx, &req.ID)
+	teacher, err := s.TeacherRepository.GetTeacherIdByUserId(ctx, &req.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +56,5 @@ func (s *service) GetAllClassByTeacherId(c context.Context, req *GetClassByTeach
 		response = append(response, res)
 	}
 
-	fmt.Println("serivce", &response)
 	return &response, nil
-
 }
