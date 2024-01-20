@@ -23,16 +23,6 @@ func NewHandler(s Service, validate *validator.Validate) *Handler {
 func (h *Handler) CreateUser(c *fiber.Ctx) error {
 	var req CreateUserRequest
 
-	roleQuery := c.Query("role")
-
-	if roleQuery == "teacher" {
-		req.Role = "teacher"
-	} else if roleQuery == "" {
-		req.Role = "student"
-	} else {
-		return util.ErrorResponse(c, fiber.StatusBadRequest, "Invalid Role.")
-	}
-
 	if err := c.BodyParser(&req); err != nil {
 		return util.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
 	}
