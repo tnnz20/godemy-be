@@ -1,0 +1,15 @@
+app:
+  name:  # name server
+  port:  # port server
+  encryption:
+    salt: # number
+    jwt_secret: 
+
+database:
+  postgres:
+    host: 
+    port: # port db
+    name: 
+    user: 
+    password:
+    SSLMode: 

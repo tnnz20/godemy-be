@@ -1,41 +1,59 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
 
 type Config struct {
-	DBHost     string `mapstructure:"POSTGRES_HOST"`
-	DBUser     string `mapstructure:"POSTGRES_USER"`
-	DBPassword string `mapstructure:"POSTGRES_PASSWORD"`
-	DBName     string `mapstructure:"POSTGRES_DB_NAME"`
-	DBPort     string `mapstructure:"POSTGRES_PORT"`
+	App      AppConfig      `yaml:"app"`
+	Database DatabaseConfig `yaml:"database"`
 }
 
-func LoadEnv(path string) (config Config, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigFile(".env")
+type AppConfig struct {
+	Name       string           `yaml:"name"`
+	Port       string           `yaml:"port"`
+	Encryption EncryptionConfig `yaml:"encryption"`
+}
 
-	viper.AutomaticEnv()
+type EncryptionConfig struct {
+	Salt      uint8  `yaml:"salt"`
+	JWTSecret string `yaml:"jwt_secret"`
+}
 
-	err = viper.ReadInConfig()
+type DatabaseConfig struct {
+	Postgres PostgresConfig `yaml:"postgres"`
+}
+
+type PostgresConfig struct {
+	Host           string                       `yaml:"host"`
+	Port           string                       `yaml:"port"`
+	User           string                       `yaml:"user"`
+	Password       string                       `yaml:"password"`
+	Name           string                       `yaml:"name"`
+	SSLMode        string                       `yaml:"SSLMode"`
+	ConnectionPool PostgresConnectionPoolConfig `yaml:"connection_pool"`
+}
+
+type PostgresConnectionPoolConfig struct {
+	MaxIdleConnection     uint8 `yaml:"max_idle_connection"`
+	MaxOpenConnetcion     uint8 `yaml:"max_open_connection"`
+	MaxLifetimeConnection uint8 `yaml:"max_lifetime_connection"`
+	MaxIdletimeConnection uint8 `yaml:"max_idletime_connection"`
+}
+
+func LoadConfig(filename string) (config *Config, err error) {
+
+	configByte, err := os.ReadFile(filename)
 	if err != nil {
 		return
 	}
 
-	err = viper.Unmarshal(&config)
-	return
-}
-
-func LoadJWTKey(path string) (key string, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigFile(".env")
-
-	viper.AutomaticEnv()
-
-	err = viper.ReadInConfig()
-	if err != nil {
+	var Cfg Config
+	if err = yaml.Unmarshal(configByte, &Cfg); err != nil {
 		return
 	}
 
-	key = viper.GetString("JWTSecret")
-	return
+	return &Cfg, nil
 }
