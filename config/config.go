@@ -43,17 +43,14 @@ type PostgresConnectionPoolConfig struct {
 	MaxIdletimeConnection uint8 `yaml:"max_idletime_connection"`
 }
 
-func LoadConfig(filename string) (config *Config, err error) {
+var Cfg Config
+
+func LoadConfig(filename string) (err error) {
 
 	configByte, err := os.ReadFile(filename)
 	if err != nil {
 		return
 	}
 
-	var Cfg Config
-	if err = yaml.Unmarshal(configByte, &Cfg); err != nil {
-		return
-	}
-
-	return &Cfg, nil
+	return yaml.Unmarshal(configByte, &Cfg)
 }

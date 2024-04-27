@@ -9,17 +9,16 @@ import (
 
 func TestLoadConfig(t *testing.T) {
 	t.Run("success load config", func(t *testing.T) {
-		config, err := LoadConfig("config-local.yaml")
+		err := LoadConfig("config-local.yaml")
 
 		require.Nil(t, err)
-		log.Printf("config: %+v", config)
+		log.Printf("config: %+v", Cfg)
 	})
 
 	t.Run("failed load config", func(t *testing.T) {
-		config, err := LoadConfig("config-local-err.yaml")
+		err := LoadConfig("config-local-err.yaml")
 
 		require.NotNil(t, err)
-		require.Nil(t, config)
 		log.Printf("error: %+v", err)
 	})
 }
