@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	err := config.LoadConfig("../../../config/config-local.yaml")
+	err := config.Load("../../../config/config-local.yaml")
 	if err != nil {
 		panic(err)
 	}

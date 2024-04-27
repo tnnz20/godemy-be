@@ -45,7 +45,7 @@ type PostgresConnectionPoolConfig struct {
 
 var Cfg Config
 
-func LoadConfig(filename string) (err error) {
+func Load(filename string) (err error) {
 
 	configByte, err := os.ReadFile(filename)
 	if err != nil {
