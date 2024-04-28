@@ -87,3 +87,11 @@ func (u *User) HashingPassword() (err error) {
 	u.Password = string(encryptedPass)
 	return nil
 }
+
+func (u User) VerifyPasswordFromEncrypted(plain string) (err error) {
+	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plain))
+}
+
+func (u User) VerifyPasswordFromPlain(encrypted string) (err error) {
+	return bcrypt.CompareHashAndPassword([]byte(encrypted), []byte(u.Password))
+}
