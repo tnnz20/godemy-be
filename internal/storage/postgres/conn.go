@@ -70,5 +70,5 @@ func (d *Database) Migrate() (err error) {
 	}
 
 	log.Println("Successfully migrate database")
-	return
+	return nil
 }
