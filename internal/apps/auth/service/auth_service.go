@@ -48,6 +48,11 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 		return errs.ErrEmailAlreadyExists
 	}
 
+	// Hash password
+	if err := regisUser.HashingPassword(); err != nil {
+		return err
+	}
+
 	// Begin transaction
 	tx, err := s.repo.Begin(ctx)
 	if err != nil {
