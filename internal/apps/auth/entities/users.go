@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
@@ -17,10 +19,12 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+// IsEmailAlreadyExists is a method to check if the email is already exists in the database
 func (u User) IsEmailAlreadyExists() bool {
 	return u.ID != uuid.Nil
 }
 
+// Validate is a method to validate the user
 func (u User) Validate() (err error) {
 	if err := u.ValidateEmail(); err != nil {
 		return err
@@ -72,4 +76,14 @@ func (u User) ValidateRole() (err error) {
 	}
 
 	return
+}
+
+// HashingPassword is a method to hash the password
+func (u *User) HashingPassword() (err error) {
+	encryptedPass, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	u.Password = string(encryptedPass)
+	return nil
 }
