@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"context"
 	"database/sql"
 	"embed"
 	"fmt"
@@ -20,12 +19,6 @@ var fs embed.FS
 type Database struct {
 	db  *sql.DB
 	dsn string
-}
-
-type DBTX interface {
-	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
-	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
-	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 }
 
 func NewConnection(config config.PostgresConfig) (*Database, error) {
