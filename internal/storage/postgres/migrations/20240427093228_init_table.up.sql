@@ -56,9 +56,11 @@ CREATE TABLE student(
 CREATE TABLE assessment(
     id UUID DEFAULT uuid_generate_v4(),
     student_id UUID not null,
+    class_id UUID not null,
     assessment_value int,
     assessment_code varchar(5),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (student_id) REFERENCES student(id)
+    FOREIGN KEY (student_id) REFERENCES student(id),
+    FOREIGN KEY (class_id) REFERENCES class(id)
 );
