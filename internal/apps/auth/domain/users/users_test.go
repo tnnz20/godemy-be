@@ -13,86 +13,98 @@ const (
 	ValidateRole     = "student"
 )
 
-func TestAuth(t *testing.T) {
+func TestUsersEntity(t *testing.T) {
 	t.Run("Success validate", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    validEmail,
 			Password: ValidatePassword,
 			Role:     ValidateRole,
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.Nil(t, err)
 	})
 
 	t.Run("Failed validate email", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    "Jhon",
 			Password: ValidatePassword,
 			Role:     ValidateRole,
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrInvalidEmail, err)
 	})
 
 	t.Run("Failed validate email must required", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    "",
 			Password: ValidatePassword,
 			Role:     ValidateRole,
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrEmailRequired, err)
 	})
 
 	t.Run("Failed validate password", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    validEmail,
 			Password: "jon",
 			Role:     ValidateRole,
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrInvalidLengthPassword, err)
 	})
 
 	t.Run("Failed validate password must required", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    validEmail,
 			Password: "",
 			Role:     ValidateRole,
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrPasswordRequired, err)
 	})
 
+	t.Run("Failed validate password must have 8 characters", func(t *testing.T) {
+		user := Users{
+			Email:    validEmail,
+			Password: "jhonpas",
+			Role:     ValidateRole,
+		}
+
+		err := user.Validate()
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrInvalidLengthPassword, err)
+	})
+
 	t.Run("Failed validate role", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    validEmail,
 			Password: "jhonpassword",
 			Role:     "admin",
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrInvalidRole, err)
 	})
 
 	t.Run("Failed validate role must required", func(t *testing.T) {
-		auth := Auth{
+		user := Users{
 			Email:    validEmail,
 			Password: "jhonpassword",
 			Role:     "",
 		}
 
-		err := auth.Validate()
+		err := user.Validate()
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrRoleRequired, err)
 	})

@@ -8,7 +8,7 @@ import (
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
-type Auth struct {
+type Users struct {
 	ID        uuid.UUID
 	Email     string
 	Password  string
@@ -17,28 +17,28 @@ type Auth struct {
 	UpdatedAt time.Time
 }
 
-func (a Auth) Validate() (err error) {
-	if err := a.ValidateEmail(); err != nil {
+func (u Users) Validate() (err error) {
+	if err := u.ValidateEmail(); err != nil {
 		return err
 	}
 
-	if err := a.ValidatePassword(); err != nil {
+	if err := u.ValidatePassword(); err != nil {
 		return err
 	}
 
-	if err := a.ValidateRole(); err != nil {
+	if err := u.ValidateRole(); err != nil {
 		return err
 	}
 
 	return
 }
 
-func (a Auth) ValidateEmail() (err error) {
-	if a.Email == "" {
+func (u Users) ValidateEmail() (err error) {
+	if u.Email == "" {
 		return errs.ErrEmailRequired
 	}
 
-	splitEmail := strings.Split(a.Email, "@")
+	splitEmail := strings.Split(u.Email, "@")
 	if len(splitEmail) != 2 {
 		return errs.ErrInvalidEmail
 	}
@@ -46,24 +46,24 @@ func (a Auth) ValidateEmail() (err error) {
 	return
 }
 
-func (a Auth) ValidatePassword() (err error) {
-	if a.Password == "" {
+func (u Users) ValidatePassword() (err error) {
+	if u.Password == "" {
 		return errs.ErrPasswordRequired
 	}
 
-	if len(a.Password) < 8 {
+	if len(u.Password) < 8 {
 		return errs.ErrInvalidLengthPassword
 	}
 
 	return
 }
 
-func (a Auth) ValidateRole() (err error) {
-	if a.Role == "" {
+func (u Users) ValidateRole() (err error) {
+	if u.Role == "" {
 		return errs.ErrRoleRequired
 	}
 
-	if a.Role != "student" && a.Role != "teacher" {
+	if u.Role != "student" && u.Role != "teacher" {
 		return errs.ErrInvalidRole
 	}
 
