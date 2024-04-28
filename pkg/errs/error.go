@@ -11,12 +11,14 @@ var (
 
 	ErrInvalidEmail  = errors.New("invalid email")
 	ErrEmailRequired = errors.New("email required")
+	ErrEmailNotFound = errors.New("email not found")
 
 	ErrInvalidLengthName = errors.New("name must be at least 3 characters")
 	ErrNameRequired      = errors.New("name required")
 
 	ErrPasswordRequired      = errors.New("password required")
 	ErrInvalidLengthPassword = errors.New("password must be at least 8 characters")
+	ErrWrongPassword         = errors.New("wrong password")
 
 	ErrInvalidRole  = errors.New("invalid role")
 	ErrRoleRequired = errors.New("role required")
