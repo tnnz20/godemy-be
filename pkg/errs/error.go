@@ -23,3 +23,27 @@ var (
 	ErrInvalidRole  = errors.New("invalid role")
 	ErrRoleRequired = errors.New("role required")
 )
+
+var (
+	ErrorMapping = map[error]uint32{
+		ErrInvalidLengthUUID: 400,
+		ErrUserIDRequired:    400,
+
+		ErrUserNotFound:       404,
+		ErrEmailAlreadyExists: 409,
+
+		ErrInvalidEmail:  400,
+		ErrEmailRequired: 400,
+		ErrEmailNotFound: 404,
+
+		ErrInvalidLengthName: 400,
+		ErrNameRequired:      400,
+
+		ErrPasswordRequired:      400,
+		ErrInvalidLengthPassword: 400,
+		ErrWrongPassword:         400,
+
+		ErrInvalidRole:  400,
+		ErrRoleRequired: 400,
+	}
+)
