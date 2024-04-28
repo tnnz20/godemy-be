@@ -3,6 +3,12 @@ package errs
 import "errors"
 
 var (
+	ErrInvalidLengthUUID = errors.New("uuid must be 16 characters")
+	ErrUserIDRequired    = errors.New("user id required")
+
+	ErrUserNotFound       = errors.New("user not found")
+	ErrEmailAlreadyExists = errors.New("email already exists")
+
 	ErrInvalidEmail  = errors.New("invalid email")
 	ErrEmailRequired = errors.New("email required")
 
