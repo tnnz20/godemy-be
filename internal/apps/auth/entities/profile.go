@@ -1,4 +1,4 @@
-package auth
+package entities
 
 import (
 	"github.com/google/uuid"
@@ -6,8 +6,9 @@ import (
 )
 
 type Profile struct {
-	ID   uuid.UUID
-	Name string
+	ID     uuid.UUID
+	Name   string
+	UserID uuid.UUID
 }
 
 func (p Profile) Validate() (err error) {
@@ -24,6 +25,18 @@ func (p Profile) ValidateName() (err error) {
 
 	if len(p.Name) < 3 {
 		return errs.ErrInvalidLengthName
+	}
+
+	return
+}
+
+func (p Profile) ValidateUserID() (err error) {
+	if p.UserID == uuid.Nil {
+		return errs.ErrUserIDRequired
+	}
+
+	if len(p.UserID) != 16 {
+		return errs.ErrInvalidLengthUUID
 	}
 
 	return
