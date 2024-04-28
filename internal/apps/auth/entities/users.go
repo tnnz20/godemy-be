@@ -8,6 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/tnnz20/godemy-be/pkg/errs"
+	"github.com/tnnz20/godemy-be/pkg/jwt"
 )
 
 type User struct {
@@ -94,4 +95,8 @@ func (u User) VerifyPasswordFromEncrypted(plain string) (err error) {
 
 func (u User) VerifyPasswordFromPlain(encrypted string) (err error) {
 	return bcrypt.CompareHashAndPassword([]byte(encrypted), []byte(u.Password))
+}
+
+func (u User) GenerateToken(secret string) (tokenString string, err error) {
+	return jwt.GenerateToken(u.ID.String(), u.Role, secret)
 }

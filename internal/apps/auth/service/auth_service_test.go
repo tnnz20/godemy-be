@@ -32,7 +32,7 @@ func init() {
 	}
 
 	repo := repository.NewRepository(db.GetDB())
-	svc = newService(repo)
+	svc = NewService(repo, config.Cfg.App.Encryption.JWTSecret)
 }
 
 func TestServiceRegisterAuth(t *testing.T) {

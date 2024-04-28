@@ -15,12 +15,14 @@ type SvcRepository interface {
 }
 
 type service struct {
-	repo SvcRepository
+	repo        SvcRepository
+	secretToken string
 }
 
-func newService(repo SvcRepository) auth.Service {
+func NewService(repo SvcRepository, secret string) auth.Service {
 	return service{
-		repo: repo,
+		repo:        repo,
+		secretToken: secret,
 	}
 }
 
@@ -130,13 +132,13 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 	}
 
 	// Generate token
-	// token, err := user.GenerateToken()
-	// if err != nil {
-	// 	return entities.LoginResponse{}, err
-	// }
+	token, err := user.GenerateToken(s.secretToken)
+	if err != nil {
+		return entities.LoginResponse{}, err
+	}
 
 	res = entities.LoginResponse{
-		Token: "login",
+		Token: token,
 	}
 
 	return
