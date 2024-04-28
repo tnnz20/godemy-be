@@ -26,18 +26,18 @@ func newService(repo SvcRepository) auth.Service {
 
 func (s service) Register(ctx context.Context, req entities.RegisterPayload) (err error) {
 
-	regisUser := entities.User{
+	NewUser := entities.User{
 		Email:    req.Email,
 		Password: req.Password,
 		Role:     req.Role,
 	}
 
-	if err := regisUser.Validate(); err != nil {
+	if err := NewUser.Validate(); err != nil {
 		return err
 	}
 
 	// Check if email already exists
-	user, err := s.repo.GetUserByEmail(ctx, regisUser.Email)
+	user, err := s.repo.GetUserByEmail(ctx, NewUser.Email)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return
@@ -49,7 +49,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	}
 
 	// Hash password
-	if err := regisUser.HashingPassword(); err != nil {
+	if err := NewUser.HashingPassword(); err != nil {
 		return err
 	}
 
@@ -63,32 +63,32 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	defer s.repo.Rollback(ctx, tx)
 
 	// Create user
-	id, err := s.repo.CreateUserWithTX(ctx, tx, regisUser)
+	id, err := s.repo.CreateUserWithTX(ctx, tx, NewUser)
 	if err != nil {
 		return err
 	}
 
 	// Create profile
-	regisProfile := entities.Profile{
+	NewProfile := entities.Profile{
 		Name:   req.Name,
 		UserID: id,
 	}
 
-	if err := regisProfile.Validate(); err != nil {
+	if err := NewProfile.Validate(); err != nil {
 		return err
 	}
 
-	err = s.repo.CreateProfileWithTX(ctx, tx, regisProfile)
+	err = s.repo.CreateProfileWithTX(ctx, tx, NewProfile)
 	if err != nil {
 		return err
 	}
 
 	// Create role
-	regisRole := entities.User{
+	NewRole := entities.User{
 		ID:   id,
-		Role: req.Role,
+		Role: NewUser.Role,
 	}
-	err = s.repo.InsertUserRoleWithTX(ctx, tx, regisRole)
+	err = s.repo.InsertUserRoleWithTX(ctx, tx, NewRole)
 	if err != nil {
 		return err
 	}
@@ -96,5 +96,48 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	if err = s.repo.Commit(ctx, tx); err != nil {
 		return
 	}
+	return
+}
+
+func (s service) Login(ctx context.Context, req entities.LoginPayload) (res entities.LoginResponse, err error) {
+	NewUserLogin := entities.User{
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	// Validate email and password
+	if err := NewUserLogin.ValidateEmail(); err != nil {
+		return entities.LoginResponse{}, err
+	}
+
+	if err := NewUserLogin.ValidatePassword(); err != nil {
+		return entities.LoginResponse{}, err
+	}
+
+	// Get user by email
+	user, err := s.repo.GetUserByEmail(ctx, NewUserLogin.Email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return entities.LoginResponse{}, errs.ErrEmailNotFound
+		}
+		return entities.LoginResponse{}, err
+	}
+
+	// Compare password
+	if err := NewUserLogin.VerifyPasswordFromPlain(user.Password); err != nil {
+		err = errs.ErrWrongPassword
+		return entities.LoginResponse{}, err
+	}
+
+	// Generate token
+	// token, err := user.GenerateToken()
+	// if err != nil {
+	// 	return entities.LoginResponse{}, err
+	// }
+
+	res = entities.LoginResponse{
+		Token: "login",
+	}
+
 	return
 }
