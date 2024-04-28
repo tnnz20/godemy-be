@@ -1,4 +1,4 @@
-package auth
+package entities
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
-type Users struct {
+type User struct {
 	ID        uuid.UUID
 	Email     string
 	Password  string
@@ -17,7 +17,11 @@ type Users struct {
 	UpdatedAt time.Time
 }
 
-func (u Users) Validate() (err error) {
+func (u User) IsEmailAlreadyExists() bool {
+	return u.ID != uuid.Nil
+}
+
+func (u User) Validate() (err error) {
 	if err := u.ValidateEmail(); err != nil {
 		return err
 	}
@@ -33,7 +37,7 @@ func (u Users) Validate() (err error) {
 	return
 }
 
-func (u Users) ValidateEmail() (err error) {
+func (u User) ValidateEmail() (err error) {
 	if u.Email == "" {
 		return errs.ErrEmailRequired
 	}
@@ -46,7 +50,7 @@ func (u Users) ValidateEmail() (err error) {
 	return
 }
 
-func (u Users) ValidatePassword() (err error) {
+func (u User) ValidatePassword() (err error) {
 	if u.Password == "" {
 		return errs.ErrPasswordRequired
 	}
@@ -58,7 +62,7 @@ func (u Users) ValidatePassword() (err error) {
 	return
 }
 
-func (u Users) ValidateRole() (err error) {
+func (u User) ValidateRole() (err error) {
 	if u.Role == "" {
 		return errs.ErrRoleRequired
 	}

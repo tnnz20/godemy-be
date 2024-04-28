@@ -1,4 +1,4 @@
-package auth
+package entities
 
 import (
 	"testing"
@@ -13,9 +13,9 @@ const (
 	ValidateRole     = "student"
 )
 
-func TestUsersEntity(t *testing.T) {
+func TestUserEntity(t *testing.T) {
 	t.Run("Success validate", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: ValidatePassword,
 			Role:     ValidateRole,
@@ -26,7 +26,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate email", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    "Jhon",
 			Password: ValidatePassword,
 			Role:     ValidateRole,
@@ -38,7 +38,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate email must required", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    "",
 			Password: ValidatePassword,
 			Role:     ValidateRole,
@@ -50,7 +50,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate password", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: "jon",
 			Role:     ValidateRole,
@@ -62,7 +62,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate password must required", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: "",
 			Role:     ValidateRole,
@@ -74,7 +74,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate password must have 8 characters", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: "jhonpas",
 			Role:     ValidateRole,
@@ -86,7 +86,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate role", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: "jhonpassword",
 			Role:     "admin",
@@ -98,7 +98,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 
 	t.Run("Failed validate role must required", func(t *testing.T) {
-		user := Users{
+		user := User{
 			Email:    validEmail,
 			Password: "jhonpassword",
 			Role:     "",
