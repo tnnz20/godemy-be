@@ -10,16 +10,12 @@ import (
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
-type SvcRepository interface {
-	auth.Repository
-}
-
 type service struct {
-	repo        SvcRepository
+	repo        auth.Repository
 	secretToken string
 }
 
-func NewService(repo SvcRepository, secret string) auth.Service {
+func NewService(repo auth.Repository, secret string) auth.Service {
 	return service{
 		repo:        repo,
 		secretToken: secret,
