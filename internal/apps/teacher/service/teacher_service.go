@@ -22,17 +22,76 @@ func NewService(teacherRepo teacher.Repository) teacher.Service {
 	}
 }
 
+func (s *service) GetCourseByTeacherId(ctx context.Context, req entities.GetCourseByTeacherIdRequest) (res entities.GetCourseByTeacherIdResponse, err error) {
+	teacher, err := s.Repository.FindTeacherIdByUserId(ctx, req.UserId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrTeacherNotFound
+			return entities.GetCourseByTeacherIdResponse{}, err
+		}
+		return entities.GetCourseByTeacherIdResponse{}, err
+	}
+
+	NewCourse, err := s.Repository.FindCourseByTeacherId(ctx, teacher.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = errs.ErrCourseNotFound
+			return
+		}
+		return
+	}
+
+	res = entities.GetCourseByTeacherIdResponse(NewCourse)
+	return
+}
+
+func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCourseByCourseCodeRequest) (res entities.GetCourseByCourseCodeResponse, err error) {
+	course := entities.Course{
+		CourseCode: req.CourseCode,
+	}
+
+	if err := course.ValidateCourseCode(); err != nil {
+		return entities.GetCourseByCourseCodeResponse{}, err
+	}
+
+	NewCourses, err := s.Repository.FindCourseByCourseCode(ctx, course.CourseCode)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = errs.ErrCourseNotFound
+			return
+		}
+		return
+	}
+
+	res = entities.GetCourseByCourseCodeResponse(NewCourses)
+
+	return
+}
+
 func (s *service) CreateCourse(ctx context.Context, req entities.CreateCourseRequest) (err error) {
 	teacher, err := s.Repository.FindTeacherIdByUserId(ctx, req.UserId)
 	if err != nil {
 		return
 	}
 
-	// Generate course code
-	randomString := helpers.GenerateRandomString(7)
-	courseCode := fmt.Sprintf("go-%s", randomString)
+	var courseCode string
+	for {
+		randomString := helpers.GenerateRandomString(7)
+		courseCode = fmt.Sprintf("go-%s", randomString)
 
-	// TODO: check if course code exist, regenerate
+		checkCourse, err := s.Repository.FindCourseByCourseCode(ctx, courseCode)
+		if err != nil {
+			if !errors.Is(err, sql.ErrNoRows) {
+				return err
+			}
+		}
+
+		if !checkCourse.IsCourseCodeExist() {
+			// Course code doesn't exist, so it's unique
+			break
+		}
+		// Course code already exists, so try again
+	}
 
 	course := entities.Course{
 		CourseName: "golang-fundamental",
@@ -59,7 +118,7 @@ func (s *service) GetTeacherIdByUserId(ctx context.Context, req entities.GetTeac
 	}
 
 	res = entities.GetTeacherIdByUserIdResponse{
-		Id:     teacher.ID,
+		ID:     teacher.ID,
 		UserId: req.UserId,
 	}
 

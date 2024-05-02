@@ -32,10 +32,11 @@ func init() {
 }
 
 var ErrParsingUUID = "Error Parsing UUID: "
+var ValidUserId = "dbb6bcda-67b7-454d-b28b-7e14448dd0c9"
 
 func TestTeacherService(t *testing.T) {
 	t.Run("Success get teacher id", func(t *testing.T) {
-		userId, err := uuid.Parse("dbb6bcda-67b7-454d-b28b-7e14448dd0c9")
+		userId, err := uuid.Parse(ValidUserId)
 		if err != nil {
 			log.Fatal(ErrParsingUUID, err)
 		}
@@ -64,23 +65,68 @@ func TestTeacherService(t *testing.T) {
 		teacher, err := svc.GetTeacherIdByUserId(context.Background(), req)
 
 		require.NotNil(t, err)
+		require.Empty(t, teacher)
 		log.Println(teacher)
 	})
 }
 
-func TestTeacherCoursesService(t *testing.T) {
-	t.Run("Success get teacher id", func(t *testing.T) {
-		userId, err := uuid.Parse("dbb6bcda-67b7-454d-b28b-7e14448dd0c9")
+func TestCreateCourseService(t *testing.T) {
+	t.Run("Success create course", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserId)
 		if err != nil {
 			log.Fatal(ErrParsingUUID, err)
 		}
+		require.Nil(t, err)
 
 		req := entities.CreateCourseRequest{
 			UserId: userId,
 		}
 
 		course := svc.CreateCourse(context.Background(), req)
+		require.Nil(t, course)
+	})
+}
+
+func TestGetCourseService(t *testing.T) {
+	t.Run("Success get course by course code", func(t *testing.T) {
+		courseCode := "go-muiYlpb"
+
+		req := entities.GetCourseByCourseCodeRequest{
+			CourseCode: courseCode,
+		}
+
+		course, err := svc.GetCourseByCourseCode(context.Background(), req)
 		require.Nil(t, err)
+		require.NotNil(t, course)
+		log.Println(course)
+	})
+
+	t.Run("Failed get course by course code", func(t *testing.T) {
+		courseCode := "go-muiYlp3"
+
+		req := entities.GetCourseByCourseCodeRequest{
+			CourseCode: courseCode,
+		}
+
+		course, err := svc.GetCourseByCourseCode(context.Background(), req)
+		require.NotNil(t, err)
+		require.Empty(t, course)
+		log.Println(course)
+	})
+
+	t.Run("Success get course by teacher id", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserId)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+
+		req := entities.GetCourseByTeacherIdRequest{
+			UserId: userId,
+		}
+
+		course, err := svc.GetCourseByTeacherId(context.Background(), req)
+		require.Nil(t, err)
+		require.NotNil(t, course)
 		log.Println(course)
 	})
 }
