@@ -27,6 +27,14 @@ var (
 	ErrInvalidLengthAddress = errors.New("address must be at least 5 characters")
 
 	ErrInvalidGender = errors.New("gender must be male or female")
+
+	// Teacher
+	ErrTeacherNotFound = errors.New("teacher id not found")
+
+	// Course
+	ErrInvalidCourseNameLength = errors.New("course name must be at least 3 characters")
+
+	ErrInvalidCourseCodeLength = errors.New("course code must be at least 3 characters")
 )
 
 var (
