@@ -10,6 +10,6 @@ import (
 type Repository interface {
 	FindTeacherIdByUserId(ctx context.Context, userId uuid.UUID) (teacher entities.Teacher, err error)
 	CreateCourse(ctx context.Context, course entities.Course) (err error)
-
-	// FindClassByTeacherId(ctx context.Context, teacherId uuid.UUID) (class entities.Class, err error)
+	FindCourseByCourseCode(ctx context.Context, courseCode string) (course entities.Course, err error)
+	FindCourseByTeacherId(ctx context.Context, teacherId uuid.UUID) (course entities.Course, err error)
 }
