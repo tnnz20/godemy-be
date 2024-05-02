@@ -3,9 +3,11 @@ package errs
 import "errors"
 
 var (
+	// General
 	ErrInvalidLengthUUID = errors.New("uuid must be 16 characters")
 	ErrUserIDRequired    = errors.New("user id required")
 
+	// Auth
 	ErrUserNotFound       = errors.New("user not found")
 	ErrEmailAlreadyExists = errors.New("email already exists")
 
@@ -20,21 +22,21 @@ var (
 	ErrInvalidRole  = errors.New("invalid role")
 	ErrRoleRequired = errors.New("role required")
 
+	// Profile
 	ErrInvalidLengthName = errors.New("name must be at least 3 characters")
 	ErrNameRequired      = errors.New("name required")
 
-	// Profile
 	ErrInvalidLengthAddress = errors.New("address must be at least 5 characters")
-
-	ErrInvalidGender = errors.New("gender must be male or female")
+	ErrInvalidGender        = errors.New("gender must be male or female")
 
 	// Teacher
-	ErrTeacherNotFound = errors.New("teacher id not found")
+	ErrTeacherNotFound = errors.New("teacher not found")
 
 	// Course
 	ErrInvalidCourseNameLength = errors.New("course name must be at least 3 characters")
-
 	ErrInvalidCourseCodeLength = errors.New("course code must be at least 3 characters")
+	ErrCourseNotFound          = errors.New("course not found")
+	ErrCourseCodeAlreadyExist  = errors.New("course code already exist")
 )
 
 var (
