@@ -19,6 +19,58 @@ func NewRepository(db *sql.DB) teacher.Repository {
 	}
 }
 
+func (r repository) FindCourseByTeacherId(ctx context.Context, teacherId uuid.UUID) (course entities.Course, err error) {
+	query := `
+	SELECT id, course_name, course_code, teacher_id, created_at, updated_at
+	FROM courses
+	WHERE teacher_id = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, query, teacherId).Scan(
+		&course.ID,
+		&course.CourseName,
+		&course.CourseCode,
+		&course.TeacherId,
+		&course.CreatedAt,
+		&course.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return
+		}
+		return
+	}
+
+	return
+}
+
+func (r repository) FindCourseByCourseCode(ctx context.Context, courseCode string) (course entities.Course, err error) {
+	query := `
+	SELECT id, course_name, course_code, teacher_id, created_at, updated_at
+	FROM courses
+	WHERE course_code = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, query, courseCode).Scan(
+		&course.ID,
+		&course.CourseName,
+		&course.CourseCode,
+		&course.TeacherId,
+		&course.CreatedAt,
+		&course.UpdatedAt,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return
+		}
+		return
+	}
+
+	return
+}
+
 func (r repository) CreateCourse(ctx context.Context, course entities.Course) (err error) {
 	query := `
 	INSERT INTO courses (course_name, course_code, teacher_id)
