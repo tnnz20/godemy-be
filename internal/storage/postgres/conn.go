@@ -68,6 +68,11 @@ func (d *Database) Migrate() (err error) {
 	if err != nil && err != migrate.ErrNoChange {
 		return err
 	}
+	if err == migrate.ErrNoChange {
+		log.Println("No changed")
+	} else {
+		log.Println("Has changed")
+	}
 
 	log.Println("Successfully migrate database")
 	return nil
