@@ -2,18 +2,18 @@ package entities
 
 import "github.com/google/uuid"
 
-type GetTeacherIdByUserIdRequest struct {
+type GetTeacherIdByUserIdPayload struct {
 	UserId uuid.UUID `json:"user_id"`
 }
 
-type GetCourseByTeacherIdRequest struct {
+type GetCourseByTeacherIdPayload struct {
 	UserId uuid.UUID `json:"user_id"`
 }
 
-type GetCourseByCourseCodeRequest struct {
+type GetCourseByCourseCodePayload struct {
 	CourseCode string `json:"course_code"`
 }
 
-type CreateCourseRequest struct {
+type CreateCoursePayload struct {
 	UserId uuid.UUID `json:"user_id"`
 }

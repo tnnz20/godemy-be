@@ -22,7 +22,7 @@ func NewService(teacherRepo teacher.Repository) teacher.Service {
 	}
 }
 
-func (s *service) GetCourseByTeacherId(ctx context.Context, req entities.GetCourseByTeacherIdRequest) (res entities.GetCourseByTeacherIdResponse, err error) {
+func (s *service) GetCourseByTeacherId(ctx context.Context, req entities.GetCourseByTeacherIdPayload) (res entities.GetCourseByTeacherIdResponse, err error) {
 	teacher, err := s.Repository.FindTeacherIdByUserId(ctx, req.UserId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -45,7 +45,7 @@ func (s *service) GetCourseByTeacherId(ctx context.Context, req entities.GetCour
 	return
 }
 
-func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCourseByCourseCodeRequest) (res entities.GetCourseByCourseCodeResponse, err error) {
+func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCourseByCourseCodePayload) (res entities.GetCourseByCourseCodeResponse, err error) {
 	course := entities.Course{
 		CourseCode: req.CourseCode,
 	}
@@ -68,7 +68,7 @@ func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCou
 	return
 }
 
-func (s *service) CreateCourse(ctx context.Context, req entities.CreateCourseRequest) (err error) {
+func (s *service) CreateCourse(ctx context.Context, req entities.CreateCoursePayload) (err error) {
 	teacher, err := s.Repository.FindTeacherIdByUserId(ctx, req.UserId)
 	if err != nil {
 		return
@@ -107,7 +107,7 @@ func (s *service) CreateCourse(ctx context.Context, req entities.CreateCourseReq
 	return newCourse
 }
 
-func (s *service) GetTeacherIdByUserId(ctx context.Context, req entities.GetTeacherIdByUserIdRequest) (res entities.GetTeacherIdByUserIdResponse, err error) {
+func (s *service) GetTeacherIdByUserId(ctx context.Context, req entities.GetTeacherIdByUserIdPayload) (res entities.GetTeacherIdByUserIdResponse, err error) {
 	teacher, err := s.Repository.FindTeacherIdByUserId(ctx, req.UserId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

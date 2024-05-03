@@ -41,7 +41,7 @@ func TestTeacherService(t *testing.T) {
 			log.Fatal(ErrParsingUUID, err)
 		}
 
-		req := entities.GetTeacherIdByUserIdRequest{
+		req := entities.GetTeacherIdByUserIdPayload{
 			UserId: userId,
 		}
 
@@ -58,7 +58,7 @@ func TestTeacherService(t *testing.T) {
 			log.Fatal(ErrParsingUUID, err)
 		}
 
-		req := entities.GetTeacherIdByUserIdRequest{
+		req := entities.GetTeacherIdByUserIdPayload{
 			UserId: userId,
 		}
 
@@ -78,7 +78,7 @@ func TestCreateCourseService(t *testing.T) {
 		}
 		require.Nil(t, err)
 
-		req := entities.CreateCourseRequest{
+		req := entities.CreateCoursePayload{
 			UserId: userId,
 		}
 
@@ -91,7 +91,7 @@ func TestGetCourseService(t *testing.T) {
 	t.Run("Success get course by course code", func(t *testing.T) {
 		courseCode := "go-muiYlpb"
 
-		req := entities.GetCourseByCourseCodeRequest{
+		req := entities.GetCourseByCourseCodePayload{
 			CourseCode: courseCode,
 		}
 
@@ -104,7 +104,7 @@ func TestGetCourseService(t *testing.T) {
 	t.Run("Failed get course by course code", func(t *testing.T) {
 		courseCode := "go-muiYlp3"
 
-		req := entities.GetCourseByCourseCodeRequest{
+		req := entities.GetCourseByCourseCodePayload{
 			CourseCode: courseCode,
 		}
 
@@ -120,7 +120,7 @@ func TestGetCourseService(t *testing.T) {
 			log.Fatal(ErrParsingUUID, err)
 		}
 
-		req := entities.GetCourseByTeacherIdRequest{
+		req := entities.GetCourseByTeacherIdPayload{
 			UserId: userId,
 		}
 
