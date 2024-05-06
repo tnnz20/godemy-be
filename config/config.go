@@ -18,7 +18,6 @@ type AppConfig struct {
 }
 
 type EncryptionConfig struct {
-	Salt      uint8  `yaml:"salt"`
 	JWTSecret string `yaml:"jwt_secret"`
 }
 
@@ -38,9 +37,9 @@ type PostgresConfig struct {
 
 type PostgresConnectionPoolConfig struct {
 	MaxIdleConnection     uint8 `yaml:"max_idle_connection"`
-	MaxOpenConnetcion     uint8 `yaml:"max_open_connection"`
+	MaxOpenConnection     uint8 `yaml:"max_open_connection"`
 	MaxLifetimeConnection uint8 `yaml:"max_lifetime_connection"`
-	MaxIdletimeConnection uint8 `yaml:"max_idletime_connection"`
+	MaxIdleTimeConnection uint8 `yaml:"max_idle_time_connection"`
 }
 
 var Cfg Config
