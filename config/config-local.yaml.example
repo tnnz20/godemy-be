@@ -2,14 +2,18 @@ app:
   name:  # name server
   port:  # port server
   encryption:
-    salt: # number
     jwt_secret: 
 
 database:
   postgres:
-    host: 
-    port: # port db
-    name: 
-    user: 
-    password:
-    SSLMode: 
+    host: #host db
+    port: #port db
+    name: #name db
+    user: #username
+    password: #password user
+    SSLMode: disable
+    connection_pool:
+      max_idle_connection: 10
+      max_open_connection: 30
+      max_lifetime_connection: 60 #second
+      max_idle_time_connection: 60 #second
