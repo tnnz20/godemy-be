@@ -21,6 +21,24 @@ type CoursesPagination struct {
 	Offset int
 }
 
+func NewCourses(usersId uuid.UUID, courseName, courseCode string) Courses {
+	return Courses{
+		ID:         uuid.New(),
+		UsersId:    usersId,
+		CourseName: courseName,
+		CourseCode: courseCode,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
+	}
+}
+
+func NewCoursesPagination(limit, offset int) CoursesPagination {
+	return CoursesPagination{
+		Limit:  limit,
+		Offset: offset,
+	}
+}
+
 func (c Courses) Validate() (err error) {
 	if err := c.ValidateCourseName(); err != nil {
 		return err
