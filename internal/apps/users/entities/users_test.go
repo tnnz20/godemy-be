@@ -14,7 +14,7 @@ const (
 	ValidRole     = "student"
 )
 
-func TestUsersEntity(t *testing.T) {
+func TestUsersEntities(t *testing.T) {
 	t.Run("Success validate users", func(t *testing.T) {
 		User := Users{
 			Email:    validEmail,
@@ -102,7 +102,7 @@ func TestUsersEntity(t *testing.T) {
 	})
 }
 
-func TestRolesEntity(t *testing.T) {
+func TestRolesEntities(t *testing.T) {
 	t.Run("Success validate roles", func(t *testing.T) {
 		Role := Roles{
 			Role: ValidRole,
