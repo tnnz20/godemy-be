@@ -30,6 +30,35 @@ type Users struct {
 	DeletedAt  time.Time
 }
 
+func NewUsersRegister(email, password, name string) Users {
+	return Users{
+		ID:        uuid.New(),
+		Email:     email,
+		Password:  password,
+		Name:      name,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+}
+
+func NewUsersUpdate(date time.Time, name, address, gender, profileImg string) Users {
+	return Users{
+		Name:       name,
+		Date:       date,
+		Address:    address,
+		Gender:     gender,
+		ProfileImg: profileImg,
+		UpdatedAt:  time.Now(),
+	}
+}
+
+func NewUsersLogin(email, password string) Users {
+	return Users{
+		Email:    email,
+		Password: password,
+	}
+}
+
 // IsEmailAlreadyExists is a method to check if the email is already exists in the database
 func (u Users) IsEmailAlreadyExists() bool {
 	return u.ID != uuid.Nil
