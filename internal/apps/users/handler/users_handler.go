@@ -40,7 +40,7 @@ func (h handler) Register(c *fiber.Ctx) error {
 		}
 	}
 
-	return response.SuccessCreated(c, nil)
+	return response.SuccessCreated(c)
 }
 
 func (h handler) Login(c *fiber.Ctx) error {
