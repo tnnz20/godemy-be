@@ -10,6 +10,13 @@ type Roles struct {
 	Role    string
 }
 
+func NewRoles(usersId uuid.UUID, role string) Roles {
+	return Roles{
+		UsersId: usersId,
+		Role:    role,
+	}
+}
+
 func (r Roles) ValidateRole() (err error) {
 	if r.Role == "" {
 		return errs.ErrRoleRequired
