@@ -22,11 +22,14 @@ func NewRepository(db *sql.DB) courses.Repository {
 func (r *repository) CreateCourse(ctx context.Context, course entities.Courses) (err error) {
 	query := `
 	INSERT INTO courses (
+		id,
 		users_id, 
 		course_name, 
-		course_code
+		course_code,
+		created_at,
+		updated_at
 	)
-	VALUES ($1, $2, $3)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	`
 
 	stmt, err := r.db.PrepareContext(ctx, query)
@@ -36,7 +39,14 @@ func (r *repository) CreateCourse(ctx context.Context, course entities.Courses) 
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, course.UsersId, course.CourseName, course.CourseCode)
+	_, err = stmt.ExecContext(ctx,
+		course.ID,
+		course.UsersId,
+		course.CourseName,
+		course.CourseCode,
+		course.CreatedAt,
+		course.UpdatedAt,
+	)
 	if err != nil {
 		return err
 	}
