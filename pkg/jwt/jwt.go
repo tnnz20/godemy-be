@@ -24,7 +24,7 @@ func GenerateToken(id, role, secret string) (tokenString string, err error) {
 }
 
 // ValidateToken is a function to validate the token and extract the claims
-func ValidateToken(tokenString string, secret string) (id string, role string, err error) {
+func ValidateToken(tokenString, secret string) (id string, role string, err error) {
 	tokens, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
