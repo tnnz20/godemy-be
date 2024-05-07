@@ -41,17 +41,13 @@ func (s *service) CreateCourse(ctx context.Context, req entities.CreateCoursePay
 		}
 	}
 
-	course := entities.Courses{
-		UsersId:    req.UsersId,
-		CourseCode: courseCode,
-		CourseName: "golang-fundamental",
-	}
+	NewCourse := entities.NewCourses(req.UsersId, "golang-fundamental", courseCode)
 
-	if err := course.Validate(); err != nil {
+	if err := NewCourse.Validate(); err != nil {
 		return err
 	}
 
-	if err := s.Repository.CreateCourse(ctx, course); err != nil {
+	if err := s.Repository.CreateCourse(ctx, NewCourse); err != nil {
 		return err
 	}
 
@@ -82,11 +78,9 @@ func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCou
 }
 
 func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req entities.GetCoursesByUsersIdWithPaginationPayload) (res []entities.CourseResponse, err error) {
-	coursePagination := entities.CoursesPagination{
-		Limit:  req.Limit,
-		Offset: req.Offset,
-	}
-	courses, err := s.Repository.FindCoursesByUsersIdWithPagination(ctx, req.UsersId, coursePagination)
+	NewCoursePagination := entities.NewCoursesPagination(req.Limit, req.Offset)
+
+	courses, err := s.Repository.FindCoursesByUsersIdWithPagination(ctx, req.UsersId, NewCoursePagination)
 	if err != nil {
 		return
 	}
