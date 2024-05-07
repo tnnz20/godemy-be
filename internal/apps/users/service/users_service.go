@@ -24,11 +24,7 @@ func NewService(repo users.Repository, secret string) users.Service {
 
 func (s service) Register(ctx context.Context, req entities.RegisterPayload) (err error) {
 
-	NewUser := entities.Users{
-		Email:    req.Email,
-		Password: req.Password,
-		Name:     req.Name,
-	}
+	NewUser := entities.NewUsersRegister(req.Email, req.Password, req.Name)
 
 	// Validate user payload
 	if err := NewUser.ValidateAuth(); err != nil {
@@ -68,10 +64,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	}
 
 	// Create role
-	NewRole := entities.Roles{
-		UsersId: id,
-		Role:    req.Role,
-	}
+	NewRole := entities.NewRoles(id, req.Role)
 
 	if err := NewRole.ValidateRole(); err != nil {
 		return err
@@ -89,10 +82,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 }
 
 func (s service) Login(ctx context.Context, req entities.LoginPayload) (res entities.LoginResponse, err error) {
-	NewUserLogin := entities.Users{
-		Email:    req.Email,
-		Password: req.Password,
-	}
+	NewUserLogin := entities.NewUsersLogin(req.Email, req.Password)
 
 	// Validate email and password
 	if err := NewUserLogin.ValidateEmail(); err != nil {
