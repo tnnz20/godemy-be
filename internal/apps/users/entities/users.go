@@ -11,6 +11,11 @@ import (
 	"github.com/tnnz20/godemy-be/pkg/jwt"
 )
 
+const (
+	ROLE_Teacher string = "teacher"
+	ROLE_Student string = "student"
+)
+
 type Users struct {
 	ID         uuid.UUID
 	Email      string
