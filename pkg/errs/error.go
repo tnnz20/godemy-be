@@ -4,10 +4,10 @@ import "errors"
 
 var (
 	// General
-	ErrInvalidLengthUUID = errors.New("uuid must be 16 characters")
-	ErrUserIDRequired    = errors.New("user id required")
+	ErrUserIDRequired = errors.New("user id required")
+	ErrUnauthorized   = errors.New("unauthorized")
 
-	// Auth
+	// Users
 	ErrUserNotFound       = errors.New("user not found")
 	ErrEmailAlreadyExists = errors.New("email already exists")
 
@@ -19,30 +19,31 @@ var (
 	ErrInvalidLengthPassword = errors.New("password must be at least 8 characters")
 	ErrWrongPassword         = errors.New("wrong password")
 
-	ErrInvalidRole  = errors.New("invalid role")
-	ErrRoleRequired = errors.New("role required")
-
-	// Profile
 	ErrInvalidLengthName = errors.New("name must be at least 3 characters")
 	ErrNameRequired      = errors.New("name required")
 
 	ErrInvalidLengthAddress = errors.New("address must be at least 5 characters")
 	ErrInvalidGender        = errors.New("gender must be male or female")
 
-	// Teacher
-	ErrTeacherNotFound = errors.New("teacher not found")
+	ErrInvalidRole  = errors.New("invalid role")
+	ErrRoleRequired = errors.New("role required")
 
-	// Course
+	// Courses
+	ErrCourseNameRequired      = errors.New("course name required")
 	ErrInvalidCourseNameLength = errors.New("course name must be at least 3 characters")
+	ErrCourseCodeRequired      = errors.New("course code required")
 	ErrInvalidCourseCodeLength = errors.New("course code must be at least 3 characters")
 	ErrCourseNotFound          = errors.New("course not found")
 	ErrCourseCodeAlreadyExist  = errors.New("course code already exist")
+	ErrCourseEmpty             = errors.New("course still empty")
+
+	// Enrollment
+	ErrInvalidThreshold = errors.New("invalid threshold must be greater than 0")
 )
 
 var (
 	ErrorMapping = map[error]uint32{
-		ErrInvalidLengthUUID: 400,
-		ErrUserIDRequired:    400,
+		ErrUserIDRequired: 400,
 
 		ErrUserNotFound:       404,
 		ErrEmailAlreadyExists: 409,
@@ -60,5 +61,17 @@ var (
 
 		ErrInvalidRole:  400,
 		ErrRoleRequired: 400,
+
+		ErrInvalidLengthAddress: 400,
+		ErrInvalidGender:        400,
+
+		ErrInvalidCourseNameLength: 400,
+		ErrInvalidCourseCodeLength: 400,
+		ErrCourseCodeRequired:      400,
+		ErrCourseNameRequired:      400,
+
+		ErrCourseEmpty:            404,
+		ErrCourseNotFound:         404,
+		ErrCourseCodeAlreadyExist: 409,
 	}
 )
