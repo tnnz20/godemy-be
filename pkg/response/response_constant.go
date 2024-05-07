@@ -7,7 +7,8 @@ const (
 
 const (
 	StatusUnauthorizedErrorName        = "access_denied"
-	StatusUnauthorizedErrorDescription = "Authorization failed by filter."
+	StatusUnauthorizedErrorDescription = "Authorization failed."
+	StatusInvalidToken                 = "Invalid token"
 )
 
 const (
