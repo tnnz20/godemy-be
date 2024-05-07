@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/tnnz20/godemy-be/config"
+	courses "github.com/tnnz20/godemy-be/internal/apps/courses/base"
 	users "github.com/tnnz20/godemy-be/internal/apps/users/base"
 	"github.com/tnnz20/godemy-be/internal/storage/postgres"
 )
@@ -35,6 +36,7 @@ func main() {
 
 	// Init router
 	users.Init(router, db.GetDB(), cfg.App.Encryption.JWTSecret)
+	courses.Init(router, db.GetDB())
 
 	port := fmt.Sprintf(":%s", cfg.App.Port)
 	router.Listen(port)
