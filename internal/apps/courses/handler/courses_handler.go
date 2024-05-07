@@ -20,12 +20,8 @@ func NewHandler(svc courses.Service) handler {
 }
 
 func (h handler) CreateCourse(c *fiber.Ctx) error {
-	// Get the user id and role from the context
+	// Get the user id from the context
 	id := c.Locals("id").(string)
-	userRole := c.Locals("role")
-	if userRole != "teacher" {
-		return response.ErrorUnauthorized(c)
-	}
 
 	userId, err := uuid.Parse(id)
 	if err != nil {
@@ -54,10 +50,6 @@ func (h handler) CreateCourse(c *fiber.Ctx) error {
 
 func (h handler) GetCoursesByUsersId(c *fiber.Ctx) error {
 	id := c.Locals("id").(string)
-	userRole := c.Locals("role")
-	if userRole != "teacher" {
-		return response.ErrorUnauthorized(c)
-	}
 
 	userId, err := uuid.Parse(id)
 	if err != nil {
