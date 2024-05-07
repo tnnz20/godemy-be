@@ -5,9 +5,9 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	handlers "github.com/tnnz20/godemy-be/internal/apps/auth/handler"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/repository"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/service"
+	handlers "github.com/tnnz20/godemy-be/internal/apps/users/handler"
+	"github.com/tnnz20/godemy-be/internal/apps/users/repository"
+	"github.com/tnnz20/godemy-be/internal/apps/users/service"
 )
 
 func Init(router fiber.Router, db *sql.DB, secret string) {

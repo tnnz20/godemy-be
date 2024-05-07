@@ -5,17 +5,17 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/tnnz20/godemy-be/internal/apps/auth"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/entities"
+	"github.com/tnnz20/godemy-be/internal/apps/users"
+	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
 type service struct {
-	repo        auth.Repository
+	repo        users.Repository
 	secretToken string
 }
 
-func NewService(repo auth.Repository, secret string) auth.Service {
+func NewService(repo users.Repository, secret string) users.Service {
 	return service{
 		repo:        repo,
 		secretToken: secret,
@@ -24,13 +24,14 @@ func NewService(repo auth.Repository, secret string) auth.Service {
 
 func (s service) Register(ctx context.Context, req entities.RegisterPayload) (err error) {
 
-	NewUser := entities.User{
+	NewUser := entities.Users{
 		Email:    req.Email,
 		Password: req.Password,
-		Role:     req.Role,
+		Name:     req.Name,
 	}
 
-	if err := NewUser.Validate(); err != nil {
+	// Validate user payload
+	if err := NewUser.ValidateAuth(); err != nil {
 		return err
 	}
 
@@ -61,32 +62,22 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	defer s.repo.Rollback(ctx, tx)
 
 	// Create user
-	id, err := s.repo.CreateUserWithTX(ctx, tx, NewUser)
-	if err != nil {
-		return err
-	}
-
-	// Create profile
-	NewProfile := entities.Profile{
-		Name:   req.Name,
-		UserID: id,
-	}
-
-	if err := NewProfile.Validate(); err != nil {
-		return err
-	}
-
-	err = s.repo.CreateProfileWithTX(ctx, tx, NewProfile)
+	id, err := s.repo.CreateUsersWithTX(ctx, tx, NewUser)
 	if err != nil {
 		return err
 	}
 
 	// Create role
-	NewRole := entities.User{
-		ID:   id,
-		Role: NewUser.Role,
+	NewRole := entities.Roles{
+		UsersId: id,
+		Role:    req.Role,
 	}
-	err = s.repo.InsertUserRoleWithTX(ctx, tx, NewRole)
+
+	if err := NewRole.ValidateRole(); err != nil {
+		return err
+	}
+
+	err = s.repo.InsertUsersRoleWithTX(ctx, tx, NewRole)
 	if err != nil {
 		return err
 	}
@@ -98,7 +89,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 }
 
 func (s service) Login(ctx context.Context, req entities.LoginPayload) (res entities.LoginResponse, err error) {
-	NewUserLogin := entities.User{
+	NewUserLogin := entities.Users{
 		Email:    req.Email,
 		Password: req.Password,
 	}
@@ -121,6 +112,11 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 		return entities.LoginResponse{}, err
 	}
 
+	role, err := s.repo.GetRoleByUserID(ctx, user.ID)
+	if err != nil {
+		return entities.LoginResponse{}, err
+	}
+
 	// Compare password
 	if err := NewUserLogin.VerifyPasswordFromPlain(user.Password); err != nil {
 		err = errs.ErrWrongPassword
@@ -128,7 +124,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 	}
 
 	// Generate token
-	token, err := user.GenerateToken(s.secretToken)
+	token, err := user.GenerateToken(role.Role, s.secretToken)
 	if err != nil {
 		return entities.LoginResponse{}, err
 	}

@@ -8,15 +8,16 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/tnnz20/godemy-be/config"
-	"github.com/tnnz20/godemy-be/internal/apps/auth"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/entities"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/repository"
+
+	"github.com/tnnz20/godemy-be/internal/apps/users"
+	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
+	"github.com/tnnz20/godemy-be/internal/apps/users/repository"
 	"github.com/tnnz20/godemy-be/internal/storage/postgres"
 	"github.com/tnnz20/godemy-be/pkg/errs"
 	"github.com/tnnz20/godemy-be/pkg/helpers"
 )
 
-var svc auth.Service
+var svc users.Service
 
 var randString string = helpers.GenerateRandomString(5)
 
@@ -50,7 +51,7 @@ func TestServiceRegisterAuth(t *testing.T) {
 		require.Nil(t, err)
 	})
 
-	t.Run("Failed Register Email Already Exists", func(t *testing.T) {
+	t.Run("Failed Register, email already exist", func(t *testing.T) {
 
 		email := fmt.Sprintf("jhon%v@godemy.com", randString)
 		req := entities.RegisterPayload{
@@ -94,7 +95,7 @@ func TestServiceLoginAuth(t *testing.T) {
 		log.Println(token)
 	})
 
-	t.Run("Failed Login Email Not Found", func(t *testing.T) {
+	t.Run("Failed Login, email not found", func(t *testing.T) {
 		email := fmt.Sprintf("jhon123%v@gmail.com", randString)
 		pass := "mysecretpassword"
 		req := entities.RegisterPayload{
@@ -117,7 +118,7 @@ func TestServiceLoginAuth(t *testing.T) {
 		require.Empty(t, token)
 	})
 
-	t.Run("Failed Login Wrong Password", func(t *testing.T) {
+	t.Run("Failed Login, wrong password", func(t *testing.T) {
 		email := fmt.Sprintf("jhon51%v@gmail.com", randString)
 		pass := "mysecretpassword"
 		req := entities.RegisterPayload{

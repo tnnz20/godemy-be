@@ -2,23 +2,24 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/tnnz20/godemy-be/internal/apps/auth"
-	"github.com/tnnz20/godemy-be/internal/apps/auth/entities"
+
+	"github.com/tnnz20/godemy-be/internal/apps/users"
+	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
 	"github.com/tnnz20/godemy-be/pkg/errs"
 	"github.com/tnnz20/godemy-be/pkg/response"
 )
 
-type Handler struct {
-	svc auth.Service
+type handler struct {
+	svc users.Service
 }
 
-func NewHandler(svc auth.Service) Handler {
-	return Handler{
+func NewHandler(svc users.Service) handler {
+	return handler{
 		svc: svc,
 	}
 }
 
-func (h Handler) Register(c *fiber.Ctx) error {
+func (h handler) Register(c *fiber.Ctx) error {
 	var req entities.RegisterPayload
 
 	if err := c.BodyParser(&req); err != nil {
@@ -42,7 +43,7 @@ func (h Handler) Register(c *fiber.Ctx) error {
 	return response.SuccessCreated(c, nil)
 }
 
-func (h Handler) Login(c *fiber.Ctx) error {
+func (h handler) Login(c *fiber.Ctx) error {
 	var req entities.LoginPayload
 
 	if err := c.BodyParser(&req); err != nil {
