@@ -94,7 +94,7 @@ func ErrorValidateToken(c *fiber.Ctx, err error) error {
 }
 
 func InternalServerError(c *fiber.Ctx, err error) error {
-	return c.Status(http.StatusBadRequest).JSON(ErrorMessage{
+	return c.Status(http.StatusInternalServerError).JSON(ErrorMessage{
 		Code: http.StatusInternalServerError,
 		Error: &ErrorFormat{
 			ErrorName:        StatusInternalServerName,
