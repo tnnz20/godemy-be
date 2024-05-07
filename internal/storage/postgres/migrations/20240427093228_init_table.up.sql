@@ -33,23 +33,23 @@ CREATE TABLE courses(
 CREATE TABLE course_enrollment(
     id UUID not null,
     users_id UUID not null,
-    course_id UUID,
+    courses_id UUID,
     progress INT DEFAULT 0,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (users_id) REFERENCES users(id),
-    FOREIGN KEY (course_id) REFERENCES courses(id)
+    FOREIGN KEY (courses_id) REFERENCES courses(id)
 );
 
 CREATE TABLE assessment(
     id UUID not null,
     users_id UUID not null,
-    course_id UUID not null,
+    courses_id UUID not null,
     assessment_value int,
     assessment_code varchar(10),
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     FOREIGN KEY (users_id) REFERENCES users(id),
-    FOREIGN KEY (course_id) REFERENCES courses(id)
+    FOREIGN KEY (courses_id) REFERENCES courses(id)
 );
