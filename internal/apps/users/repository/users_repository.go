@@ -40,8 +40,8 @@ func (repository) Rollback(ctx context.Context, tx *sql.Tx) (err error) {
 // CreateUsersWithTx implements user repository to create new users.
 func (r repository) CreateUsersWithTX(ctx context.Context, tx *sql.Tx, user entities.Users) (id uuid.UUID, err error) {
 	query := `
-	INSERT INTO users (email, password, name) 
-	VALUES ($1, $2, $3) 
+	INSERT INTO users (id, email, password, name, created_at, updated_at) 
+	VALUES ($1, $2, $3, $4, $5, $6) 
 	RETURNING id
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
@@ -51,7 +51,14 @@ func (r repository) CreateUsersWithTX(ctx context.Context, tx *sql.Tx, user enti
 
 	defer stmt.Close()
 
-	err = tx.QueryRowContext(ctx, query, user.Email, user.Password, user.Name).Scan(&id)
+	err = tx.QueryRowContext(ctx, query,
+		user.ID,
+		user.Email,
+		user.Password,
+		user.Name,
+		user.CreatedAt,
+		user.UpdatedAt,
+	).Scan(&id)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -87,9 +94,7 @@ func (r repository) GetUserByEmail(ctx context.Context, email string) (user enti
 	)
 
 	query := `
-	SELECT id, email, password, name, date, 
-	address, gender, profile_img, 
-	created_at, updated_at
+	SELECT id, email, password, name, date, address, gender, profile_img, created_at, updated_at
 	FROM users
 	WHERE email = $1
 	`
