@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SuccessCreated(c *fiber.Ctx, data interface{}) error {
+func SuccessCreated(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(SuccessCreatedMessage{
 		Code:    http.StatusCreated,
 		Message: StatusSuccessCreatedName,
@@ -59,6 +59,27 @@ func ErrorUnauthorized(c *fiber.Ctx) error {
 			ErrorDescription: StatusUnauthorizedErrorDescription,
 		},
 	})
+}
+
+func ErrorInvalidToken(c *fiber.Ctx) error {
+	return c.Status(http.StatusUnauthorized).JSON(ErrorMessage{
+		Code: http.StatusUnauthorized,
+		Error: &ErrorFormat{
+			ErrorName:        StatusUnauthorizedErrorName,
+			ErrorDescription: StatusInvalidToken,
+		},
+	})
+}
+
+func ErrorValidateToken(c *fiber.Ctx, err error) error {
+	return c.Status(http.StatusUnauthorized).JSON(ErrorMessage{
+		Code: http.StatusUnauthorized,
+		Error: &ErrorFormat{
+			ErrorName:        StatusUnauthorizedErrorName,
+			ErrorDescription: err.Error(),
+		},
+	})
+
 }
 
 func InternalServerError(c *fiber.Ctx, err error) error {
