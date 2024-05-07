@@ -91,8 +91,6 @@ func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req ent
 		return
 	}
 
-	fmt.Println(courses)
-
 	if len(courses) == 0 {
 		err = errs.ErrCourseEmpty
 		return
