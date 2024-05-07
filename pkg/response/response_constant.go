@@ -7,8 +7,13 @@ const (
 
 const (
 	StatusUnauthorizedErrorName        = "access_denied"
-	StatusUnauthorizedErrorDescription = "Authorization failed."
-	StatusInvalidToken                 = "Invalid token"
+	StatusUnauthorizedErrorDescription = "Authorization failed"
+	StatusUnauthorizedInvalidToken     = "Invalid token"
+)
+
+const (
+	StatusForbidden            = "forbidden"
+	StatusForbiddenDescription = "You are not allowed to access this API"
 )
 
 const (

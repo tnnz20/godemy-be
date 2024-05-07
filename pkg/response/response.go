@@ -66,9 +66,20 @@ func ErrorInvalidToken(c *fiber.Ctx) error {
 		Code: http.StatusUnauthorized,
 		Error: &ErrorFormat{
 			ErrorName:        StatusUnauthorizedErrorName,
-			ErrorDescription: StatusInvalidToken,
+			ErrorDescription: StatusUnauthorizedInvalidToken,
 		},
 	})
+}
+
+func ErrorForbiddenAccess(c *fiber.Ctx) error {
+	return c.Status(http.StatusForbidden).JSON(ErrorMessage{
+		Code: http.StatusForbidden,
+		Error: &ErrorFormat{
+			ErrorName:        StatusForbidden,
+			ErrorDescription: StatusForbiddenDescription,
+		},
+	})
+
 }
 
 func ErrorValidateToken(c *fiber.Ctx, err error) error {
