@@ -6,6 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// GenerateToken is a function to generate a token based on the user id and role
 func GenerateToken(id, role, secret string) (tokenString string, err error) {
 	claims := jwt.MapClaims{
 		"id":   id,
@@ -22,6 +23,7 @@ func GenerateToken(id, role, secret string) (tokenString string, err error) {
 	return tokenString, nil
 }
 
+// ValidateToken is a function to validate the token and extract the claims
 func ValidateToken(tokenString string, secret string) (id string, role string, err error) {
 	tokens, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
