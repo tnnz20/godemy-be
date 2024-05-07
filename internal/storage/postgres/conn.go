@@ -1,10 +1,12 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -21,6 +23,12 @@ type Database struct {
 	dsn string
 }
 
+type DBTX interface {
+	Begin(ctx context.Context) (tx *sql.Tx, err error)
+	Rollback(ctx context.Context, tx *sql.Tx) (err error)
+	Commit(ctx context.Context, tx *sql.Tx) (err error)
+}
+
 func NewConnection(config config.PostgresConfig) (*Database, error) {
 	dsn := fmt.Sprintf("postgres://%v:%s@%v:%v/%v?sslmode=%v",
 		config.User, config.Password, config.Host,
@@ -34,6 +42,12 @@ func NewConnection(config config.PostgresConfig) (*Database, error) {
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
+
+	// Set connection pool
+	db.SetConnMaxIdleTime(time.Duration(config.ConnectionPool.MaxIdleConnection) * time.Second)
+	db.SetConnMaxLifetime(time.Duration(config.ConnectionPool.MaxLifetimeConnection) * time.Second)
+	db.SetMaxOpenConns(int(config.ConnectionPool.MaxOpenConnection))
+	db.SetMaxIdleConns(int(config.ConnectionPool.MaxIdleConnection))
 
 	log.Println("Successfully connected to database")
 
