@@ -11,4 +11,5 @@ import (
 type Service interface {
 	Register(ctx context.Context, req entities.RegisterPayload) (err error)
 	Login(ctx context.Context, req entities.LoginPayload) (res entities.LoginResponse, err error)
+	GetUser(ctx context.Context, req entities.GetUserPayload) (res entities.UserResponse, err error)
 }

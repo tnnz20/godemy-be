@@ -16,5 +16,6 @@ type Repository interface {
 	InsertUsersRoleWithTX(ctx context.Context, tx *sql.Tx, role entities.Roles) (err error)
 	GetUserByEmail(ctx context.Context, email string) (user entities.Users, err error)
 	GetRoleByUserID(ctx context.Context, userID uuid.UUID) (role entities.Roles, err error)
+	GetUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error)
 	postgres.DBTX
 }
