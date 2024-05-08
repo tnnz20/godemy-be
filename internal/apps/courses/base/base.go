@@ -30,4 +30,9 @@ func Init(router fiber.Router, db *sql.DB) {
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
 		handler.GetCoursesByUsersId)
+
+	courses.Post("/course/enroll",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.EnrollCourse)
 }
