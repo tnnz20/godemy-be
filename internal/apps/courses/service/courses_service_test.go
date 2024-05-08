@@ -33,15 +33,16 @@ func init() {
 }
 
 var (
-	ValidUserId     = "b17903ef-0de1-4155-9b9e-98e01e5ff894"
-	ValidCourseCode = "go-C7CRGmU"
+	ValidCourseCode    = "go-m5PRgxq"
+	ValidUserIdTeacher = "b8f11f87-6d58-4cf3-8634-a672c607b8db"
+	ValidUserIdStudent = "6286637a-3d6c-460a-b68a-956fd9553059"
 )
 
 var ErrParsingUUID = "Error Parsing UUID: "
 
 func TestCreateCoursesService(t *testing.T) {
 	t.Run("Success create course", func(t *testing.T) {
-		userId, err := uuid.Parse(ValidUserId)
+		userId, err := uuid.Parse(ValidUserIdTeacher)
 		if err != nil {
 			log.Fatal(ErrParsingUUID, err)
 		}
@@ -97,7 +98,7 @@ func TestGetCoursesService(t *testing.T) {
 	})
 
 	t.Run("Success get courses by user id", func(t *testing.T) {
-		userId, err := uuid.Parse(ValidUserId)
+		userId, err := uuid.Parse(ValidUserIdTeacher)
 		if err != nil {
 			log.Fatal(ErrParsingUUID, err)
 		}
@@ -112,5 +113,36 @@ func TestGetCoursesService(t *testing.T) {
 		require.Nil(t, err)
 		require.NotNil(t, courses)
 		log.Println(courses)
+	})
+}
+
+func TestEnrollCoursesService(t *testing.T) {
+	t.Run("Success enroll course", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdStudent)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.EnrollCoursePayload{
+			UsersId:    userId,
+			CourseCode: ValidCourseCode,
+		}
+		err = svc.EnrollCourse(context.Background(), req)
+		require.Nil(t, err)
+	})
+}
+
+func TestGetCourseEnrollmentService(t *testing.T) {
+	t.Run("Success get course enrollment by user id", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdStudent)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.GetCourseEnrollmentByUsersIdPayload{
+			UsersId: userId,
+		}
+		courseEnrollment, err := svc.GetCourseEnrollmentByUsersId(context.Background(), req)
+		require.Nil(t, err)
+		require.NotNil(t, courseEnrollment)
+		log.Println(courseEnrollment)
 	})
 }

@@ -118,3 +118,61 @@ func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, use
 
 	return
 }
+
+func (r *repository) InsertCourseEnrollment(ctx context.Context, enrollment entities.Enrollment) (err error) {
+	query := `
+	INSERT INTO course_enrollment (
+		id, 
+		users_id, 
+		courses_id, 
+		progress, 
+		created_at, 
+		updated_at
+	) 
+	VALUES ($1, $2, $3, $4, $5, $6)`
+
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		enrollment.ID,
+		enrollment.UsersId,
+		enrollment.CoursesId,
+		enrollment.Progress,
+		enrollment.CreatedAt,
+		enrollment.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
+func (r *repository) FindCourseEnrollmentByUsersId(ctx context.Context, usersId uuid.UUID) (enrollments entities.Enrollment, err error) {
+	query := `
+	SELECT id, users_id, courses_id, progress, created_at, updated_at
+	FROM course_enrollment
+	WHERE users_id = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, query, usersId).Scan(
+		&enrollments.ID,
+		&enrollments.UsersId,
+		&enrollments.CoursesId,
+		&enrollments.Progress,
+		&enrollments.CreatedAt,
+		&enrollments.UpdatedAt,
+	)
+
+	if err != nil {
+		return
+	}
+
+	return
+}

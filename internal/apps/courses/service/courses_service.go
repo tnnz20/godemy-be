@@ -65,7 +65,7 @@ func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCou
 
 	course, err := s.Repository.FindCourseByCourseCode(ctx, courseEntity.CourseCode)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrCourseNotFound
 			return
 		}
@@ -93,6 +93,62 @@ func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req ent
 	for _, course := range courses {
 		res = append(res, entities.CourseResponse(course))
 	}
+
+	return
+}
+
+func (s *service) EnrollCourse(ctx context.Context, req entities.EnrollCoursePayload) (err error) {
+
+	validateCourse := entities.Courses{
+		CourseCode: req.CourseCode,
+	}
+
+	if err := validateCourse.ValidateCourseCode(); err != nil {
+		return err
+	}
+
+	userEnroll, err := s.Repository.FindCourseEnrollmentByUsersId(ctx, req.UsersId)
+	if err != nil {
+		if !errors.Is(err, sql.ErrNoRows) {
+			return err
+		}
+	}
+
+	if userEnroll.IsEnrolled() {
+		err = errs.ErrUserAlreadyEnrolled
+		return
+	}
+
+	course, err := s.Repository.FindCourseByCourseCode(ctx, validateCourse.CourseCode)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrCourseNotFound
+			return
+		}
+		return
+	}
+
+	NewEnrollment := entities.NewEnrollment(req.UsersId, course.ID)
+
+	if err := s.Repository.InsertCourseEnrollment(ctx, NewEnrollment); err != nil {
+		return err
+	}
+
+	return
+}
+
+func (s *service) GetCourseEnrollmentByUsersId(ctx context.Context, req entities.GetCourseEnrollmentByUsersIdPayload) (res entities.CourseEnrollmentResponse, err error) {
+
+	enrollment, err := s.Repository.FindCourseEnrollmentByUsersId(ctx, req.UsersId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrCourseEnrollmentNotFound
+			return
+		}
+		return
+	}
+
+	res = entities.CourseEnrollmentResponse(enrollment)
 
 	return
 }
