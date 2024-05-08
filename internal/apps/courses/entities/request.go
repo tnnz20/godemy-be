@@ -24,3 +24,17 @@ func (p *GetCoursesByUsersIdWithPaginationPayload) GenerateDefaultValue() GetCou
 
 	return *p
 }
+
+type EnrollCoursePayload struct {
+	UsersId    uuid.UUID `json:"users_id"`
+	CourseCode string    `json:"course_code"`
+}
+
+type UpdateEnrollmentProgressPayload struct {
+	UsersId  uuid.UUID `json:"users_id"`
+	Progress uint8     `json:"progress"`
+}
+
+type GetCourseEnrollmentByUsersIdPayload struct {
+	UsersId uuid.UUID `json:"users_id"`
+}

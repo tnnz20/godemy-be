@@ -14,3 +14,12 @@ type CourseResponse struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }
+
+type CourseEnrollmentResponse struct {
+	ID        uuid.UUID `json:"id"`
+	UsersId   uuid.UUID `json:"users_id"`
+	CoursesId uuid.UUID `json:"courses_id"`
+	Progress  uint8     `json:"progress"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
