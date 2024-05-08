@@ -11,13 +11,13 @@ import (
 )
 
 type service struct {
-	repo        users.Repository
+	users.Repository
 	secretToken string
 }
 
-func NewService(repo users.Repository, secret string) users.Service {
+func NewService(userRepo users.Repository, secret string) users.Service {
 	return service{
-		repo:        repo,
+		Repository:  userRepo,
 		secretToken: secret,
 	}
 }
@@ -32,7 +32,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	}
 
 	// Check if email already exists
-	user, err := s.repo.GetUserByEmail(ctx, NewUser.Email)
+	user, err := s.Repository.GetUserByEmail(ctx, NewUser.Email)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return
@@ -49,16 +49,16 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	}
 
 	// Begin transaction
-	tx, err := s.repo.Begin(ctx)
+	tx, err := s.Repository.Begin(ctx)
 	if err != nil {
 		return err
 	}
 
 	// Rollback transaction if error
-	defer s.repo.Rollback(ctx, tx)
+	defer s.Repository.Rollback(ctx, tx)
 
 	// Create user
-	id, err := s.repo.CreateUsersWithTX(ctx, tx, NewUser)
+	id, err := s.Repository.CreateUsersWithTX(ctx, tx, NewUser)
 	if err != nil {
 		return err
 	}
@@ -70,12 +70,12 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 		return err
 	}
 
-	err = s.repo.InsertUsersRoleWithTX(ctx, tx, NewRole)
+	err = s.Repository.InsertUsersRoleWithTX(ctx, tx, NewRole)
 	if err != nil {
 		return err
 	}
 
-	if err = s.repo.Commit(ctx, tx); err != nil {
+	if err = s.Repository.Commit(ctx, tx); err != nil {
 		return
 	}
 	return
@@ -94,7 +94,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 	}
 
 	// Get user by email
-	user, err := s.repo.GetUserByEmail(ctx, NewUserLogin.Email)
+	user, err := s.Repository.GetUserByEmail(ctx, NewUserLogin.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entities.LoginResponse{}, errs.ErrEmailNotFound
@@ -102,7 +102,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 		return entities.LoginResponse{}, err
 	}
 
-	role, err := s.repo.GetRoleByUserID(ctx, user.ID)
+	role, err := s.Repository.GetRoleByUserID(ctx, user.ID)
 	if err != nil {
 		return entities.LoginResponse{}, err
 	}
@@ -121,6 +121,31 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 
 	res = entities.LoginResponse{
 		Token: token,
+	}
+
+	return
+}
+
+func (s service) GetUser(ctx context.Context, req entities.GetUserPayload) (res entities.UserResponse, err error) {
+	user, err := s.Repository.GetUserByUserId(ctx, req.ID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrUserNotFound
+			return
+		}
+		return
+	}
+
+	res = entities.UserResponse{
+		ID:         user.ID,
+		Name:       user.Name,
+		Email:      user.Email,
+		Date:       user.Date,
+		Address:    user.Address,
+		Gender:     user.Gender,
+		ProfileImg: user.ProfileImg,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
 	}
 
 	return

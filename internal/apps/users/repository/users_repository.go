@@ -112,9 +112,6 @@ func (r repository) GetUserByEmail(ctx context.Context, email string) (user enti
 		&user.UpdatedAt,
 	)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return
-		}
 		return
 	}
 
@@ -149,10 +146,55 @@ func (r repository) GetRoleByUserID(ctx context.Context, userID uuid.UUID) (role
 		&role.Role,
 	)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return
-		}
 		return
 	}
+	return
+}
+
+func (r repository) GetUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error) {
+	var (
+		nullableDate       sql.NullTime
+		nullableAddress    sql.NullString
+		nullableGender     sql.NullString
+		nullableProfileImg sql.NullString
+	)
+
+	query := `
+	SELECT id, email, name, date, address, gender, profile_img, created_at, updated_at
+	FROM users
+	WHERE id = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, query, userId).Scan(
+		&user.ID,
+		&user.Email,
+		&user.Name,
+		&nullableDate,
+		&nullableAddress,
+		&nullableGender,
+		&nullableProfileImg,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return
+	}
+
+	if nullableDate.Valid {
+		user.Date = nullableDate.Time
+	}
+
+	if nullableAddress.Valid {
+		user.Address = nullableAddress.String
+	}
+
+	if nullableGender.Valid {
+		user.Gender = nullableGender.String
+	}
+
+	if nullableProfileImg.Valid {
+		user.ProfileImg = nullableProfileImg.String
+	}
+
 	return
 }

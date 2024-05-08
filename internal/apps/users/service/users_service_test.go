@@ -6,6 +6,7 @@ import (
 	"log"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/tnnz20/godemy-be/config"
 
@@ -141,5 +142,34 @@ func TestServiceLoginAuth(t *testing.T) {
 		require.Empty(t, token)
 		log.Println(token)
 	})
+}
 
+func TestServiceGetUser(t *testing.T) {
+	const ValidId = "5c0ed3a9-d7b7-4ea6-b877-2ce9a234068c"
+
+	id, err := uuid.Parse(ValidId)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Run("Success Get User", func(t *testing.T) {
+		req := entities.GetUserPayload{
+			ID: id,
+		}
+
+		user, err := svc.GetUser(context.Background(), req)
+		require.Nil(t, err)
+		require.NotEmpty(t, user)
+		log.Println(user)
+	})
+
+	t.Run("Failed Get User, user not found", func(t *testing.T) {
+		req := entities.GetUserPayload{
+			ID: uuid.New(),
+		}
+
+		user, err := svc.GetUser(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrUserNotFound, err)
+		require.Empty(t, user)
+	})
 }
