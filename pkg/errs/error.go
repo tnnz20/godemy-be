@@ -32,13 +32,15 @@ var (
 	ErrCourseNameRequired      = errors.New("course name required")
 	ErrInvalidCourseNameLength = errors.New("course name must be at least 3 characters")
 	ErrCourseCodeRequired      = errors.New("course code required")
-	ErrInvalidCourseCodeLength = errors.New("course code must be at least 3 characters")
+	ErrInvalidCourseCodeLength = errors.New("course code must be 10 characters")
 	ErrCourseNotFound          = errors.New("course not found")
 	ErrCourseCodeAlreadyExist  = errors.New("course code already exist")
 	ErrCourseEmpty             = errors.New("course still empty")
 
 	// Enrollment
-	ErrInvalidThreshold = errors.New("invalid threshold must be greater than 0")
+	ErrInvalidThreshold         = errors.New("invalid threshold must be greater than 0")
+	ErrCourseEnrollmentNotFound = errors.New("course enrollment not found")
+	ErrUserAlreadyEnrolled      = errors.New("user already enrolled course")
 )
 
 var (
@@ -73,5 +75,9 @@ var (
 		ErrCourseEmpty:            404,
 		ErrCourseNotFound:         404,
 		ErrCourseCodeAlreadyExist: 409,
+
+		ErrInvalidThreshold:         400,
+		ErrCourseEnrollmentNotFound: 404,
+		ErrUserAlreadyEnrolled:      409,
 	}
 )
