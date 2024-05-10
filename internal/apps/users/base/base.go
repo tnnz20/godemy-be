@@ -8,6 +8,7 @@ import (
 	handlers "github.com/tnnz20/godemy-be/internal/apps/users/handler"
 	"github.com/tnnz20/godemy-be/internal/apps/users/repository"
 	"github.com/tnnz20/godemy-be/internal/apps/users/service"
+	"github.com/tnnz20/godemy-be/internal/middleware"
 )
 
 func Init(router fiber.Router, db *sql.DB, secret string) {
@@ -20,5 +21,6 @@ func Init(router fiber.Router, db *sql.DB, secret string) {
 	auth := router.Group("/auth", logger.New())
 	auth.Post("/register", handler.Register)
 	auth.Post("/login", handler.Login)
+	auth.Get("/user", middleware.Protected(), handler.GetUser)
 
 }

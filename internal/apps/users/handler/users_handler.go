@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
-
+	"github.com/google/uuid"
 	"github.com/tnnz20/godemy-be/internal/apps/users"
 	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
 	"github.com/tnnz20/godemy-be/pkg/errs"
@@ -66,4 +66,29 @@ func (h handler) Login(c *fiber.Ctx) error {
 	}
 
 	return response.SuccessOK(c, token)
+}
+
+func (h handler) GetUser(c *fiber.Ctx) error {
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.GetUserPayload
+	req.ID = userId
+
+	user, err := h.svc.GetUser(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, user)
 }
