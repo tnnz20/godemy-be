@@ -176,3 +176,25 @@ func (r *repository) FindCourseEnrollmentByUsersId(ctx context.Context, usersId 
 
 	return
 }
+
+func (r *repository) UpdateEnrollmentProgress(ctx context.Context, enrollment entities.Enrollment) (err error) {
+	query := `
+	UPDATE course_enrollment
+	SET progress = $1, updated_at = $2
+	WHERE id = $3
+	`
+
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, enrollment.Progress, enrollment.UpdatedAt, enrollment.ID)
+	if err != nil {
+		return err
+	}
+
+	return
+}

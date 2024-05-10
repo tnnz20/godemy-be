@@ -146,3 +146,31 @@ func TestGetCourseEnrollmentService(t *testing.T) {
 		log.Println(courseEnrollment)
 	})
 }
+
+func TestUpdateProgressCourseEnrollmentService(t *testing.T) {
+	t.Run("Success update progress course enrollment", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdStudent)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.UpdateEnrollmentProgressPayload{
+			UsersId:  userId,
+			Progress: 15,
+		}
+		err = svc.UpdateProgressCourseEnrollment(context.Background(), req)
+		require.Nil(t, err)
+	})
+
+	t.Run("Failed update progress course enrollment", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdStudent)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.UpdateEnrollmentProgressPayload{
+			UsersId:  userId,
+			Progress: 8,
+		}
+		err = svc.UpdateProgressCourseEnrollment(context.Background(), req)
+		require.NotNil(t, err)
+	})
+}

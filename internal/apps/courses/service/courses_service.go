@@ -152,3 +152,27 @@ func (s *service) GetCourseEnrollmentByUsersId(ctx context.Context, req entities
 
 	return
 }
+
+func (s *service) UpdateProgressCourseEnrollment(ctx context.Context, req entities.UpdateEnrollmentProgressPayload) (err error) {
+	enrollment, err := s.Repository.FindCourseEnrollmentByUsersId(ctx, req.UsersId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrCourseEnrollmentNotFound
+			return
+		}
+		return
+	}
+
+	fmt.Println("before", enrollment)
+
+	if err := enrollment.UpdateProgress(req.Progress); err != nil {
+		return err
+	}
+
+	fmt.Println("after", enrollment)
+	if err := s.Repository.UpdateEnrollmentProgress(ctx, enrollment); err != nil {
+		return err
+	}
+
+	return
+}
