@@ -35,4 +35,9 @@ func Init(router fiber.Router, db *sql.DB) {
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.EnrollCourse)
+
+	courses.Get("/course/enroll",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.GetCourseEnrollmentDetail)
 }

@@ -110,3 +110,30 @@ func (h handler) EnrollCourse(c *fiber.Ctx) error {
 
 	return response.SuccessCreated(c)
 }
+
+func (h handler) GetCourseEnrollmentDetail(c *fiber.Ctx) error {
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.GetCourseEnrollmentByUsersIdPayload
+	req.UsersId = userId
+
+	enrollment, err := h.Service.GetCourseEnrollmentByUsersId(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, enrollment)
+}
