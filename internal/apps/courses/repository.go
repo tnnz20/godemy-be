@@ -7,7 +7,6 @@ import (
 	"github.com/tnnz20/godemy-be/internal/apps/courses/entities"
 )
 
-// TODO: update progress enrollment
 // Repository is the interface that provides the repository methods for courses.
 type Repository interface {
 	CreateCourse(ctx context.Context, course entities.Courses) (err error)
@@ -15,4 +14,5 @@ type Repository interface {
 	FindCoursesByUsersIdWithPagination(ctx context.Context, usersId uuid.UUID, model entities.CoursesPagination) (courses []entities.Courses, err error)
 	InsertCourseEnrollment(ctx context.Context, enrollment entities.Enrollment) (err error)
 	FindCourseEnrollmentByUsersId(ctx context.Context, usersId uuid.UUID) (enrollments entities.Enrollment, err error)
+	UpdateEnrollmentProgress(ctx context.Context, enrollment entities.Enrollment) (err error)
 }
