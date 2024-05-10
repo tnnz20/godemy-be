@@ -38,7 +38,7 @@ var (
 	ErrCourseEmpty             = errors.New("course still empty")
 
 	// Enrollment
-	ErrInvalidThreshold         = errors.New("invalid threshold must be greater than 0")
+	ErrInvalidProgress          = errors.New("invalid progress must be greater than before")
 	ErrCourseEnrollmentNotFound = errors.New("course enrollment not found")
 	ErrUserAlreadyEnrolled      = errors.New("user already enrolled course")
 )
@@ -76,7 +76,7 @@ var (
 		ErrCourseNotFound:         404,
 		ErrCourseCodeAlreadyExist: 409,
 
-		ErrInvalidThreshold:         400,
+		ErrInvalidProgress:          400,
 		ErrCourseEnrollmentNotFound: 404,
 		ErrUserAlreadyEnrolled:      409,
 	}
