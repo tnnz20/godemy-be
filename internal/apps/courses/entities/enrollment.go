@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
 type Enrollment struct {
@@ -26,11 +27,16 @@ func NewEnrollment(usersId, coursesId uuid.UUID) Enrollment {
 	}
 }
 
-func (e *Enrollment) UpdateProgress(progress uint8) {
+func (e *Enrollment) UpdateProgress(progress uint8) (err error) {
 	if e.Progress < progress {
 		e.Progress = progress
 		e.UpdatedAt = time.Now()
+
+		return
 	}
+
+	return errs.ErrInvalidProgress
+
 }
 
 func (e Enrollment) IsEnrolled() bool {
