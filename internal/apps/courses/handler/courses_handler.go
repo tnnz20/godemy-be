@@ -137,3 +137,62 @@ func (h handler) GetCourseEnrollmentDetail(c *fiber.Ctx) error {
 
 	return response.SuccessOK(c, enrollment)
 }
+
+func (h handler) UpdateProgressCourseEnrollment(c *fiber.Ctx) error {
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.UpdateEnrollmentProgressPayload
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.UsersId = userId
+
+	if err := h.Service.UpdateProgressCourseEnrollment(c.UserContext(), req); err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, nil)
+}
+
+func (h handler) GetListUserCourseByCourseId(c *fiber.Ctx) error {
+
+	var req entities.GetListUserCourseByCourseIdPayload
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	limit := c.QueryInt("limit", 5)
+	offset := c.QueryInt("offset", 0)
+
+	req.Limit = limit
+	req.Offset = offset
+
+	users, err := h.Service.GetListUserCourseByCourseId(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, users)
+}
