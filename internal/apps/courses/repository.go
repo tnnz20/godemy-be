@@ -15,4 +15,5 @@ type Repository interface {
 	InsertCourseEnrollment(ctx context.Context, enrollment entities.Enrollment) (err error)
 	FindCourseEnrollmentByUsersId(ctx context.Context, usersId uuid.UUID) (enrollments entities.Enrollment, err error)
 	UpdateEnrollmentProgress(ctx context.Context, enrollment entities.Enrollment) (err error)
+	FindListUserCourseByCourseId(ctx context.Context, courseId uuid.UUID, model entities.CoursesPagination) (courses []entities.ListUserCourseEnrollmentResponse, err error)
 }
