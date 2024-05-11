@@ -6,8 +6,6 @@ import (
 	"github.com/tnnz20/godemy-be/internal/apps/courses/entities"
 )
 
-// TODO: get all enroll course by course id
-
 // Service is the interface that provides the service methods for courses.
 type Service interface {
 	CreateCourse(ctx context.Context, req entities.CreateCoursePayload) (err error)
