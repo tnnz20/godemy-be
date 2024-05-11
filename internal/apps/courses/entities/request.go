@@ -11,15 +11,25 @@ type GetCourseByCourseCodePayload struct {
 	CourseCode string `json:"course_code"`
 }
 
-type GetCoursesByUsersIdWithPaginationPayload struct {
-	UsersId uuid.UUID `json:"users_id"`
-	Limit   int       `query:"limit" json:"limit"`
-	Offset  int       `query:"offset" json:"offset"`
+type ModelPaginationPayload struct {
+	Limit  int `query:"limit" json:"limit"`
+	Offset int `query:"offset" json:"offset"`
 }
 
-func (p *GetCoursesByUsersIdWithPaginationPayload) GenerateDefaultValue() GetCoursesByUsersIdWithPaginationPayload {
+type GetCoursesByUsersIdWithPaginationPayload struct {
+	UsersId uuid.UUID `json:"users_id"`
+	ModelPaginationPayload
+}
+
+func (p *ModelPaginationPayload) GenerateDefaultValue() ModelPaginationPayload {
+	// limit rows
 	if p.Limit <= 0 {
 		p.Limit = 10
+	}
+
+	// skip rows
+	if p.Offset <= 0 {
+		p.Offset = 0
 	}
 
 	return *p
@@ -37,4 +47,9 @@ type UpdateEnrollmentProgressPayload struct {
 
 type GetCourseEnrollmentByUsersIdPayload struct {
 	UsersId uuid.UUID `json:"users_id"`
+}
+
+type GetListUserCourseByCourseIdPayload struct {
+	CourseId uuid.UUID `json:"course_id"`
+	ModelPaginationPayload
 }
