@@ -198,3 +198,52 @@ func (r *repository) UpdateEnrollmentProgress(ctx context.Context, enrollment en
 
 	return
 }
+
+func (r *repository) FindListUserCourseByCourseId(ctx context.Context, courseId uuid.UUID, model entities.CoursesPagination) (courses []entities.ListUserCourseEnrollmentResponse, err error) {
+	query := `
+	SELECT 
+		u.id, 
+		c.id,
+		u.name,
+		ce.progress
+	FROM 
+		users AS u
+	JOIN 
+		course_enrollment AS ce ON u.id = ce.users_id
+	JOIN
+		courses AS c ON ce.courses_id = c.id
+	WHERE
+		c.id = $1
+	LIMIT $2 OFFSET $3
+	`
+
+	rows, err := r.db.QueryContext(ctx, query, courseId, model.Limit, model.Offset)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var c entities.ListUserCourseEnrollmentResponse
+
+		err = rows.Scan(
+			&c.ID,
+			&c.CourseId,
+			&c.Name,
+			&c.Progress,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		courses = append(courses, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return
+}

@@ -163,16 +163,31 @@ func (s *service) UpdateProgressCourseEnrollment(ctx context.Context, req entiti
 		return
 	}
 
-	fmt.Println("before", enrollment)
-
 	if err := enrollment.UpdateProgress(req.Progress); err != nil {
 		return err
 	}
 
-	fmt.Println("after", enrollment)
 	if err := s.Repository.UpdateEnrollmentProgress(ctx, enrollment); err != nil {
 		return err
 	}
+
+	return
+}
+
+func (s *service) GetListUserCourseByCourseId(ctx context.Context, req entities.GetListUserCourseByCourseIdPayload) (res []entities.ListUserCourseEnrollmentResponse, err error) {
+	NewCoursePagination := entities.NewCoursesPagination(req.Limit, req.Offset)
+
+	courses, err := s.Repository.FindListUserCourseByCourseId(ctx, req.CourseId, NewCoursePagination)
+	if err != nil {
+		return
+	}
+
+	if len(courses) == 0 {
+		err = errs.ErrCourseEmpty
+		return
+	}
+
+	res = append(res, courses...)
 
 	return
 }

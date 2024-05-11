@@ -105,11 +105,11 @@ func TestGetCoursesService(t *testing.T) {
 
 		var reqPagination entities.GetCoursesByUsersIdWithPaginationPayload
 		reqPagination.UsersId = userId
-		req := reqPagination.GenerateDefaultValue()
+		reqPagination.ModelPaginationPayload.GenerateDefaultValue()
 
-		log.Println(req)
+		log.Println(reqPagination)
 
-		courses, err := svc.GetCoursesByUsersIdWithPagination(context.Background(), req)
+		courses, err := svc.GetCoursesByUsersIdWithPagination(context.Background(), reqPagination)
 		require.Nil(t, err)
 		require.NotNil(t, courses)
 		log.Println(courses)
@@ -172,5 +172,24 @@ func TestUpdateProgressCourseEnrollmentService(t *testing.T) {
 		}
 		err = svc.UpdateProgressCourseEnrollment(context.Background(), req)
 		require.NotNil(t, err)
+	})
+}
+
+func TestGetListCourseByCourseIdService(t *testing.T) {
+	t.Run("Success get list course by course id", func(t *testing.T) {
+		courseId, err := uuid.Parse("aa76f7e4-dd83-40b7-8317-4bb55d7d1f86")
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.GetListUserCourseByCourseIdPayload{
+			CourseId: courseId,
+		}
+
+		req.GenerateDefaultValue()
+		log.Println(req)
+		courses, err := svc.GetListUserCourseByCourseId(context.Background(), req)
+		require.Nil(t, err)
+		require.NotNil(t, courses)
+		log.Println(courses)
 	})
 }
