@@ -46,7 +46,7 @@ CREATE TABLE assessment(
     id UUID not null,
     users_id UUID not null,
     courses_id UUID not null,
-    assessment_value int,
+    assessment_value FLOAT,
     assessment_code varchar(10),
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
