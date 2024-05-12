@@ -22,7 +22,7 @@ func NewService(assessmentRepo assessment.Repository) assessment.Service {
 
 // CreateAssessment is a function to create a new assessment
 func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAssessmentRequest) (err error) {
-	courseEnrollment, err := s.Repository.FindCoursesEnrollment(ctx, req.UserId)
+	courseEnrollment, err := s.Repository.FindCoursesEnrollment(ctx, req.UsersId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrCourseEnrollmentNotFound
@@ -31,7 +31,7 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 		return
 	}
 
-	NewAssessment := entities.NewAssessment(req.UserId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode)
+	NewAssessment := entities.NewAssessment(req.UsersId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode)
 
 	if err = NewAssessment.Validate(); err != nil {
 		return
@@ -45,7 +45,7 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 
 // GetAssessment is a function to get assessment by user id
 func (s *service) GetAssessment(ctx context.Context, req entities.GetAssessmentRequest) (res entities.AssessmentResponse, err error) {
-	assessment, err := s.Repository.FindAssessment(ctx, req.UserId)
+	assessment, err := s.Repository.FindAssessment(ctx, req.UsersId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound
@@ -61,7 +61,7 @@ func (s *service) GetAssessment(ctx context.Context, req entities.GetAssessmentR
 
 // GetAssessments is a function to get all assessments by user id
 func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
-	assessments, err := s.Repository.FindAssessments(ctx, req.UserId)
+	assessments, err := s.Repository.FindAssessments(ctx, req.UsersId)
 	if err != nil {
 		return []entities.AssessmentResponse{}, err
 	}
@@ -80,7 +80,7 @@ func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessment
 
 // GetAssessmentByAssessmentCode is a function to get assessment by assessment code
 func (s *service) GetAssessmentByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error) {
-	assessment, err := s.Repository.FindAssessmentByAssessmentCode(ctx, req.UserId, req.AssessmentCode)
+	assessment, err := s.Repository.FindAssessmentByAssessmentCode(ctx, req.UsersId, req.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound

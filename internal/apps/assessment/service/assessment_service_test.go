@@ -45,7 +45,7 @@ func TestCreateAssessment(t *testing.T) {
 		}
 
 		req := entities.CreateAssessmentRequest{
-			UserId:          userId,
+			UsersId:         userId,
 			AssessmentValue: 7,
 			AssessmentCode:  validAssessmentChapterCode,
 		}
@@ -61,7 +61,7 @@ func TestCreateAssessment(t *testing.T) {
 		}
 
 		req := entities.CreateAssessmentRequest{
-			UserId:          userId,
+			UsersId:         userId,
 			AssessmentValue: 80,
 			AssessmentCode:  validAssessmentChapterCode,
 		}
@@ -81,7 +81,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentRequest{
-			UserId: userId,
+			UsersId: userId,
 		}
 
 		assessment, err := svc.GetAssessment(context.Background(), req)
@@ -97,7 +97,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentRequest{
-			UserId: userId,
+			UsersId: userId,
 		}
 
 		_, err = svc.GetAssessment(context.Background(), req)
@@ -113,7 +113,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentRequest{
-			UserId: userId,
+			UsersId: userId,
 		}
 
 		assessments, err := svc.GetAssessments(context.Background(), req)
@@ -129,7 +129,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentRequest{
-			UserId: userId,
+			UsersId: userId,
 		}
 
 		_, err = svc.GetAssessments(context.Background(), req)
@@ -145,7 +145,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentByAssessmentCodeRequest{
-			UserId:         userId,
+			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 		}
 
@@ -162,7 +162,7 @@ func TestGetAssessment(t *testing.T) {
 		}
 
 		req := entities.GetAssessmentByAssessmentCodeRequest{
-			UserId:         userId,
+			UsersId:        userId,
 			AssessmentCode: "chap-10",
 		}
 
