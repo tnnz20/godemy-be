@@ -57,38 +57,6 @@ func (r *repository) CreateAssessment(ctx context.Context, assessment entities.A
 	return
 }
 
-// FindAssessment is a function to get assessment by user id
-func (r *repository) FindAssessment(ctx context.Context, userId uuid.UUID) (assessment entities.Assessment, err error) {
-	query := `
-	SELECT 
-		id, 
-		users_id, 
-		courses_id, 
-		assessment_value, 
-		assessment_code, 
-		created_at, 
-		updated_at
-	FROM assessment
-	WHERE users_id = $1
-	`
-
-	err = r.db.QueryRowContext(ctx, query, userId).Scan(
-		&assessment.ID,
-		&assessment.UsersId,
-		&assessment.CoursesId,
-		&assessment.AssessmentValue,
-		&assessment.AssessmentCode,
-		&assessment.CreatedAt,
-		&assessment.UpdatedAt,
-	)
-
-	if err != nil {
-		return
-	}
-
-	return
-}
-
 // FindAssessments is a function to get all assessments by user id
 func (r *repository) FindAssessments(ctx context.Context, usersId uuid.UUID) (assessments []entities.Assessment, err error) {
 	query := `

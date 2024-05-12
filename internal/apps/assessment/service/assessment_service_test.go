@@ -73,39 +73,7 @@ func TestCreateAssessment(t *testing.T) {
 	})
 }
 
-func TestGetAssessment(t *testing.T) {
-	t.Run("Success get assessment", func(t *testing.T) {
-		userId, err := uuid.Parse(validUserId)
-		if err != nil {
-			t.Error(err)
-		}
-
-		req := entities.GetAssessmentRequest{
-			UsersId: userId,
-		}
-
-		assessment, err := svc.GetAssessment(context.Background(), req)
-		require.Nil(t, err)
-		require.NotEmpty(t, assessment)
-		log.Print(assessment)
-	})
-
-	t.Run("Failed get assessment, assessment not found", func(t *testing.T) {
-		userId, err := uuid.Parse("6286637a-3d6c-460a-b68a-956fd9553058")
-		if err != nil {
-			t.Error(err)
-		}
-
-		req := entities.GetAssessmentRequest{
-			UsersId: userId,
-		}
-
-		_, err = svc.GetAssessment(context.Background(), req)
-		require.NotNil(t, err)
-		require.Equal(t, errs.ErrAssessmentNotFound, err)
-		log.Print(err)
-	})
-
+func TestGetAssessments(t *testing.T) {
 	t.Run("Success get assessments", func(t *testing.T) {
 		userId, err := uuid.Parse(validUserId)
 		if err != nil {

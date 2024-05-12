@@ -43,22 +43,6 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 	return
 }
 
-// GetAssessment is a function to get assessment by user id
-func (s *service) GetAssessment(ctx context.Context, req entities.GetAssessmentRequest) (res entities.AssessmentResponse, err error) {
-	assessment, err := s.Repository.FindAssessment(ctx, req.UsersId)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			err = errs.ErrAssessmentNotFound
-			return
-		}
-		return res, err
-	}
-
-	res = entities.AssessmentResponse(assessment)
-
-	return
-}
-
 // GetAssessments is a function to get all assessments by user id
 func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
 	assessments, err := s.Repository.FindAssessments(ctx, req.UsersId)
