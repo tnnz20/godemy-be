@@ -42,14 +42,26 @@ CREATE TABLE course_enrollment(
     FOREIGN KEY (courses_id) REFERENCES courses(id)
 );
 
-CREATE TABLE assessment(
+CREATE TABLE users_assessment(
+    id UUID not null,
+    users_id UUID not null,
+    assessment_code varchar(10) not null,
+    random_array_id integer[],
+    status VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (users_id) REFERENCES users(id)
+);
+
+CREATE TABLE users_assessment_result(
     id UUID not null,
     users_id UUID not null,
     courses_id UUID not null,
     assessment_value FLOAT,
-    assessment_code varchar(10),
+    assessment_code varchar(10) not null,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     FOREIGN KEY (users_id) REFERENCES users(id),
     FOREIGN KEY (courses_id) REFERENCES courses(id)
 );
+
