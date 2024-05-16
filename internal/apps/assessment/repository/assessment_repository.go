@@ -58,18 +58,24 @@ func (r *repository) CreateAssessment(ctx context.Context, assessment entities.A
 }
 
 // FindAssessments is a function to get all assessments by user id
-func (r *repository) FindAssessments(ctx context.Context, usersId uuid.UUID) (assessments []entities.Assessment, err error) {
+func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.Assessment, err error) {
 	query := `
 	SELECT 
-		id, 
-		users_id, 
-		courses_id, 
-		assessment_value, 
-		assessment_code, 
-		created_at, 
-		updated_at
-	FROM assessment
+		a.id, 
+		a.users_id, 
+		a.courses_id, 
+		a.assessment_value, 
+		a.assessment_code, 
+		a.created_at, 
+		a.updated_at
+	FROM assessment AS a
+	INNER JOIN (
+		SELECT assessment_code, MAX(created_at) AS max_created_at
+		FROM assessment
+		GROUP BY assessment_code
+	) b ON a.assessment_code = b.assessment_code AND a.created_at = b.max_created_at
 	WHERE users_id = $1
+	ORDER BY a.created_at DESC
 	`
 
 	rows, err := r.db.QueryContext(ctx, query, usersId)

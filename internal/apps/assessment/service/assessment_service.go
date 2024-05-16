@@ -45,7 +45,7 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 
 // GetAssessments is a function to get all assessments by user id
 func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
-	assessments, err := s.Repository.FindAssessments(ctx, req.UsersId)
+	assessments, err := s.Repository.FindAssessmentsFiltered(ctx, req.UsersId)
 	if err != nil {
 		return []entities.AssessmentResponse{}, err
 	}
