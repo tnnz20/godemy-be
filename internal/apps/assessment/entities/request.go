@@ -16,3 +16,20 @@ type GetAssessmentByAssessmentCodeRequest struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
 }
+
+type CreateUsersAssessmentRequest struct {
+	UsersId        uuid.UUID `json:"users_id"`
+	AssessmentCode string    `json:"assessment_code"`
+	RandomArrayId  []int     `json:"random_array_id"`
+}
+
+type GetUsersAssessmentRequest struct {
+	UsersId        uuid.UUID `json:"users_id"`
+	AssessmentCode string    `json:"assessment_code"`
+}
+
+type UpdateUsersAssessmentStatusRequest struct {
+	UsersId        uuid.UUID `json:"users_id"`
+	AssessmentCode string    `json:"assessment_code"`
+	Status         uint8     `json:"status"`
+}
