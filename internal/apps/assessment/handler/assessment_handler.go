@@ -35,7 +35,7 @@ func (h handler) CreateAssessment(c *fiber.Ctx) error {
 
 	req.UsersId = userId
 
-	if err := h.Service.CreateAssessment(c.UserContext(), req); err != nil {
+	if err := h.Service.CreateAssessmentResult(c.UserContext(), req); err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
 		case 400:
@@ -64,7 +64,7 @@ func (h handler) GetAssessmentsFiltered(c *fiber.Ctx) error {
 	var req entities.GetAssessmentRequest
 	req.UsersId = userId
 
-	res, err := h.Service.GetAssessments(c.UserContext(), req)
+	res, err := h.Service.GetAssessmentsResult(c.UserContext(), req)
 	if err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
@@ -96,7 +96,7 @@ func (h handler) GetAssessmentByAssessmentCode(c *fiber.Ctx) error {
 
 	req.UsersId = userId
 
-	res, err := h.Service.GetAssessmentByAssessmentCode(c.UserContext(), req)
+	res, err := h.Service.GetAssessmentResultByAssessmentCode(c.UserContext(), req)
 	if err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
