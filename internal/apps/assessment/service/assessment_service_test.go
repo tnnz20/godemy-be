@@ -33,11 +33,11 @@ func init() {
 }
 
 const (
-	validUserId                string = "6286637a-3d6c-460a-b68a-956fd9553059"
+	validUserId                string = "19f75097-e613-4769-a6dd-fe97ccb8e54b"
 	validAssessmentChapterCode string = "chap-3"
 )
 
-func TestCreateAssessment(t *testing.T) {
+func TestCreateAssessmentResult(t *testing.T) {
 	t.Run("Success create assessment", func(t *testing.T) {
 		userId, err := uuid.Parse(validUserId)
 		if err != nil {
@@ -50,7 +50,7 @@ func TestCreateAssessment(t *testing.T) {
 			AssessmentCode:  validAssessmentChapterCode,
 		}
 
-		err = svc.CreateAssessment(context.Background(), req)
+		err = svc.CreateAssessmentResult(context.Background(), req)
 		require.Nil(t, err)
 	})
 
@@ -66,14 +66,14 @@ func TestCreateAssessment(t *testing.T) {
 			AssessmentCode:  validAssessmentChapterCode,
 		}
 
-		err = svc.CreateAssessment(context.Background(), req)
+		err = svc.CreateAssessmentResult(context.Background(), req)
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrCourseEnrollmentNotFound, err)
 		log.Print(err)
 	})
 }
 
-func TestGetAssessments(t *testing.T) {
+func TestGetAssessmentsResult(t *testing.T) {
 	t.Run("Success get assessments", func(t *testing.T) {
 		userId, err := uuid.Parse(validUserId)
 		if err != nil {
@@ -84,7 +84,7 @@ func TestGetAssessments(t *testing.T) {
 			UsersId: userId,
 		}
 
-		assessments, err := svc.GetAssessments(context.Background(), req)
+		assessments, err := svc.GetAssessmentsResult(context.Background(), req)
 		require.Nil(t, err)
 		require.NotEmpty(t, assessments)
 		log.Print(assessments)
@@ -100,7 +100,7 @@ func TestGetAssessments(t *testing.T) {
 			UsersId: userId,
 		}
 
-		_, err = svc.GetAssessments(context.Background(), req)
+		_, err = svc.GetAssessmentsResult(context.Background(), req)
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrAssessmentNotFound, err)
 		log.Print(err)
@@ -117,7 +117,7 @@ func TestGetAssessments(t *testing.T) {
 			AssessmentCode: validAssessmentChapterCode,
 		}
 
-		assessment, err := svc.GetAssessmentByAssessmentCode(context.Background(), req)
+		assessment, err := svc.GetAssessmentResultByAssessmentCode(context.Background(), req)
 		require.Nil(t, err)
 		require.NotEmpty(t, assessment)
 		log.Print(assessment)
@@ -134,9 +134,45 @@ func TestGetAssessments(t *testing.T) {
 			AssessmentCode: "chap-10",
 		}
 
-		_, err = svc.GetAssessmentByAssessmentCode(context.Background(), req)
+		_, err = svc.GetAssessmentResultByAssessmentCode(context.Background(), req)
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrAssessmentNotFound, err)
+		log.Print(err)
+	})
+}
+
+func TestCreateUsersAssessment(t *testing.T) {
+	t.Run("Success create users assessment", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.CreateUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+			RandomArrayId:  []int{1, 2, 3, 4, 5},
+		}
+
+		err = svc.CreateUsersAssessment(context.Background(), req)
+		require.Nil(t, err)
+	})
+
+	t.Run("Failed create users assessment, assessment code required", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.CreateUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: "",
+			RandomArrayId:  []int{1, 2, 3, 4, 5},
+		}
+
+		err = svc.CreateUsersAssessment(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrAssessmentCodeRequired, err)
 		log.Print(err)
 	})
 }

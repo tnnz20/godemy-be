@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/tnnz20/godemy-be/internal/apps/assessment"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment/entities"
@@ -21,7 +22,7 @@ func NewService(assessmentRepo assessment.Repository) assessment.Service {
 }
 
 // CreateAssessment is a function to create a new assessment
-func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAssessmentRequest) (err error) {
+func (s *service) CreateAssessmentResult(ctx context.Context, req entities.CreateAssessmentRequest) (err error) {
 	courseEnrollment, err := s.Repository.FindCoursesEnrollment(ctx, req.UsersId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -31,12 +32,12 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 		return
 	}
 
-	NewAssessment := entities.NewAssessment(req.UsersId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode)
+	NewAssessmentResult := entities.NewAssessmentResult(req.UsersId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode)
 
-	if err = NewAssessment.Validate(); err != nil {
+	if err = NewAssessmentResult.Validate(); err != nil {
 		return
 	}
-	err = s.Repository.CreateAssessment(ctx, NewAssessment)
+	err = s.Repository.CreateAssessmentResult(ctx, NewAssessmentResult)
 	if err != nil {
 		return err
 	}
@@ -44,7 +45,7 @@ func (s *service) CreateAssessment(ctx context.Context, req entities.CreateAsses
 }
 
 // GetAssessments is a function to get all assessments by user id
-func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
+func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
 	assessments, err := s.Repository.FindAssessmentsFiltered(ctx, req.UsersId)
 	if err != nil {
 		return []entities.AssessmentResponse{}, err
@@ -63,7 +64,7 @@ func (s *service) GetAssessments(ctx context.Context, req entities.GetAssessment
 }
 
 // GetAssessmentByAssessmentCode is a function to get assessment by assessment code
-func (s *service) GetAssessmentByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error) {
+func (s *service) GetAssessmentResultByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error) {
 	assessment, err := s.Repository.FindAssessmentByAssessmentCode(ctx, req.UsersId, req.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -74,6 +75,68 @@ func (s *service) GetAssessmentByAssessmentCode(ctx context.Context, req entitie
 	}
 
 	res = entities.AssessmentResponse(assessment)
+
+	return
+}
+
+func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentRequest) (err error) {
+
+	NewAssessmentUser := entities.NewAssessmentUser(req.UsersId, req.AssessmentCode, req.RandomArrayId)
+
+	if err = NewAssessmentUser.ValidateAssessmentUserCode(); err != nil {
+		return
+	}
+
+	err = s.Repository.CreateUsersAssessment(ctx, NewAssessmentUser)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
+func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersAssessmentRequest) (res entities.AssessmentUserResponse, err error) {
+	newUserAssessment := entities.AssessmentUser{
+		UsersId:        req.UsersId,
+		AssessmentCode: req.AssessmentCode,
+	}
+
+	if err = newUserAssessment.ValidateAssessmentUserCode(); err != nil {
+		return entities.AssessmentUserResponse{}, err
+	}
+
+	assessment, err := s.Repository.FindUsersAssessment(ctx, newUserAssessment.UsersId, newUserAssessment.AssessmentCode)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrAssessmentNotFound
+			return
+		}
+		return entities.AssessmentUserResponse{}, err
+	}
+
+	res = entities.AssessmentUserResponse(assessment)
+	return
+}
+
+func (s *service) UpdateUsersAssessmentStatus(ctx context.Context, req entities.UpdateUsersAssessmentStatusRequest) (err error) {
+	newUserAssessment := entities.AssessmentUser{
+		UsersId:        req.UsersId,
+		AssessmentCode: req.AssessmentCode,
+	}
+
+	if err = newUserAssessment.ValidateAssessmentUserCode(); err != nil {
+		return
+	}
+
+	if err = newUserAssessment.UpdateStatus(req.Status); err != nil {
+		return
+	}
+
+	fmt.Print(newUserAssessment)
+	err = s.Repository.UpdateUsersAssessmentStatus(ctx, newUserAssessment.UsersId, newUserAssessment.AssessmentCode, newUserAssessment.Status)
+	if err != nil {
+		return err
+	}
 
 	return
 }

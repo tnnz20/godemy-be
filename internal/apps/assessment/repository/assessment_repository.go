@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment/entities"
 )
@@ -19,10 +20,10 @@ func NewRepository(db *sql.DB) assessment.Repository {
 	}
 }
 
-// CreateAssessment is a function to create a new assessment
-func (r *repository) CreateAssessment(ctx context.Context, assessment entities.Assessment) (err error) {
+// CreateAssessmentResult is a function to create a new assessment result
+func (r *repository) CreateAssessmentResult(ctx context.Context, assessment entities.AssessmentResult) (err error) {
 	query := `
-	INSERT INTO assessment (
+	INSERT INTO users_assessment_result (
 		id,
 		users_id,
 		courses_id,
@@ -58,7 +59,7 @@ func (r *repository) CreateAssessment(ctx context.Context, assessment entities.A
 }
 
 // FindAssessments is a function to get all assessments by user id
-func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.Assessment, err error) {
+func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.AssessmentResult, err error) {
 	query := `
 	SELECT 
 		a.id, 
@@ -68,7 +69,7 @@ func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.U
 		a.assessment_code, 
 		a.created_at, 
 		a.updated_at
-	FROM assessment AS a
+	FROM users_assessment_result AS a
 	INNER JOIN (
 		SELECT assessment_code, MAX(created_at) AS max_created_at
 		FROM assessment
@@ -86,7 +87,7 @@ func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.U
 	defer rows.Close()
 
 	for rows.Next() {
-		var assessment entities.Assessment
+		var assessment entities.AssessmentResult
 		err = rows.Scan(
 			&assessment.ID,
 			&assessment.UsersId,
@@ -112,7 +113,7 @@ func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.U
 }
 
 // FindAssessmentByAssessmentCode is a function to get assessment by user id and assessment code
-func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (assessment entities.Assessment, err error) {
+func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (assessment entities.AssessmentResult, err error) {
 	query := `
 	SELECT 
 		id, 
@@ -122,7 +123,7 @@ func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId
 		assessment_code, 
 		created_at, 
 		updated_at
-	FROM assessment
+	FROM users_assessment_result
 	WHERE users_id = $1 AND assessment_code = $2
 	`
 
@@ -162,6 +163,104 @@ func (r *repository) FindCoursesEnrollment(ctx context.Context, usersId uuid.UUI
 
 	if err != nil {
 		return
+	}
+
+	return
+}
+
+// CreateAssessmentUser is a function to create a new assessment task
+func (r *repository) CreateUsersAssessment(ctx context.Context, userAssessment entities.AssessmentUser) (err error) {
+	query := `
+	INSERT INTO users_assessment (
+		id,
+		users_id,
+		assessment_code,
+		random_array_id,
+		status,
+		created_at,
+		updated_at
+	)
+
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`
+
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		userAssessment.ID,
+		userAssessment.UsersId,
+		userAssessment.AssessmentCode,
+		pq.Array(userAssessment.RandomArrayId),
+		userAssessment.Status,
+		userAssessment.CreatedAt,
+		userAssessment.UpdatedAt,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
+// FindUserAssessment is a function to get assessment task by user id and assessment code
+func (r *repository) FindUsersAssessment(ctx context.Context, usersId uuid.UUID, assessmentCode string) (userAssessment entities.AssessmentUser, err error) {
+	query := `
+	SELECT
+		id,
+		users_id,
+		assessment_code,
+		random_array_id,
+		status,
+		created_at,
+		updated_at
+
+	FROM users_assessment
+	WHERE users_id = $1 
+		AND assessment_code = $2 
+		AND status != $3
+	`
+
+	err = r.db.QueryRowContext(ctx, query, usersId, assessmentCode, entities.AssessmentStatusDone).Scan(
+		&userAssessment.ID,
+		&userAssessment.UsersId,
+		&userAssessment.AssessmentCode,
+		pq.Array(&userAssessment.RandomArrayId),
+		&userAssessment.Status,
+		&userAssessment.CreatedAt,
+		&userAssessment.UpdatedAt,
+	)
+
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+// UpdateUserAssessmentStatus is a function to update assessment task status by user id and assessment code
+func (r *repository) UpdateUsersAssessmentStatus(ctx context.Context, usersId uuid.UUID, assessmentCode string, status string) (err error) {
+	query := `
+	UPDATE users_assessment
+	SET status = $1
+	WHERE users_id = $2 AND assessment_code = $3
+	`
+
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, status, usersId, assessmentCode)
+	if err != nil {
+		return err
 	}
 
 	return
