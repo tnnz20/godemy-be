@@ -4,7 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/tnnz20/godemy-be/config"
+	assessment "github.com/tnnz20/godemy-be/internal/apps/assessment/base"
 	courses "github.com/tnnz20/godemy-be/internal/apps/courses/base"
 	users "github.com/tnnz20/godemy-be/internal/apps/users/base"
 	"github.com/tnnz20/godemy-be/internal/storage/postgres"
@@ -34,9 +36,15 @@ func main() {
 		AppName: cfg.App.Name,
 	})
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:3000",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
+
 	// Init router
 	users.Init(router, db.GetDB(), cfg.App.Encryption.JWTSecret)
 	courses.Init(router, db.GetDB())
+	assessment.Init(router, db.GetDB())
 
 	port := fmt.Sprintf(":%s", cfg.App.Port)
 	router.Listen(port)
