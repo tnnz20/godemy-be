@@ -9,7 +9,7 @@ import (
 
 func TestAssessmentEntities(t *testing.T) {
 	t.Run("Success validate assessment", func(t *testing.T) {
-		assessment := Assessment{
+		assessment := AssessmentResult{
 			AssessmentValue: 90,
 			AssessmentCode:  "chap-4",
 		}
@@ -19,7 +19,7 @@ func TestAssessmentEntities(t *testing.T) {
 	})
 
 	t.Run("Failed validate assessment, invalid assessment value", func(t *testing.T) {
-		assessment := Assessment{
+		assessment := AssessmentResult{
 			AssessmentValue: 101,
 			AssessmentCode:  "chap-4",
 		}
@@ -30,7 +30,7 @@ func TestAssessmentEntities(t *testing.T) {
 	})
 
 	t.Run("Failed validate assessment, assessment code must required", func(t *testing.T) {
-		assessment := Assessment{
+		assessment := AssessmentResult{
 			AssessmentValue: 90,
 			AssessmentCode:  "",
 		}
