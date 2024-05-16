@@ -7,7 +7,10 @@ import (
 )
 
 type Service interface {
-	CreateAssessment(ctx context.Context, req entities.CreateAssessmentRequest) (err error)
-	GetAssessments(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error)
-	GetAssessmentByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error)
+	CreateAssessmentResult(ctx context.Context, req entities.CreateAssessmentRequest) (err error)
+	GetAssessmentsResult(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error)
+	GetAssessmentResultByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error)
+	CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentRequest) (err error)
+	GetUsersAssessment(ctx context.Context, req entities.GetUsersAssessmentRequest) (res entities.AssessmentUserResponse, err error)
+	UpdateUsersAssessmentStatus(ctx context.Context, req entities.UpdateUsersAssessmentStatusRequest) (err error)
 }

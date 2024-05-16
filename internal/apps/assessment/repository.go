@@ -8,8 +8,11 @@ import (
 )
 
 type Repository interface {
-	CreateAssessment(ctx context.Context, assignment entities.Assessment) (err error)
-	FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.Assessment, err error)
-	FindAssessmentByAssessmentCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (assessment entities.Assessment, err error)
+	CreateAssessmentResult(ctx context.Context, assessment entities.AssessmentResult) (err error)
+	FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.AssessmentResult, err error)
+	FindAssessmentByAssessmentCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (assessment entities.AssessmentResult, err error)
 	FindCoursesEnrollment(ctx context.Context, usersId uuid.UUID) (enrollment entities.Enrollment, err error)
+	CreateUsersAssessment(ctx context.Context, userAssessment entities.AssessmentUser) (err error)
+	FindUsersAssessment(ctx context.Context, usersId uuid.UUID, assessmentCode string) (userAssessment entities.AssessmentUser, err error)
+	UpdateUsersAssessmentStatus(ctx context.Context, usersId uuid.UUID, assessmentCode string, status string) (err error)
 }
