@@ -47,13 +47,13 @@ type AssessmentUser struct {
 	ID             uuid.UUID
 	UsersId        uuid.UUID
 	AssessmentCode string
-	RandomArrayId  []int
+	RandomArrayId  []uint8
 	Status         string
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
 
-func NewAssessmentUser(userId uuid.UUID, assessmentCode string, randomArrayId []int) AssessmentUser {
+func NewAssessmentUser(userId uuid.UUID, assessmentCode string, randomArrayId []uint8) AssessmentUser {
 	return AssessmentUser{
 		ID:             uuid.New(),
 		UsersId:        userId,
@@ -105,4 +105,8 @@ func (au *AssessmentUser) UpdateStatus(status uint8) (err error) {
 	}
 	au.Status = AssessmentStatusMapping[status]
 	return
+}
+
+func (au AssessmentUser) IsStatusCreated() bool {
+	return au.Status == AssessmentStatusMapping[1]
 }

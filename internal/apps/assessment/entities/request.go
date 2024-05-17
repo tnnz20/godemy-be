@@ -20,7 +20,7 @@ type GetAssessmentByAssessmentCodeRequest struct {
 type CreateUsersAssessmentRequest struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
-	RandomArrayId  []int     `json:"random_array_id"`
+	RandomArrayId  []uint8   `json:"random_array_id"`
 }
 
 type GetUsersAssessmentRequest struct {

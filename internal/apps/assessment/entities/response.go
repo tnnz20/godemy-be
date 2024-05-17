@@ -20,7 +20,7 @@ type AssessmentUserResponse struct {
 	ID             uuid.UUID `json:"id"`
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
-	RandomArrayId  []int     `json:"random_array_id"`
+	RandomArrayId  []uint8   `json:"random_array_id"`
 	Status         string    `json:"status"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
