@@ -7,7 +7,7 @@ const (
 
 const (
 	StatusUnauthorizedErrorName        = "access_denied"
-	StatusUnauthorizedErrorDescription = "Authorization failed"
+	StatusUnauthorizedErrorDescription = "Authorization failed: token doesn't exist or invalid"
 	StatusUnauthorizedInvalidToken     = "Invalid token"
 )
 
