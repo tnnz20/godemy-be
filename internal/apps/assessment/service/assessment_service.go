@@ -124,6 +124,7 @@ func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersA
 		return entities.AssessmentUserResponse{}, err
 	}
 
+	// res.RandomArrayId will hold Base64 encoded string
 	res = entities.AssessmentUserResponse(assessment)
 	return
 }
