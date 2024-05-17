@@ -47,7 +47,8 @@ var (
 	ErrAssessmentCodeRequired = errors.New("assessment code required")
 	ErrAssessmentNotFound     = errors.New("assessment not found")
 
-	ErrInvalidAssessmentStatus = errors.New("invalid assessment status")
+	ErrInvalidAssessmentStatus        = errors.New("invalid assessment status")
+	ErrAssessmentStatusAlreadyCreated = errors.New("assessment status already created")
 )
 
 var (
@@ -91,6 +92,7 @@ var (
 		ErrAssessmentCodeRequired: 400,
 		ErrAssessmentNotFound:     404,
 
-		ErrInvalidAssessmentStatus: 400,
+		ErrInvalidAssessmentStatus:        400,
+		ErrAssessmentStatusAlreadyCreated: 409,
 	}
 )
