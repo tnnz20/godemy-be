@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/tnnz20/godemy-be/internal/apps/assessment"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment/entities"
@@ -87,6 +86,17 @@ func (s *service) CreateUsersAssessment(ctx context.Context, req entities.Create
 		return
 	}
 
+	assessment, err := s.Repository.FindUsersAssessment(ctx, NewAssessmentUser.UsersId, NewAssessmentUser.AssessmentCode)
+	if err != nil {
+		if !errors.Is(err, sql.ErrNoRows) {
+			return err
+		}
+	}
+
+	if assessment.IsStatusCreated() {
+		return errs.ErrAssessmentStatusAlreadyCreated
+	}
+
 	err = s.Repository.CreateUsersAssessment(ctx, NewAssessmentUser)
 	if err != nil {
 		return err
@@ -132,8 +142,15 @@ func (s *service) UpdateUsersAssessmentStatus(ctx context.Context, req entities.
 		return
 	}
 
-	fmt.Print(newUserAssessment)
-	err = s.Repository.UpdateUsersAssessmentStatus(ctx, newUserAssessment.UsersId, newUserAssessment.AssessmentCode, newUserAssessment.Status)
+	assessment, err := s.Repository.FindUsersAssessment(ctx, newUserAssessment.UsersId, newUserAssessment.AssessmentCode)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return errs.ErrAssessmentNotFound
+		}
+		return err
+	}
+
+	err = s.Repository.UpdateUsersAssessmentStatus(ctx, assessment.UsersId, assessment.AssessmentCode, newUserAssessment.Status)
 	if err != nil {
 		return err
 	}
