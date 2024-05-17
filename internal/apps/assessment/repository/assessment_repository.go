@@ -8,7 +8,6 @@ import (
 	"github.com/lib/pq"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment"
 	"github.com/tnnz20/godemy-be/internal/apps/assessment/entities"
-	"github.com/tnnz20/godemy-be/pkg/helpers"
 )
 
 type repository struct {
@@ -240,10 +239,6 @@ func (r *repository) FindUsersAssessment(ctx context.Context, usersId uuid.UUID,
 	if err != nil {
 		return
 	}
-
-	actualValue := helpers.ConvertBytePgArrayToActualValue(userAssessment.RandomArrayId)
-
-	userAssessment.RandomArrayId = actualValue
 
 	return
 }
