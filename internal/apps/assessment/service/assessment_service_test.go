@@ -131,7 +131,7 @@ func TestGetAssessmentsResult(t *testing.T) {
 
 		req := entities.GetAssessmentByAssessmentCodeRequest{
 			UsersId:        userId,
-			AssessmentCode: "chap-10",
+			AssessmentCode: "chap-7",
 		}
 
 		_, err = svc.GetAssessmentResultByAssessmentCode(context.Background(), req)
@@ -151,7 +151,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 		req := entities.CreateUsersAssessmentRequest{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
-			RandomArrayId:  []int{1, 2, 3, 4, 5},
+			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
 		}
 
 		err = svc.CreateUsersAssessment(context.Background(), req)
@@ -167,12 +167,128 @@ func TestCreateUsersAssessment(t *testing.T) {
 		req := entities.CreateUsersAssessmentRequest{
 			UsersId:        userId,
 			AssessmentCode: "",
-			RandomArrayId:  []int{1, 2, 3, 4, 5},
+			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
 		}
 
 		err = svc.CreateUsersAssessment(context.Background(), req)
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrAssessmentCodeRequired, err)
 		log.Print(err)
+	})
+
+	t.Run("Failed create users assessment, assessment already created", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.CreateUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
+		}
+
+		err = svc.CreateUsersAssessment(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrAssessmentStatusAlreadyCreated, err)
+		log.Print(err)
+	})
+}
+
+func TestGetUsersAssessment(t *testing.T) {
+	t.Run("Success get users assessment", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.GetUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+		}
+
+		assessment, err := svc.GetUsersAssessment(context.Background(), req)
+		require.Nil(t, err)
+		require.NotEmpty(t, assessment)
+		log.Print(assessment)
+	})
+
+	t.Run("Failed get users assessment, assessment not found", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.GetUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: "chap-10",
+		}
+
+		_, err = svc.GetUsersAssessment(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrAssessmentNotFound, err)
+		log.Print(err)
+	})
+}
+
+func TestUpdateUsersAssessmentStatus(t *testing.T) {
+	t.Run("Success update users assessment status", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.UpdateUsersAssessmentStatusRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+			Status:         5,
+		}
+
+		err = svc.UpdateUsersAssessmentStatus(context.Background(), req)
+		require.Nil(t, err)
+
+		getAssessmentReq := entities.GetUsersAssessmentRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+		}
+		assessment, err := svc.GetUsersAssessment(context.Background(), getAssessmentReq)
+		require.Nil(t, err)
+		require.Equal(t, entities.AssessmentStatusOnGoing, assessment.Status)
+		log.Print(assessment)
+	})
+
+	t.Run("Failed update users assessment status, assessment not found", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.UpdateUsersAssessmentStatusRequest{
+			UsersId:        userId,
+			AssessmentCode: "chap-10",
+			Status:         5,
+		}
+
+		err = svc.UpdateUsersAssessmentStatus(context.Background(), req)
+
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrAssessmentNotFound, err)
+	})
+
+	t.Run("Failed update users assessment status, status invalid", func(t *testing.T) {
+		userId, err := uuid.Parse(validUserId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.UpdateUsersAssessmentStatusRequest{
+			UsersId:        userId,
+			AssessmentCode: validAssessmentChapterCode,
+			Status:         8,
+		}
+
+		err = svc.UpdateUsersAssessmentStatus(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrInvalidAssessmentStatus, err)
 	})
 }
