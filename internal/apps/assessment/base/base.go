@@ -25,12 +25,30 @@ func Init(router fiber.Router, db *sql.DB) {
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.CreateAssessment,
 	)
-	assessment.Get("/assessment/users",
+	assessment.Get("/assessment/users/results",
 		middleware.Protected(),
 		handler.GetAssessmentsFiltered,
 	)
-	assessment.Get("/assessment/code",
+	assessment.Get("/assessment",
 		middleware.Protected(),
 		handler.GetAssessmentByAssessmentCode,
+	)
+
+	assessment.Get("/assessment/users",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.GetUsersAssessment,
+	)
+
+	assessment.Post("/assessment/create/users",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.CreateUsersAssessment,
+	)
+
+	assessment.Patch("/assessment/users/status",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.UpdateUsersAssessmentStatus,
 	)
 }

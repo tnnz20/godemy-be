@@ -111,3 +111,98 @@ func (h handler) GetAssessmentByAssessmentCode(c *fiber.Ctx) error {
 
 	return response.SuccessOK(c, res)
 }
+
+func (h handler) CreateUsersAssessment(c *fiber.Ctx) error {
+	// Get the user id from the context
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.CreateUsersAssessmentRequest
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.UsersId = userId
+	if err := h.Service.CreateUsersAssessment(c.UserContext(), req); err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 409:
+			return response.ErrorConflict(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessCreated(c)
+}
+
+func (h handler) UpdateUsersAssessmentStatus(c *fiber.Ctx) error {
+	// Get the user id from the context
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.UpdateUsersAssessmentStatusRequest
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.UsersId = userId
+
+	if err := h.Service.UpdateUsersAssessmentStatus(c.UserContext(), req); err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, nil)
+}
+
+func (h handler) GetUsersAssessment(c *fiber.Ctx) error {
+	// Get the user id from the context
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.GetUsersAssessmentRequest
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.UsersId = userId
+
+	res, err := h.Service.GetUsersAssessment(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, res)
+}
