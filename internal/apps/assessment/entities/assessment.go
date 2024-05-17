@@ -23,7 +23,7 @@ func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, a
 		UsersId:         userId,
 		CoursesId:       coursesId,
 		AssessmentValue: assessmentValue,
-		AssessmentCode:  assessmentCode,
+		AssessmentCode:  "chap-" + assessmentCode,
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
 	}
@@ -57,7 +57,7 @@ func NewAssessmentUser(userId uuid.UUID, assessmentCode string, randomArrayId []
 	return AssessmentUser{
 		ID:             uuid.New(),
 		UsersId:        userId,
-		AssessmentCode: assessmentCode,
+		AssessmentCode: "chap-" + assessmentCode,
 		RandomArrayId:  randomArrayId,
 		Status:         AssessmentStatusMapping[1],
 		CreatedAt:      time.Now(),
