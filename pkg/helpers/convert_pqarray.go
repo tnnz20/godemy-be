@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func ConvertBytePqArrayToActualValue(byteSlice []uint8) []uint8 {
+func ConvertBytePgArrayToActualValue(byteSlice []uint8) []uint8 {
 	// Convert the byte slice to a string
 	str := string(byteSlice)
 
