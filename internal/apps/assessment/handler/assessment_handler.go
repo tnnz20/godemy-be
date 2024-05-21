@@ -80,7 +80,7 @@ func (h handler) GetAssessmentsResultFiltered(c *fiber.Ctx) error {
 	return response.SuccessOK(c, res)
 }
 
-func (h handler) GetAssessmentByAssessmentCode(c *fiber.Ctx) error {
+func (h handler) GetAssessment(c *fiber.Ctx) error {
 	// Get the user id from the context
 	id := c.Locals("id").(string)
 
@@ -90,7 +90,7 @@ func (h handler) GetAssessmentByAssessmentCode(c *fiber.Ctx) error {
 	}
 
 	var req entities.GetAssessmentByAssessmentCodeRequest
-	if err := c.ParamsParser(&req); err != nil {
+	if err := c.QueryParser(&req); err != nil {
 		err = errs.ErrAssessmentCodeRequired
 		return response.ErrorBadRequest(c, err)
 	}

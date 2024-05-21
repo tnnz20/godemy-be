@@ -20,24 +20,21 @@ func Init(router fiber.Router, db *sql.DB) {
 	_ = handler
 
 	assessment := router.Group("/assessments", logger.New())
-	assessment.Post("/assessment/create",
+
+	assessment.Get("/assessment",
+		middleware.Protected(),
+		handler.GetAssessment,
+	)
+
+	assessment.Post("/assessment",
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.CreateAssessment,
 	)
-	assessment.Get("/assessment/users/results",
+
+	assessment.Get("/assessment/results",
 		middleware.Protected(),
 		handler.GetAssessmentsResultFiltered,
-	)
-	assessment.Get("/assessment/:assessment_code",
-		middleware.Protected(),
-		handler.GetAssessmentByAssessmentCode,
-	)
-
-	assessment.Post("/assessment/create/users",
-		middleware.Protected(),
-		middleware.CheckRoles([]string{entities.ROLE_Student}),
-		handler.CreateUsersAssessment,
 	)
 
 	assessment.Get("/assessment/users",
@@ -46,9 +43,16 @@ func Init(router fiber.Router, db *sql.DB) {
 		handler.GetUsersAssessment,
 	)
 
+	assessment.Post("/assessment/users",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.CreateUsersAssessment,
+	)
+
 	assessment.Patch("/assessment/users/status",
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.UpdateUsersAssessmentStatus,
 	)
+
 }
