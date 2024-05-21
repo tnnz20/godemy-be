@@ -14,7 +14,7 @@ type GetAssessmentRequest struct {
 
 type GetAssessmentByAssessmentCodeRequest struct {
 	UsersId        uuid.UUID `json:"users_id"`
-	AssessmentCode string    `json:"assessment_code"`
+	AssessmentCode string    `params:"assessment_code"`
 }
 
 type CreateUsersAssessmentRequest struct {
@@ -25,7 +25,7 @@ type CreateUsersAssessmentRequest struct {
 
 type GetUsersAssessmentRequest struct {
 	UsersId        uuid.UUID `json:"users_id"`
-	AssessmentCode string    `json:"assessment_code"`
+	AssessmentCode string    `query:"assessment_code"`
 }
 
 type UpdateUsersAssessmentStatusRequest struct {
