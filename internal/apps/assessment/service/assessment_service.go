@@ -111,10 +111,6 @@ func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersA
 		AssessmentCode: req.AssessmentCode,
 	}
 
-	if err = newUserAssessment.ValidateAssessmentUserCode(); err != nil {
-		return entities.AssessmentUserResponse{}, err
-	}
-
 	assessment, err := s.Repository.FindUsersAssessment(ctx, newUserAssessment.UsersId, newUserAssessment.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -126,6 +122,7 @@ func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersA
 
 	// res.RandomArrayId will hold Base64 encoded string
 	res = entities.AssessmentUserResponse(assessment)
+
 	return
 }
 
