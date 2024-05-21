@@ -125,6 +125,7 @@ func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId
 		updated_at
 	FROM users_assessment_result
 	WHERE users_id = $1 AND assessment_code = $2
+	ORDER BY created_at DESC
 	`
 
 	err = r.db.QueryRowContext(ctx, query, usersId, assessmentCode).Scan(
