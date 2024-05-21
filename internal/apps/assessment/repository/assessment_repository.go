@@ -72,7 +72,7 @@ func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.U
 	FROM users_assessment_result AS a
 	INNER JOIN (
 		SELECT assessment_code, MAX(created_at) AS max_created_at
-		FROM assessment
+		FROM users_assessment_result
 		GROUP BY assessment_code
 	) b ON a.assessment_code = b.assessment_code AND a.created_at = b.max_created_at
 	WHERE users_id = $1
