@@ -21,6 +21,11 @@ func Init(router fiber.Router, db *sql.DB) {
 
 	assessment := router.Group("/assessments", logger.New())
 
+	assessment.Get("/",
+		middleware.Protected(),
+		handler.GetAssessments,
+	)
+
 	assessment.Get("/assessment",
 		middleware.Protected(),
 		handler.GetAssessment,
@@ -30,11 +35,6 @@ func Init(router fiber.Router, db *sql.DB) {
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.CreateAssessment,
-	)
-
-	assessment.Get("/assessment/results",
-		middleware.Protected(),
-		handler.GetAssessmentsResultFiltered,
 	)
 
 	assessment.Get("/assessment/users",
