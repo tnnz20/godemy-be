@@ -52,7 +52,7 @@ func (h handler) CreateAssessment(c *fiber.Ctx) error {
 	return response.SuccessCreated(c)
 }
 
-func (h handler) GetAssessmentsResultFiltered(c *fiber.Ctx) error {
+func (h handler) GetAssessments(c *fiber.Ctx) error {
 	// Get the user id from the context
 	id := c.Locals("id").(string)
 
