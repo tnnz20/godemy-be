@@ -24,9 +24,13 @@ type CourseEnrollmentResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type ListUserCourseEnrollmentResponse struct {
-	ID       uuid.UUID `json:"id"`
-	CourseId string    `json:"course_id"`
-	Name     string    `json:"name"`
-	Progress uint8     `json:"progress"`
+type CoursesLengthResponse struct {
+	Total int `json:"total"`
+}
+
+type EnrolledUsersResponse struct {
+	ID         uuid.UUID `json:"id"`
+	CourseName string    `json:"course_name"`
+	Name       string    `json:"name"`
+	Progress   uint8     `json:"progress"`
 }
