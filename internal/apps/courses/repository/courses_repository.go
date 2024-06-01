@@ -119,6 +119,21 @@ func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, use
 	return
 }
 
+func (r *repository) FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID) (total int, err error) {
+	query := `
+	SELECT COUNT(id)
+	FROM courses
+	WHERE users_id = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, query, usersId).Scan(&total)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func (r *repository) InsertCourseEnrollment(ctx context.Context, enrollment entities.Enrollment) (err error) {
 	query := `
 	INSERT INTO course_enrollment (
@@ -199,11 +214,11 @@ func (r *repository) UpdateEnrollmentProgress(ctx context.Context, enrollment en
 	return
 }
 
-func (r *repository) FindListUserCourseByCourseId(ctx context.Context, courseId uuid.UUID, model entities.CoursesPagination) (courses []entities.ListUserCourseEnrollmentResponse, err error) {
+func (r *repository) FindEnrolledUsersByCourseId(ctx context.Context, courseId uuid.UUID, name string, model entities.CoursesPagination) (courses []entities.EnrolledUsersResponse, err error) {
 	query := `
 	SELECT 
 		u.id, 
-		c.id,
+		c.course_name,
 		u.name,
 		ce.progress
 	FROM 
@@ -213,11 +228,14 @@ func (r *repository) FindListUserCourseByCourseId(ctx context.Context, courseId 
 	JOIN
 		courses AS c ON ce.courses_id = c.id
 	WHERE
-		c.id = $1
-	LIMIT $2 OFFSET $3
+		c.id = $1 AND
+		(u.name ILIKE $2)
+	LIMIT $3 OFFSET $4
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, courseId, model.Limit, model.Offset)
+	wildcardName := "%" + name + "%"
+
+	rows, err := r.db.QueryContext(ctx, query, courseId, wildcardName, model.Limit, model.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -225,11 +243,11 @@ func (r *repository) FindListUserCourseByCourseId(ctx context.Context, courseId 
 	defer rows.Close()
 
 	for rows.Next() {
-		var c entities.ListUserCourseEnrollmentResponse
+		var c entities.EnrolledUsersResponse
 
 		err = rows.Scan(
 			&c.ID,
-			&c.CourseId,
+			&c.CourseName,
 			&c.Name,
 			&c.Progress,
 		)
