@@ -31,6 +31,10 @@ func (h handler) CreateCourse(c *fiber.Ctx) error {
 	var req entities.CreateCoursePayload
 	req.UsersId = userId
 
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
 	if err := h.Service.CreateCourse(c.UserContext(), req); err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
@@ -77,6 +81,33 @@ func (h handler) GetCoursesByUsersId(c *fiber.Ctx) error {
 	}
 
 	return response.SuccessOK(c, courses)
+}
+
+func (h handler) GetTotalCourses(c *fiber.Ctx) error {
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.GetCoursesByUsersIdPayload
+	req.UsersId = userId
+
+	total, err := h.Service.GetTotalCourses(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, total)
 }
 
 func (h handler) EnrollCourse(c *fiber.Ctx) error {
@@ -168,20 +199,25 @@ func (h handler) UpdateProgressCourseEnrollment(c *fiber.Ctx) error {
 	return response.SuccessOK(c, nil)
 }
 
-func (h handler) GetListUserCourseByCourseId(c *fiber.Ctx) error {
+func (h handler) GetEnrolledUsers(c *fiber.Ctx) error {
 
-	var req entities.GetListUserCourseByCourseIdPayload
-	if err := c.BodyParser(&req); err != nil {
-		return response.ErrorBadRequest(c, err)
-	}
-
+	var req entities.GetEnrolledUsersByCourseIdPayload
 	limit := c.QueryInt("limit", 5)
 	offset := c.QueryInt("offset", 0)
 
+	paramsCourseId := c.Params("courseId")
+
+	courseId, err := uuid.Parse(paramsCourseId)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.Name = c.Query("name")
+	req.CourseId = courseId
 	req.Limit = limit
 	req.Offset = offset
 
-	users, err := h.Service.GetListUserCourseByCourseId(c.UserContext(), req)
+	users, err := h.Service.GetEnrolledUsersByCourseId(c.UserContext(), req)
 	if err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
