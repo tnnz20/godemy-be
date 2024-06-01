@@ -3,17 +3,25 @@ package entities
 import "github.com/google/uuid"
 
 type CreateCoursePayload struct {
-	UsersId uuid.UUID `json:"users_id"`
-	// CourseName string    `json:"course_name"`
+	UsersId    uuid.UUID `json:"users_id"`
+	CourseName string    `json:"course_name"`
 }
 
 type GetCourseByCourseCodePayload struct {
 	CourseCode string `json:"course_code"`
 }
 
+type GetCoursesByUsersIdPayload struct {
+	UsersId uuid.UUID `json:"users_id"`
+}
+
+type GetEnrolledUsersByUsersIdPayload struct {
+	UsersId uuid.UUID `json:"users_id"`
+}
+
 type ModelPaginationPayload struct {
-	Limit  int `query:"limit" json:"limit"`
-	Offset int `query:"offset" json:"offset"`
+	Limit  int `query:"limit"`
+	Offset int `query:"offset"`
 }
 
 type GetCoursesByUsersIdWithPaginationPayload struct {
@@ -49,7 +57,8 @@ type GetCourseEnrollmentByUsersIdPayload struct {
 	UsersId uuid.UUID `json:"users_id"`
 }
 
-type GetListUserCourseByCourseIdPayload struct {
-	CourseId uuid.UUID `json:"course_id"`
+type GetEnrolledUsersByCourseIdPayload struct {
+	CourseId uuid.UUID `params:"courseId"`
+	Name     string    `query:"name"`
 	ModelPaginationPayload
 }
