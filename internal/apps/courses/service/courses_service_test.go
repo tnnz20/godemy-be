@@ -33,8 +33,9 @@ func init() {
 }
 
 var (
-	ValidCourseCode    = "go-m5PRgxq"
-	ValidUserIdTeacher = "b8f11f87-6d58-4cf3-8634-a672c607b8db"
+	ValidCourseCode    = "go-wlDqAUx"
+	validCourseName    = "go-fundamental-1"
+	ValidUserIdTeacher = "28126e28-f696-4af5-9bfc-d5c9b7d952d2"
 	ValidUserIdStudent = "6286637a-3d6c-460a-b68a-956fd9553059"
 )
 
@@ -47,11 +48,27 @@ func TestCreateCoursesService(t *testing.T) {
 			log.Fatal(ErrParsingUUID, err)
 		}
 		req := entities.CreateCoursePayload{
-			UsersId: userId,
+			UsersId:    userId,
+			CourseName: validCourseName,
 		}
 
 		err = svc.CreateCourse(context.Background(), req)
 		require.Nil(t, err)
+	})
+
+	t.Run("Failed create course, course name must be required", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdTeacher)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.CreateCoursePayload{
+			UsersId:    userId,
+			CourseName: "",
+		}
+
+		err = svc.CreateCourse(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrCourseNameRequired, err)
 	})
 }
 
@@ -113,6 +130,22 @@ func TestGetCoursesService(t *testing.T) {
 		require.Nil(t, err)
 		require.NotNil(t, courses)
 		log.Println(courses)
+	})
+
+	t.Run("Success get total courses by user id", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidUserIdTeacher)
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+
+		req := entities.GetCoursesByUsersIdPayload{
+			UsersId: userId,
+		}
+
+		total, err := svc.GetTotalCourses(context.Background(), req)
+		require.Nil(t, err)
+		require.NotNil(t, total)
+		log.Println(total)
 	})
 }
 
@@ -177,17 +210,17 @@ func TestUpdateProgressCourseEnrollmentService(t *testing.T) {
 
 func TestGetListCourseByCourseIdService(t *testing.T) {
 	t.Run("Success get list course by course id", func(t *testing.T) {
-		courseId, err := uuid.Parse("aa76f7e4-dd83-40b7-8317-4bb55d7d1f86")
+		courseId, err := uuid.Parse("6183b21e-de39-44b7-bb39-4b9cadc26847")
 		if err != nil {
 			log.Fatal(ErrParsingUUID, err)
 		}
-		req := entities.GetListUserCourseByCourseIdPayload{
+		req := entities.GetEnrolledUsersByCourseIdPayload{
 			CourseId: courseId,
 		}
 
 		req.GenerateDefaultValue()
 		log.Println(req)
-		courses, err := svc.GetListUserCourseByCourseId(context.Background(), req)
+		courses, err := svc.GetEnrolledUsersByCourseId(context.Background(), req)
 		require.Nil(t, err)
 		require.NotNil(t, courses)
 		log.Println(courses)

@@ -41,7 +41,7 @@ func (s *service) CreateCourse(ctx context.Context, req entities.CreateCoursePay
 		}
 	}
 
-	NewCourse := entities.NewCourses(req.UsersId, "golang-fundamental", courseCode)
+	NewCourse := entities.NewCourses(req.UsersId, req.CourseName, courseCode)
 
 	if err := NewCourse.Validate(); err != nil {
 		return err
@@ -92,6 +92,24 @@ func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req ent
 
 	for _, course := range courses {
 		res = append(res, entities.CourseResponse(course))
+	}
+
+	return
+}
+
+func (s *service) GetTotalCourses(ctx context.Context, req entities.GetCoursesByUsersIdPayload) (res entities.CoursesLengthResponse, err error) {
+	total, err := s.Repository.FindTotalCoursesByUsersId(ctx, req.UsersId)
+	if err != nil {
+		return
+	}
+
+	if total == 0 {
+		err = errs.ErrCourseEmpty
+		return
+	}
+
+	res = entities.CoursesLengthResponse{
+		Total: total,
 	}
 
 	return
@@ -174,10 +192,10 @@ func (s *service) UpdateProgressCourseEnrollment(ctx context.Context, req entiti
 	return
 }
 
-func (s *service) GetListUserCourseByCourseId(ctx context.Context, req entities.GetListUserCourseByCourseIdPayload) (res []entities.ListUserCourseEnrollmentResponse, err error) {
+func (s *service) GetEnrolledUsersByCourseId(ctx context.Context, req entities.GetEnrolledUsersByCourseIdPayload) (res []entities.EnrolledUsersResponse, err error) {
 	NewCoursePagination := entities.NewCoursesPagination(req.Limit, req.Offset)
 
-	courses, err := s.Repository.FindListUserCourseByCourseId(ctx, req.CourseId, NewCoursePagination)
+	courses, err := s.Repository.FindEnrolledUsersByCourseId(ctx, req.CourseId, req.Name, NewCoursePagination)
 	if err != nil {
 		return
 	}
