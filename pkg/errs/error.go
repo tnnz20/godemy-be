@@ -41,6 +41,7 @@ var (
 	ErrInvalidProgress          = errors.New("invalid progress must be greater than before")
 	ErrCourseEnrollmentNotFound = errors.New("course enrollment not found")
 	ErrUserAlreadyEnrolled      = errors.New("user already enrolled course")
+	ErrEmptyEnrollment          = errors.New("enrollment still empty")
 
 	// Assessment
 	ErrInvalidAssessmentValue = errors.New("invalid assessment value")
@@ -87,6 +88,7 @@ var (
 		ErrInvalidProgress:          400,
 		ErrCourseEnrollmentNotFound: 404,
 		ErrUserAlreadyEnrolled:      409,
+		ErrEmptyEnrollment:          404,
 
 		ErrInvalidAssessmentValue: 400,
 		ErrAssessmentCodeRequired: 400,
