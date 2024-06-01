@@ -21,15 +21,20 @@ func Init(router fiber.Router, db *sql.DB) {
 
 	courses := router.Group("/courses", logger.New())
 
-	courses.Post("/create",
-		middleware.Protected(),
-		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
-		handler.CreateCourse)
-
-	courses.Get("/course",
+	courses.Get("/",
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
 		handler.GetCoursesByUsersId)
+
+	courses.Get("/total",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
+		handler.GetTotalCourses)
+
+	courses.Post("/course/create",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
+		handler.CreateCourse)
 
 	courses.Post("/course/enroll",
 		middleware.Protected(),
@@ -46,5 +51,5 @@ func Init(router fiber.Router, db *sql.DB) {
 		middleware.CheckRoles([]string{entities.ROLE_Student}),
 		handler.UpdateProgressCourseEnrollment)
 
-	courses.Get("/course/enroll/users", handler.GetListUserCourseByCourseId)
+	courses.Get("/course/:courseId/enrolled", handler.GetEnrolledUsers)
 }
