@@ -33,4 +33,5 @@ type EnrolledUsersResponse struct {
 	CourseName string    `json:"course_name"`
 	Name       string    `json:"name"`
 	Progress   uint8     `json:"progress"`
+	UpdateAt   time.Time `json:"updated_at"`
 }
