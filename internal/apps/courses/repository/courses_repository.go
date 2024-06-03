@@ -220,7 +220,8 @@ func (r *repository) FindEnrolledUsersByCourseId(ctx context.Context, courseId u
 		u.id, 
 		c.course_name,
 		u.name,
-		ce.progress
+		ce.progress,
+		ce.updated_at
 	FROM 
 		users AS u
 	JOIN 
@@ -250,6 +251,7 @@ func (r *repository) FindEnrolledUsersByCourseId(ctx context.Context, courseId u
 			&c.CourseName,
 			&c.Name,
 			&c.Progress,
+			&c.UpdateAt,
 		)
 
 		if err != nil {
