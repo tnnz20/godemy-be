@@ -16,4 +16,5 @@ type Service interface {
 	GetCourseEnrollmentByUsersId(ctx context.Context, req entities.GetCourseEnrollmentByUsersIdPayload) (res entities.CourseEnrollmentResponse, err error)
 	UpdateProgressCourseEnrollment(ctx context.Context, req entities.UpdateEnrollmentProgressPayload) (err error)
 	GetEnrolledUsersByCourseId(ctx context.Context, req entities.GetEnrolledUsersByCourseIdPayload) (res []entities.EnrolledUsersResponse, err error)
+	GetTotalEnrolledUsersByCourseId(ctx context.Context, req entities.GetTotalEnrolledUsersByCourseIdPayload) (res entities.EnrolledUsersLengthResponse, err error)
 }
