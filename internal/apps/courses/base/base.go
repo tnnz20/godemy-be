@@ -52,4 +52,6 @@ func Init(router fiber.Router, db *sql.DB) {
 		handler.UpdateProgressCourseEnrollment)
 
 	courses.Get("/course/:courseId/enrolled", handler.GetEnrolledUsers)
+	courses.Get("/course/:courseId/enrolled/total", handler.GetTotalEnrolledUsers)
+
 }

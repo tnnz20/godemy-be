@@ -59,7 +59,7 @@ func (h handler) GetCoursesByUsersId(c *fiber.Ctx) error {
 	if err != nil {
 		return response.ErrorBadRequest(c, err)
 	}
-	limit := c.QueryInt("limit", 5)
+	limit := c.QueryInt("limit", 6)
 	offset := c.QueryInt("offset", 0)
 
 	var req entities.GetCoursesByUsersIdWithPaginationPayload
@@ -202,7 +202,7 @@ func (h handler) UpdateProgressCourseEnrollment(c *fiber.Ctx) error {
 func (h handler) GetEnrolledUsers(c *fiber.Ctx) error {
 
 	var req entities.GetEnrolledUsersByCourseIdPayload
-	limit := c.QueryInt("limit", 5)
+	limit := c.QueryInt("limit", 6)
 	offset := c.QueryInt("offset", 0)
 
 	paramsCourseId := c.Params("courseId")
@@ -231,4 +231,34 @@ func (h handler) GetEnrolledUsers(c *fiber.Ctx) error {
 	}
 
 	return response.SuccessOK(c, users)
+}
+
+func (h handler) GetTotalEnrolledUsers(c *fiber.Ctx) error {
+
+	var req entities.GetTotalEnrolledUsersByCourseIdPayload
+
+	paramsCourseId := c.Params("courseId")
+
+	courseId, err := uuid.Parse(paramsCourseId)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.Name = c.Query("name")
+	req.CourseId = courseId
+
+	total, err := h.Service.GetTotalEnrolledUsersByCourseId(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, total)
 }
