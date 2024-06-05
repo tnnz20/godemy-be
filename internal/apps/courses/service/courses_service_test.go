@@ -36,7 +36,7 @@ var (
 	ValidCourseCode    = "go-wlDqAUx"
 	validCourseName    = "go-fundamental-1"
 	ValidUserIdTeacher = "28126e28-f696-4af5-9bfc-d5c9b7d952d2"
-	ValidUserIdStudent = "6286637a-3d6c-460a-b68a-956fd9553059"
+	ValidUserIdStudent = "0c550f03-79d1-4f55-aeac-770f1aefa818"
 )
 
 var ErrParsingUUID = "Error Parsing UUID: "
@@ -224,5 +224,22 @@ func TestGetListCourseByCourseIdService(t *testing.T) {
 		require.Nil(t, err)
 		require.NotNil(t, courses)
 		log.Println(courses)
+	})
+}
+
+func TestGetTotalEnrolledUsersByCourseIdService(t *testing.T) {
+	t.Run("Success get total enrolled users by course id", func(t *testing.T) {
+		courseId, err := uuid.Parse("6183b21e-de39-44b7-bb39-4b9cadc26847")
+		if err != nil {
+			log.Fatal(ErrParsingUUID, err)
+		}
+		req := entities.GetTotalEnrolledUsersByCourseIdPayload{
+			CourseId: courseId,
+		}
+
+		total, err := svc.GetTotalEnrolledUsersByCourseId(context.Background(), req)
+		require.Nil(t, err)
+		require.NotNil(t, total)
+		log.Println(total)
 	})
 }
