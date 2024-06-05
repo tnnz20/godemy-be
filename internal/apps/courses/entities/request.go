@@ -62,3 +62,8 @@ type GetEnrolledUsersByCourseIdPayload struct {
 	Name     string    `query:"name"`
 	ModelPaginationPayload
 }
+
+type GetTotalEnrolledUsersByCourseIdPayload struct {
+	CourseId uuid.UUID `params:"courseId"`
+	Name     string    `query:"name"`
+}

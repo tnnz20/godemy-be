@@ -35,3 +35,7 @@ type EnrolledUsersResponse struct {
 	Progress   uint8     `json:"progress"`
 	UpdateAt   time.Time `json:"updated_at"`
 }
+
+type EnrolledUsersLengthResponse struct {
+	Total int `json:"total"`
+}
