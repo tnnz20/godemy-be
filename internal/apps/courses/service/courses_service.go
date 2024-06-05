@@ -209,3 +209,21 @@ func (s *service) GetEnrolledUsersByCourseId(ctx context.Context, req entities.G
 
 	return
 }
+
+func (s *service) GetTotalEnrolledUsersByCourseId(ctx context.Context, req entities.GetTotalEnrolledUsersByCourseIdPayload) (res entities.EnrolledUsersLengthResponse, err error) {
+	total, err := s.Repository.FindTotalEnrolledUsersByCourseId(ctx, req.CourseId, req.Name)
+	if err != nil {
+		return
+	}
+
+	if total == 0 {
+		err = errs.ErrCourseEmpty
+		return
+	}
+
+	res = entities.EnrolledUsersLengthResponse{
+		Total: total,
+	}
+
+	return
+}

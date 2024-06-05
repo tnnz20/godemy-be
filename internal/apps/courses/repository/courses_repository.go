@@ -267,3 +267,27 @@ func (r *repository) FindEnrolledUsersByCourseId(ctx context.Context, courseId u
 
 	return
 }
+
+func (r *repository) FindTotalEnrolledUsersByCourseId(ctx context.Context, courseId uuid.UUID, name string) (total int, err error) {
+	query := `
+	SELECT COUNT(u.id)
+	FROM 
+		users AS u
+	JOIN 
+		course_enrollment AS ce ON u.id = ce.users_id
+	JOIN
+		courses AS c ON ce.courses_id = c.id
+	WHERE
+		c.id = $1 AND
+		(u.name ILIKE $2)
+	`
+
+	wildcardName := "%" + name + "%"
+
+	err = r.db.QueryRowContext(ctx, query, courseId, wildcardName).Scan(&total)
+	if err != nil {
+		return
+	}
+
+	return
+}
