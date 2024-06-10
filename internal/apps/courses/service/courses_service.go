@@ -80,7 +80,7 @@ func (s *service) GetCourseByCourseCode(ctx context.Context, req entities.GetCou
 func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req entities.GetCoursesByUsersIdWithPaginationPayload) (res []entities.CourseResponse, err error) {
 	NewCoursePagination := entities.NewCoursesPagination(req.Limit, req.Offset)
 
-	courses, err := s.Repository.FindCoursesByUsersIdWithPagination(ctx, req.UsersId, NewCoursePagination)
+	courses, err := s.Repository.FindCoursesByUsersIdWithPagination(ctx, req.UsersId, req.CourseName, NewCoursePagination)
 	if err != nil {
 		return
 	}
@@ -97,8 +97,8 @@ func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req ent
 	return
 }
 
-func (s *service) GetTotalCourses(ctx context.Context, req entities.GetCoursesByUsersIdPayload) (res entities.CoursesLengthResponse, err error) {
-	total, err := s.Repository.FindTotalCoursesByUsersId(ctx, req.UsersId)
+func (s *service) GetTotalCourses(ctx context.Context, req entities.GetTotalCoursesByUsersIdPayload) (res entities.CoursesLengthResponse, err error) {
+	total, err := s.Repository.FindTotalCoursesByUsersId(ctx, req.UsersId, req.CourseName)
 	if err != nil {
 		return
 	}

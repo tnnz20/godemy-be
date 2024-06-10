@@ -138,7 +138,7 @@ func TestGetCoursesService(t *testing.T) {
 			log.Fatal(ErrParsingUUID, err)
 		}
 
-		req := entities.GetCoursesByUsersIdPayload{
+		req := entities.GetTotalCoursesByUsersIdPayload{
 			UsersId: userId,
 		}
 

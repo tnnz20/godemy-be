@@ -56,9 +56,12 @@ func (r *repository) CreateCourse(ctx context.Context, course entities.Courses) 
 
 func (r *repository) FindCourseByCourseCode(ctx context.Context, courseCode string) (course entities.Courses, err error) {
 	query := `
-	SELECT id, users_id, course_name, course_code, created_at, updated_at
-	FROM courses
-	WHERE course_code = $1
+	SELECT 
+		id, users_id, course_name, course_code, created_at, updated_at
+	FROM 
+		courses
+	WHERE 
+		course_code = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, courseCode).Scan(
@@ -77,16 +80,23 @@ func (r *repository) FindCourseByCourseCode(ctx context.Context, courseCode stri
 	return
 }
 
-func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, usersId uuid.UUID, model entities.CoursesPagination) (courses []entities.Courses, err error) {
+func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, usersId uuid.UUID, courseName string, model entities.CoursesPagination) (courses []entities.Courses, err error) {
 	query := `
-	SELECT id, users_id, course_name, course_code, created_at, updated_at
-	FROM courses
-	WHERE users_id = $1
-	ORDER BY created_at DESC
-	LIMIT $2 OFFSET $3
+	SELECT 
+		id, users_id, course_name, course_code, created_at, updated_at
+	FROM 
+		courses
+	WHERE 
+		users_id = $1 AND
+		(course_name ILIKE $2)
+	ORDER BY 
+		created_at DESC
+	LIMIT $3 OFFSET $4
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, usersId, model.Limit, model.Offset)
+	wildcardCourseName := "%" + courseName + "%"
+
+	rows, err := r.db.QueryContext(ctx, query, usersId, wildcardCourseName, model.Limit, model.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -119,14 +129,20 @@ func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, use
 	return
 }
 
-func (r *repository) FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID) (total int, err error) {
+func (r *repository) FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID, courseName string) (total int, err error) {
 	query := `
-	SELECT COUNT(id)
-	FROM courses
-	WHERE users_id = $1
+	SELECT 
+		COUNT(id)
+	FROM 
+		courses
+	WHERE 
+		users_id = $1 AND
+		(course_name ILIKE $2)
 	`
 
-	err = r.db.QueryRowContext(ctx, query, usersId).Scan(&total)
+	wildcardCourseName := "%" + courseName + "%"
+
+	err = r.db.QueryRowContext(ctx, query, usersId, wildcardCourseName).Scan(&total)
 	if err != nil {
 		return
 	}
@@ -171,9 +187,12 @@ func (r *repository) InsertCourseEnrollment(ctx context.Context, enrollment enti
 
 func (r *repository) FindCourseEnrollmentByUsersId(ctx context.Context, usersId uuid.UUID) (enrollments entities.Enrollment, err error) {
 	query := `
-	SELECT id, users_id, courses_id, progress, created_at, updated_at
-	FROM course_enrollment
-	WHERE users_id = $1
+	SELECT 
+		id, users_id, courses_id, progress, created_at, updated_at
+	FROM 
+		course_enrollment
+	WHERE 
+		users_id = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, usersId).Scan(
@@ -194,9 +213,12 @@ func (r *repository) FindCourseEnrollmentByUsersId(ctx context.Context, usersId 
 
 func (r *repository) UpdateEnrollmentProgress(ctx context.Context, enrollment entities.Enrollment) (err error) {
 	query := `
-	UPDATE course_enrollment
-	SET progress = $1, updated_at = $2
-	WHERE id = $3
+	UPDATE 
+		course_enrollment
+	SET 
+		progress = $1, updated_at = $2
+	WHERE 
+		id = $3
 	`
 
 	stmt, err := r.db.PrepareContext(ctx, query)
