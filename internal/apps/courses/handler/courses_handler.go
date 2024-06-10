@@ -63,6 +63,7 @@ func (h handler) GetCoursesByUsersId(c *fiber.Ctx) error {
 	offset := c.QueryInt("offset", 0)
 
 	var req entities.GetCoursesByUsersIdWithPaginationPayload
+	req.CourseName = c.Query("course_name")
 	req.UsersId = userId
 	req.Limit = limit
 	req.Offset = offset
@@ -91,8 +92,9 @@ func (h handler) GetTotalCourses(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetCoursesByUsersIdPayload
+	var req entities.GetTotalCoursesByUsersIdPayload
 	req.UsersId = userId
+	req.CourseName = c.Query("course_name")
 
 	total, err := h.Service.GetTotalCourses(c.UserContext(), req)
 	if err != nil {
