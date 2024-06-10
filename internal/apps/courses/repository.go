@@ -11,8 +11,8 @@ import (
 type Repository interface {
 	CreateCourse(ctx context.Context, course entities.Courses) (err error)
 	FindCourseByCourseCode(ctx context.Context, courseCode string) (course entities.Courses, err error)
-	FindCoursesByUsersIdWithPagination(ctx context.Context, usersId uuid.UUID, model entities.CoursesPagination) (courses []entities.Courses, err error)
-	FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID) (total int, err error)
+	FindCoursesByUsersIdWithPagination(ctx context.Context, usersId uuid.UUID, courseName string, model entities.CoursesPagination) (courses []entities.Courses, err error)
+	FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID, courseName string) (total int, err error)
 	InsertCourseEnrollment(ctx context.Context, enrollment entities.Enrollment) (err error)
 	FindCourseEnrollmentByUsersId(ctx context.Context, usersId uuid.UUID) (enrollments entities.Enrollment, err error)
 	UpdateEnrollmentProgress(ctx context.Context, enrollment entities.Enrollment) (err error)
