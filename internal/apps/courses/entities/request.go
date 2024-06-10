@@ -2,6 +2,25 @@ package entities
 
 import "github.com/google/uuid"
 
+type ModelPaginationPayload struct {
+	Limit  int `query:"limit"`
+	Offset int `query:"offset"`
+}
+
+func (p *ModelPaginationPayload) GenerateDefaultValue() ModelPaginationPayload {
+	// limit rows
+	if p.Limit <= 0 {
+		p.Limit = 10
+	}
+
+	// skip rows
+	if p.Offset <= 0 {
+		p.Offset = 0
+	}
+
+	return *p
+}
+
 type CreateCoursePayload struct {
 	UsersId    uuid.UUID `json:"users_id"`
 	CourseName string    `json:"course_name"`
@@ -19,28 +38,15 @@ type GetEnrolledUsersByUsersIdPayload struct {
 	UsersId uuid.UUID `json:"users_id"`
 }
 
-type ModelPaginationPayload struct {
-	Limit  int `query:"limit"`
-	Offset int `query:"offset"`
-}
-
 type GetCoursesByUsersIdWithPaginationPayload struct {
-	UsersId uuid.UUID `json:"users_id"`
+	UsersId    uuid.UUID `json:"users_id"`
+	CourseName string    `query:"course_name"`
 	ModelPaginationPayload
 }
 
-func (p *ModelPaginationPayload) GenerateDefaultValue() ModelPaginationPayload {
-	// limit rows
-	if p.Limit <= 0 {
-		p.Limit = 10
-	}
-
-	// skip rows
-	if p.Offset <= 0 {
-		p.Offset = 0
-	}
-
-	return *p
+type GetTotalCoursesByUsersIdPayload struct {
+	UsersId    uuid.UUID `json:"users_id"`
+	CourseName string    `query:"course_name"`
 }
 
 type EnrollCoursePayload struct {
