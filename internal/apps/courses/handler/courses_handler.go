@@ -59,6 +59,33 @@ func (h handler) GetCoursesByUsersId(c *fiber.Ctx) error {
 	if err != nil {
 		return response.ErrorBadRequest(c, err)
 	}
+
+	var req entities.GetCoursesByUsersIdPayload
+	req.CourseName = c.Query("course_name")
+	req.UsersId = userId
+
+	courses, err := h.Service.GetCoursesByUsersId(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, courses)
+}
+func (h handler) GetCoursesByUsersIdWithPagination(c *fiber.Ctx) error {
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
 	limit := c.QueryInt("limit", 6)
 	offset := c.QueryInt("offset", 0)
 

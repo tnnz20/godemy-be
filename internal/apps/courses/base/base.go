@@ -24,6 +24,11 @@ func Init(router fiber.Router, db *sql.DB) {
 	courses.Get("/",
 		middleware.Protected(),
 		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
+		handler.GetCoursesByUsersIdWithPagination)
+
+	courses.Get("/list",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Teacher}),
 		handler.GetCoursesByUsersId)
 
 	courses.Get("/total",
