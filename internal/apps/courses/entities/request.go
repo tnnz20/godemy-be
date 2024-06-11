@@ -31,7 +31,8 @@ type GetCourseByCourseCodePayload struct {
 }
 
 type GetCoursesByUsersIdPayload struct {
-	UsersId uuid.UUID `json:"users_id"`
+	UsersId    uuid.UUID `json:"users_id"`
+	CourseName string    `query:"course_name"`
 }
 
 type GetEnrolledUsersByUsersIdPayload struct {
