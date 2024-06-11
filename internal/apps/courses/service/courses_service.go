@@ -97,6 +97,25 @@ func (s *service) GetCoursesByUsersIdWithPagination(ctx context.Context, req ent
 	return
 }
 
+func (s *service) GetCoursesByUsersId(ctx context.Context, req entities.GetCoursesByUsersIdPayload) (res []entities.CourseResponse, err error) {
+
+	courses, err := s.Repository.FindCoursesByUsersId(ctx, req.UsersId, req.CourseName)
+	if err != nil {
+		return
+	}
+
+	if len(courses) == 0 {
+		err = errs.ErrCourseEmpty
+		return
+	}
+
+	for _, course := range courses {
+		res = append(res, entities.CourseResponse(course))
+	}
+
+	return
+}
+
 func (s *service) GetTotalCourses(ctx context.Context, req entities.GetTotalCoursesByUsersIdPayload) (res entities.CoursesLengthResponse, err error) {
 	total, err := s.Repository.FindTotalCoursesByUsersId(ctx, req.UsersId, req.CourseName)
 	if err != nil {

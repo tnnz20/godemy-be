@@ -129,6 +129,54 @@ func (r *repository) FindCoursesByUsersIdWithPagination(ctx context.Context, use
 	return
 }
 
+func (r *repository) FindCoursesByUsersId(ctx context.Context, usersId uuid.UUID, courseName string) (courses []entities.Courses, err error) {
+	query := `
+	SELECT 
+		id, users_id, course_name, course_code, created_at, updated_at
+	FROM 
+		courses
+	WHERE 
+		users_id = $1 AND
+		(course_name ILIKE $2)
+	ORDER BY 
+		created_at DESC
+	`
+
+	wildcardCourseName := "%" + courseName + "%"
+
+	rows, err := r.db.QueryContext(ctx, query, usersId, wildcardCourseName)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var c entities.Courses
+
+		err = rows.Scan(
+			&c.ID,
+			&c.UsersId,
+			&c.CourseName,
+			&c.CourseCode,
+			&c.CreatedAt,
+			&c.UpdatedAt,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		courses = append(courses, c)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return
+}
+
 func (r *repository) FindTotalCoursesByUsersId(ctx context.Context, usersId uuid.UUID, courseName string) (total int, err error) {
 	query := `
 	SELECT 
