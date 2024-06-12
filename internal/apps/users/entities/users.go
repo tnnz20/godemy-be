@@ -41,8 +41,9 @@ func NewUsersRegister(email, password, name string) Users {
 	}
 }
 
-func NewUsersUpdate(date time.Time, name, address, gender, profileImg string) Users {
+func NewUsersUpdate(id uuid.UUID, date time.Time, name, address, gender, profileImg string) Users {
 	return Users{
+		ID:         id,
 		Name:       name,
 		Date:       date,
 		Address:    address,
