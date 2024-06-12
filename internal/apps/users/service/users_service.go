@@ -8,6 +8,7 @@ import (
 	"github.com/tnnz20/godemy-be/internal/apps/users"
 	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
 	"github.com/tnnz20/godemy-be/pkg/errs"
+	"github.com/tnnz20/godemy-be/pkg/helpers"
 )
 
 type service struct {
@@ -32,7 +33,7 @@ func (s service) Register(ctx context.Context, req entities.RegisterPayload) (er
 	}
 
 	// Check if email already exists
-	user, err := s.Repository.GetUserByEmail(ctx, NewUser.Email)
+	user, err := s.Repository.FindUserByEmail(ctx, NewUser.Email)
 	if err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
 			return
@@ -94,7 +95,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 	}
 
 	// Get user by email
-	user, err := s.Repository.GetUserByEmail(ctx, NewUserLogin.Email)
+	user, err := s.Repository.FindUserByEmail(ctx, NewUserLogin.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entities.LoginResponse{}, errs.ErrEmailNotFound
@@ -102,7 +103,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 		return entities.LoginResponse{}, err
 	}
 
-	role, err := s.Repository.GetRoleByUserID(ctx, user.ID)
+	role, err := s.Repository.FindRoleByUserID(ctx, user.ID)
 	if err != nil {
 		return entities.LoginResponse{}, err
 	}
@@ -127,7 +128,7 @@ func (s service) Login(ctx context.Context, req entities.LoginPayload) (res enti
 }
 
 func (s service) GetUser(ctx context.Context, req entities.GetUserPayload) (res entities.UserResponse, err error) {
-	user, err := s.Repository.GetUserByUserId(ctx, req.ID)
+	user, err := s.Repository.FindUserByUserId(ctx, req.ID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrUserNotFound
@@ -146,6 +147,43 @@ func (s service) GetUser(ctx context.Context, req entities.GetUserPayload) (res 
 		ProfileImg: user.ProfileImg,
 		CreatedAt:  user.CreatedAt,
 		UpdatedAt:  user.UpdatedAt,
+	}
+
+	return
+}
+
+func (s service) UpdateUser(ctx context.Context, req entities.UpdateUserPayload) (err error) {
+
+	_, err = s.Repository.FindUserByUserId(ctx, req.ID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrUserNotFound
+			return
+		}
+		return
+	}
+
+	time, err := helpers.StringToTime(req.Date)
+	if err != nil {
+		return err
+	}
+
+	NewUser := entities.NewUsersUpdate(
+		req.ID,
+		time,
+		req.Name,
+		req.Address,
+		req.Gender,
+		req.ProfileImg,
+	)
+
+	// Validate user payload
+	if err := NewUser.ValidateUpdateUsers(); err != nil {
+		return err
+	}
+
+	if err := s.Repository.UpdateUserProfile(ctx, NewUser); err != nil {
+		return err
 	}
 
 	return

@@ -72,6 +72,10 @@ func TestServiceRegisterAuth(t *testing.T) {
 	})
 }
 
+const (
+	ValidId = "cd7ddb0d-03e6-4524-a010-7219adad233d"
+)
+
 func TestServiceLoginAuth(t *testing.T) {
 	t.Run("Success Login", func(t *testing.T) {
 		email := fmt.Sprintf("jhon%v@gmail.com", randString)
@@ -145,7 +149,6 @@ func TestServiceLoginAuth(t *testing.T) {
 }
 
 func TestServiceGetUser(t *testing.T) {
-	const ValidId = "5c0ed3a9-d7b7-4ea6-b877-2ce9a234068c"
 
 	id, err := uuid.Parse(ValidId)
 	if err != nil {
@@ -171,5 +174,26 @@ func TestServiceGetUser(t *testing.T) {
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrUserNotFound, err)
 		require.Empty(t, user)
+	})
+}
+
+func TestServiceUpdateUser(t *testing.T) {
+	t.Run("Success update user", func(t *testing.T) {
+		userId, err := uuid.Parse(ValidId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.UpdateUserPayload{
+			ID:         userId,
+			Name:       "Jhon Doe rq",
+			Date:       "2021-04-01",
+			Address:    "Jakarta Barat",
+			Gender:     "male",
+			ProfileImg: "",
+		}
+
+		err = svc.UpdateUser(context.Background(), req)
+		require.Nil(t, err)
 	})
 }

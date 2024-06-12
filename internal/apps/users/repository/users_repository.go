@@ -40,8 +40,10 @@ func (repository) Rollback(ctx context.Context, tx *sql.Tx) (err error) {
 // CreateUsersWithTx implements user repository to create new users.
 func (r repository) CreateUsersWithTX(ctx context.Context, tx *sql.Tx, user entities.Users) (id uuid.UUID, err error) {
 	query := `
-	INSERT INTO users (id, email, password, name, created_at, updated_at) 
-	VALUES ($1, $2, $3, $4, $5, $6) 
+	INSERT INTO 
+		users (id, email, password, name, created_at, updated_at) 
+	VALUES 
+		($1, $2, $3, $4, $5, $6) 
 	RETURNING id
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
@@ -84,7 +86,7 @@ func (r repository) InsertUsersRoleWithTX(ctx context.Context, tx *sql.Tx, role 
 
 }
 
-func (r repository) GetUserByEmail(ctx context.Context, email string) (user entities.Users, err error) {
+func (r repository) FindUserByEmail(ctx context.Context, email string) (user entities.Users, err error) {
 
 	var (
 		nullableDate       sql.NullTime
@@ -94,9 +96,21 @@ func (r repository) GetUserByEmail(ctx context.Context, email string) (user enti
 	)
 
 	query := `
-	SELECT id, email, password, name, date, address, gender, profile_img, created_at, updated_at
-	FROM users
-	WHERE email = $1
+	SELECT 
+		id, 
+		email, 
+		password, 
+		name, 
+		date, 
+		address, 
+		gender, 
+		profile_img, 
+		created_at, 
+		updated_at
+	FROM 
+		users
+	WHERE 
+		email = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, email).Scan(
@@ -134,11 +148,14 @@ func (r repository) GetUserByEmail(ctx context.Context, email string) (user enti
 	return
 }
 
-func (r repository) GetRoleByUserID(ctx context.Context, userID uuid.UUID) (role entities.Roles, err error) {
+func (r repository) FindRoleByUserID(ctx context.Context, userID uuid.UUID) (role entities.Roles, err error) {
 	query := `
-	SELECT users_id, role
-	FROM roles
-	WHERE users_id = $1
+	SELECT 
+		users_id, role
+	FROM 
+		roles
+	WHERE 
+		users_id = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, userID).Scan(
@@ -151,7 +168,7 @@ func (r repository) GetRoleByUserID(ctx context.Context, userID uuid.UUID) (role
 	return
 }
 
-func (r repository) GetUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error) {
+func (r repository) FindUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error) {
 	var (
 		nullableDate       sql.NullTime
 		nullableAddress    sql.NullString
@@ -160,9 +177,20 @@ func (r repository) GetUserByUserId(ctx context.Context, userId uuid.UUID) (user
 	)
 
 	query := `
-	SELECT id, email, name, date, address, gender, profile_img, created_at, updated_at
-	FROM users
-	WHERE id = $1
+	SELECT 
+		id, 
+		email, 
+		name, 
+		date, 
+		address, 
+		gender, 
+		profile_img, 
+		created_at, 
+		updated_at
+	FROM 
+		users
+	WHERE 
+		id = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, userId).Scan(
@@ -197,4 +225,45 @@ func (r repository) GetUserByUserId(ctx context.Context, userId uuid.UUID) (user
 	}
 
 	return
+}
+
+func (r repository) UpdateUserProfile(ctx context.Context, users entities.Users) (err error) {
+	query := `
+	UPDATE
+		users
+	SET
+		name = $1,
+		date = $2,
+		address = $3,
+		gender = $4,
+		profile_img = $5,
+		updated_at = $6
+	
+	WHERE
+		id = $7
+	`
+
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		users.Name,
+		users.Date,
+		users.Address,
+		users.Gender,
+		users.ProfileImg,
+		users.UpdatedAt,
+		users.ID,
+	)
+
+	if err != nil {
+		return
+	}
+
+	return
+
 }
