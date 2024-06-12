@@ -21,6 +21,9 @@ func Init(router fiber.Router, db *sql.DB, secret string) {
 	auth := router.Group("/auth", logger.New())
 	auth.Post("/register", handler.Register)
 	auth.Post("/login", handler.Login)
-	auth.Get("/user", middleware.Protected(), handler.GetUser)
+
+	user := router.Group("/users", logger.New())
+	user.Get("/profile", middleware.Protected(), handler.GetUser)
+	user.Patch("/profile/edit", middleware.Protected(), handler.UpdateUser)
 
 }
