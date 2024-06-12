@@ -14,8 +14,9 @@ import (
 type Repository interface {
 	CreateUsersWithTX(ctx context.Context, tx *sql.Tx, user entities.Users) (id uuid.UUID, err error)
 	InsertUsersRoleWithTX(ctx context.Context, tx *sql.Tx, role entities.Roles) (err error)
-	GetUserByEmail(ctx context.Context, email string) (user entities.Users, err error)
-	GetRoleByUserID(ctx context.Context, userID uuid.UUID) (role entities.Roles, err error)
-	GetUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error)
+	FindUserByEmail(ctx context.Context, email string) (user entities.Users, err error)
+	FindRoleByUserID(ctx context.Context, userID uuid.UUID) (role entities.Roles, err error)
+	FindUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error)
+	UpdateUserProfile(ctx context.Context, users entities.Users) (err error)
 	postgres.DBTX
 }
