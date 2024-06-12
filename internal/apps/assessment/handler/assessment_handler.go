@@ -80,7 +80,7 @@ func (h handler) GetAssessments(c *fiber.Ctx) error {
 	return response.SuccessOK(c, res)
 }
 
-func (h handler) GetAssessment(c *fiber.Ctx) error {
+func (h handler) GetFilteredAssessmentResult(c *fiber.Ctx) error {
 	// Get the user id from the context
 	id := c.Locals("id").(string)
 
@@ -89,15 +89,14 @@ func (h handler) GetAssessment(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetAssessmentByAssessmentCodeRequest
-	if err := c.QueryParser(&req); err != nil {
-		err = errs.ErrAssessmentCodeRequired
-		return response.ErrorBadRequest(c, err)
-	}
+	var req entities.GetAssessmentResultByAssessmentCodeRequest
 
+	req.AssessmentCode = c.Query("assessment_code")
+	req.Limit = c.QueryInt("limit", 5)
+	req.Offset = c.QueryInt("offset", 0)
 	req.UsersId = userId
 
-	res, err := h.Service.GetAssessmentResultByAssessmentCode(c.UserContext(), req)
+	res, err := h.Service.GetFilteredAssessmentResult(c.UserContext(), req)
 	if err != nil {
 		errorMapping := errs.ErrorMapping[err]
 		switch errorMapping {
