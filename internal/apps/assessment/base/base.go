@@ -28,7 +28,7 @@ func Init(router fiber.Router, db *sql.DB) {
 
 	assessment.Get("/assessment",
 		middleware.Protected(),
-		handler.GetAssessment,
+		handler.GetFilteredAssessmentResult,
 	)
 
 	assessment.Post("/assessment",
