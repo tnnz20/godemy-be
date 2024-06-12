@@ -69,6 +69,30 @@ func (h handler) Login(c *fiber.Ctx) error {
 }
 
 func (h handler) GetUser(c *fiber.Ctx) error {
+	var req entities.GetUserPayload
+
+	queryId := c.Query("id")
+	if queryId != "" {
+		userId, err := uuid.Parse(queryId)
+		if err != nil {
+			return response.ErrorBadRequest(c, err)
+		}
+
+		req.ID = userId
+		user, err := h.svc.GetUser(c.UserContext(), req)
+		if err != nil {
+			errorMapping := errs.ErrorMapping[err]
+			switch errorMapping {
+			case 404:
+				return response.ErrorNotFound(c, err)
+			default:
+				return response.InternalServerError(c, err)
+			}
+		}
+
+		return response.SuccessOK(c, user)
+	}
+
 	id := c.Locals("id").(string)
 
 	userId, err := uuid.Parse(id)
@@ -76,7 +100,6 @@ func (h handler) GetUser(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetUserPayload
 	req.ID = userId
 
 	user, err := h.svc.GetUser(c.UserContext(), req)
@@ -91,4 +114,35 @@ func (h handler) GetUser(c *fiber.Ctx) error {
 	}
 
 	return response.SuccessOK(c, user)
+}
+
+func (h handler) UpdateUser(c *fiber.Ctx) error {
+	var req entities.UpdateUserPayload
+
+	if err := c.BodyParser(&req); err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.ID = userId
+
+	if err := h.svc.UpdateUser(c.UserContext(), req); err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, nil)
 }
