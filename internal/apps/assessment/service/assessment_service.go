@@ -45,7 +45,7 @@ func (s *service) CreateAssessmentResult(ctx context.Context, req entities.Creat
 
 // GetAssessments is a function to get all assessments by user id
 func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
-	assessments, err := s.Repository.FindAssessmentsFiltered(ctx, req.UsersId)
+	assessments, err := s.Repository.FindAssessments(ctx, req.UsersId)
 	if err != nil {
 		return []entities.AssessmentResponse{}, err
 	}
@@ -62,9 +62,11 @@ func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAsse
 	return
 }
 
-// GetAssessmentByAssessmentCode is a function to get assessment by assessment code
-func (s *service) GetAssessmentResultByAssessmentCode(ctx context.Context, req entities.GetAssessmentByAssessmentCodeRequest) (res entities.AssessmentResponse, err error) {
-	assessment, err := s.Repository.FindAssessmentByAssessmentCode(ctx, req.UsersId, req.AssessmentCode)
+// GetFilteredAssessmentResult is a function to get assessment by assessment code
+func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultByAssessmentCodeRequest) (res []entities.AssessmentResponse, err error) {
+
+	NewAssessmentPagination := entities.NewAssessmentPagination(req.Limit, req.Offset)
+	assessments, err := s.Repository.FindAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode, NewAssessmentPagination)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound
@@ -73,7 +75,14 @@ func (s *service) GetAssessmentResultByAssessmentCode(ctx context.Context, req e
 		return res, err
 	}
 
-	res = entities.AssessmentResponse(assessment)
+	if len(assessments) == 0 {
+		err = errs.ErrAssessmentNotFound
+		return
+	}
+
+	for _, assessment := range assessments {
+		res = append(res, entities.AssessmentResponse(assessment))
+	}
 
 	return
 }

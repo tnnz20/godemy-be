@@ -59,7 +59,7 @@ func (r *repository) CreateAssessmentResult(ctx context.Context, assessment enti
 }
 
 // FindAssessments is a function to get all assessments by user id
-func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.UUID) (assessments []entities.AssessmentResult, err error) {
+func (r *repository) FindAssessments(ctx context.Context, usersId uuid.UUID) (assessments []entities.AssessmentResult, err error) {
 	query := `
 	SELECT 
 		a.id, 
@@ -112,8 +112,8 @@ func (r *repository) FindAssessmentsFiltered(ctx context.Context, usersId uuid.U
 	return
 }
 
-// FindAssessmentByAssessmentCode is a function to get assessment by user id and assessment code
-func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (assessment entities.AssessmentResult, err error) {
+// FindAssessmentsFilteredByCode is a function to get assessment by user id and assessment code
+func (r *repository) FindAssessmentsFilteredByCode(ctx context.Context, usersId uuid.UUID, assessmentCode string, model entities.AssessmentPagination) (assessments []entities.AssessmentResult, err error) {
 	query := `
 	SELECT 
 		id, 
@@ -123,23 +123,97 @@ func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId
 		assessment_code, 
 		created_at, 
 		updated_at
-	FROM users_assessment_result
-	WHERE users_id = $1 AND assessment_code = $2
-	ORDER BY created_at DESC
+	FROM 
+		users_assessment_result
+	WHERE 
+		users_id = $1 AND 
+		assessment_code = $2
+	ORDER BY 
+		created_at DESC
+	LIMIT $3 OFFSET $4
 	`
 
-	err = r.db.QueryRowContext(ctx, query, usersId, assessmentCode).Scan(
-		&assessment.ID,
-		&assessment.UsersId,
-		&assessment.CoursesId,
-		&assessment.AssessmentValue,
-		&assessment.AssessmentCode,
-		&assessment.CreatedAt,
-		&assessment.UpdatedAt,
-	)
-
+	rows, err := r.db.QueryContext(ctx, query, usersId, assessmentCode, model.Limit, model.Offset)
 	if err != nil {
 		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var assessment entities.AssessmentResult
+		err = rows.Scan(
+			&assessment.ID,
+			&assessment.UsersId,
+			&assessment.CoursesId,
+			&assessment.AssessmentValue,
+			&assessment.AssessmentCode,
+			&assessment.CreatedAt,
+			&assessment.UpdatedAt,
+		)
+
+		if err != nil {
+			return
+		}
+
+		assessments = append(assessments, assessment)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return
+}
+
+func (r *repository) FindAssessmentsUsersByCode(ctx context.Context, courseId uuid.UUID, assessmentCode string, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
+	query := `
+	SELECT  
+		u.id, 
+		u.name,
+		ar.courses_id, 
+		ar.assessment_value, 
+		ar.assessment_code, 
+		ar.created_at, 
+	FROM 
+		users_assessment_result AS ar
+	JOIN
+		users AS u
+	WHERE 
+		courses_id = $1
+		assessment_code = $2
+	ORDER BY 
+		created_at DESC
+	LIMIT $3 OFFSET $4
+	`
+
+	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, model.Limit, model.Offset)
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var assessmentUsersResult entities.AssessmentUsersResult
+		err = rows.Scan(
+			&assessmentUsersResult.Id,
+			&assessmentUsersResult.Name,
+			&assessmentUsersResult.CoursesId,
+			&assessmentUsersResult.AssessmentValue,
+			&assessmentUsersResult.AssessmentCode,
+			&assessmentUsersResult.CreatedAt,
+		)
+
+		if err != nil {
+			return
+		}
+
+		assessments = append(assessments, assessmentUsersResult)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return
@@ -148,9 +222,17 @@ func (r *repository) FindAssessmentByAssessmentCode(ctx context.Context, usersId
 // FindCoursesEnrollment is a function to get course by user id
 func (r *repository) FindCoursesEnrollment(ctx context.Context, usersId uuid.UUID) (enrollment entities.Enrollment, err error) {
 	query := `
-	SELECT id, users_id, courses_id, progress, created_at, updated_at
-	FROM course_enrollment
-	WHERE users_id = $1
+	SELECT 
+		id, 
+		users_id, 
+		courses_id, 
+		progress, 
+		created_at, 
+		updated_at
+	FROM 
+		course_enrollment
+	WHERE 
+		users_id = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, query, usersId).Scan(

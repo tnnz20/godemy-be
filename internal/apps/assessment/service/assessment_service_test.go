@@ -105,36 +105,46 @@ func TestGetAssessmentsResult(t *testing.T) {
 		require.Equal(t, errs.ErrAssessmentNotFound, err)
 		log.Print(err)
 	})
+}
 
-	t.Run("Success get assessment by assessment code", func(t *testing.T) {
+func TestGetFilteredAssessmentResult(t *testing.T) {
+	t.Run("Success get filtered assessment", func(t *testing.T) {
 		userId, err := uuid.Parse(validUserId)
 		if err != nil {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentByAssessmentCodeRequest{
+		req := entities.GetAssessmentResultByAssessmentCodeRequest{
 			UsersId:        userId,
-			AssessmentCode: validAssessmentChapterCode,
+			AssessmentCode: "chap-4",
+			ModelPaginationPayload: entities.ModelPaginationPayload{
+				Limit:  5,
+				Offset: 0,
+			},
 		}
 
-		assessment, err := svc.GetAssessmentResultByAssessmentCode(context.Background(), req)
+		assessments, err := svc.GetFilteredAssessmentResult(context.Background(), req)
 		require.Nil(t, err)
-		require.NotEmpty(t, assessment)
-		log.Print(assessment)
+		require.NotEmpty(t, assessments)
+		log.Print(assessments)
 	})
 
-	t.Run("Failed get assessment by assessment code, assessment not found", func(t *testing.T) {
-		userId, err := uuid.Parse(validUserId)
+	t.Run("Failed get filtered assessment, assessment not found", func(t *testing.T) {
+		userId, err := uuid.Parse("6286637a-3d6c-460a-b68a-956fd9553058")
 		if err != nil {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentByAssessmentCodeRequest{
+		req := entities.GetAssessmentResultByAssessmentCodeRequest{
 			UsersId:        userId,
-			AssessmentCode: "chap-7",
+			AssessmentCode: validAssessmentChapterCode,
+			ModelPaginationPayload: entities.ModelPaginationPayload{
+				Limit:  5,
+				Offset: 0,
+			},
 		}
 
-		_, err = svc.GetAssessmentResultByAssessmentCode(context.Background(), req)
+		_, err = svc.GetFilteredAssessmentResult(context.Background(), req)
 		require.NotNil(t, err)
 		require.Equal(t, errs.ErrAssessmentNotFound, err)
 		log.Print(err)
