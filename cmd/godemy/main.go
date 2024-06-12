@@ -37,7 +37,7 @@ func main() {
 	})
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:3000",
+		AllowOrigins: "http://localhost:3000, https://godemy-v2.vercel.app/",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 
