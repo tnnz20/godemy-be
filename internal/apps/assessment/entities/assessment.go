@@ -7,6 +7,18 @@ import (
 	"github.com/tnnz20/godemy-be/pkg/errs"
 )
 
+type AssessmentPagination struct {
+	Limit  int
+	Offset int
+}
+
+func NewAssessmentPagination(limit, offset int) AssessmentPagination {
+	return AssessmentPagination{
+		Limit:  limit,
+		Offset: offset,
+	}
+}
+
 type AssessmentResult struct {
 	ID              uuid.UUID
 	UsersId         uuid.UUID
@@ -15,6 +27,12 @@ type AssessmentResult struct {
 	AssessmentCode  string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+}
+
+type AssessmentUsersResult struct {
+	Id   uuid.UUID
+	Name string
+	AssessmentResult
 }
 
 func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, assessmentCode string) AssessmentResult {
