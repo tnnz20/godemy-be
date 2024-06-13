@@ -31,9 +31,14 @@ type AssessmentResult struct {
 }
 
 type AssessmentUsersResult struct {
-	Id   uuid.UUID
-	Name string
-	AssessmentResult
+	Id              uuid.UUID
+	Name            string
+	CoursesId       uuid.UUID
+	AssessmentValue float32
+	AssessmentCode  string
+	Status          uint8
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
 }
 
 func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, assessmentCode string, status uint8) AssessmentResult {
