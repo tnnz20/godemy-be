@@ -21,7 +21,7 @@ func NewService(assessmentRepo assessment.Repository) assessment.Service {
 }
 
 // CreateAssessment is a function to create a new assessment
-func (s *service) CreateAssessmentResult(ctx context.Context, req entities.CreateAssessmentRequest) (err error) {
+func (s *service) CreateAssessmentResult(ctx context.Context, req entities.CreateAssessmentPayload) (err error) {
 	courseEnrollment, err := s.Repository.FindCoursesEnrollment(ctx, req.UsersId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -31,7 +31,14 @@ func (s *service) CreateAssessmentResult(ctx context.Context, req entities.Creat
 		return
 	}
 
-	NewAssessmentResult := entities.NewAssessmentResult(req.UsersId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode)
+	var status uint8
+	if req.AssessmentValue >= 80 {
+		status = 1
+	} else {
+		status = 0
+	}
+
+	NewAssessmentResult := entities.NewAssessmentResult(req.UsersId, courseEnrollment.CoursesId, req.AssessmentValue, req.AssessmentCode, status)
 
 	if err = NewAssessmentResult.Validate(); err != nil {
 		return
@@ -44,7 +51,7 @@ func (s *service) CreateAssessmentResult(ctx context.Context, req entities.Creat
 }
 
 // GetAssessments is a function to get all assessments by user id
-func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAssessmentRequest) (res []entities.AssessmentResponse, err error) {
+func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAssessmentPayload) (res []entities.AssessmentResponse, err error) {
 	assessments, err := s.Repository.FindAssessments(ctx, req.UsersId)
 	if err != nil {
 		return []entities.AssessmentResponse{}, err
@@ -63,7 +70,7 @@ func (s *service) GetAssessmentsResult(ctx context.Context, req entities.GetAsse
 }
 
 // GetFilteredAssessmentResult is a function to get assessment by assessment code
-func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultByAssessmentCodeRequest) (res []entities.AssessmentResponse, err error) {
+func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultWithPaginationPayload) (res []entities.AssessmentResponse, err error) {
 
 	NewAssessmentPagination := entities.NewAssessmentPagination(req.Limit, req.Offset)
 	assessments, err := s.Repository.FindAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode, NewAssessmentPagination)
@@ -88,7 +95,7 @@ func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.
 }
 
 // GetTotalFilteredAssessmentResult is a function to get total assessment by assessment code
-func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultByAssessmentCodePayload) (res entities.AssessmentTotalResponse, err error) {
+func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultWithPaginationPayload) (res entities.AssessmentTotalResponse, err error) {
 	assessments, err := s.Repository.FindTotalAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -106,7 +113,11 @@ func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req enti
 
 }
 
-func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentRequest) (err error) {
+// func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseId) (res []entities.AssessmentResultUsersResponse, err error) {
+
+// }
+
+func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentPayload) (err error) {
 
 	NewAssessmentUser := entities.NewAssessmentUser(req.UsersId, req.AssessmentCode, req.RandomArrayId)
 
@@ -133,7 +144,7 @@ func (s *service) CreateUsersAssessment(ctx context.Context, req entities.Create
 	return
 }
 
-func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersAssessmentRequest) (res entities.AssessmentUserResponse, err error) {
+func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersAssessmentPayload) (res entities.AssessmentUserResponse, err error) {
 	newUserAssessment := entities.AssessmentUser{
 		UsersId:        req.UsersId,
 		AssessmentCode: req.AssessmentCode,
@@ -154,7 +165,7 @@ func (s *service) GetUsersAssessment(ctx context.Context, req entities.GetUsersA
 	return
 }
 
-func (s *service) UpdateUsersAssessmentStatus(ctx context.Context, req entities.UpdateUsersAssessmentStatusRequest) (err error) {
+func (s *service) UpdateUsersAssessmentStatus(ctx context.Context, req entities.UpdateUsersAssessmentStatusPayload) (err error) {
 	newUserAssessment := entities.AssessmentUser{
 		UsersId:        req.UsersId,
 		AssessmentCode: req.AssessmentCode,
