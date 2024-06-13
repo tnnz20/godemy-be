@@ -2,39 +2,42 @@ package entities
 
 import "github.com/google/uuid"
 
-type CreateAssessmentRequest struct {
+type CreateAssessmentPayload struct {
 	UsersId         uuid.UUID `json:"users_id"`
 	AssessmentValue float32   `json:"assessment_value"`
 	AssessmentCode  string    `json:"assessment_code"`
 }
 
-type GetAssessmentRequest struct {
-	UsersId uuid.UUID `json:"users_id"`
+type GetAssessmentPayload struct {
+	UsersId        uuid.UUID `json:"users_id"`
+	AssessmentCode string    `query:"assessment_code"`
 }
 
-type GetAssessmentResultByAssessmentCodeRequest struct {
+type GetAssessmentResultWithPaginationPayload struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `query:"assessment_code"`
 	ModelPaginationPayload
 }
 
-type GetAssessmentResultByAssessmentCodePayload struct {
-	UsersId        uuid.UUID `json:"users_id"`
+type GetAssessmentResultsByCourseId struct {
+	CoursesId      uuid.UUID `json:"courses_id"`
 	AssessmentCode string    `query:"assessment_code"`
+	Status         uint8     `query:"status"`
+	ModelPaginationPayload
 }
 
-type CreateUsersAssessmentRequest struct {
+type CreateUsersAssessmentPayload struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
 	RandomArrayId  []uint8   `json:"random_array_id"`
 }
 
-type GetUsersAssessmentRequest struct {
+type GetUsersAssessmentPayload struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `query:"assessment_code"`
 }
 
-type UpdateUsersAssessmentStatusRequest struct {
+type UpdateUsersAssessmentStatusPayload struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
 	Status         uint8     `json:"status"`
