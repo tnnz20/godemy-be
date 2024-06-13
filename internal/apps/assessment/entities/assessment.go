@@ -25,6 +25,7 @@ type AssessmentResult struct {
 	CoursesId       uuid.UUID
 	AssessmentValue float32
 	AssessmentCode  string
+	Status          uint8
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
@@ -35,13 +36,14 @@ type AssessmentUsersResult struct {
 	AssessmentResult
 }
 
-func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, assessmentCode string) AssessmentResult {
+func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, assessmentCode string, status uint8) AssessmentResult {
 	return AssessmentResult{
 		ID:              uuid.New(),
 		UsersId:         userId,
 		CoursesId:       coursesId,
 		AssessmentValue: assessmentValue,
 		AssessmentCode:  "chap-" + assessmentCode,
+		Status:          status,
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
 	}
