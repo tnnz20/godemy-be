@@ -60,4 +60,7 @@ func Init(router fiber.Router, db *sql.DB) {
 		handler.UpdateUsersAssessmentStatus,
 	)
 
+	assessment.Get("/assessment/:courseId",
+		middleware.Protected(),
+		handler.GetAssessmentsResultUsers)
 }

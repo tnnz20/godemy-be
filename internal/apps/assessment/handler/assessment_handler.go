@@ -139,7 +139,42 @@ func (h handler) GetTotalFilteredAssessmentResult(c *fiber.Ctx) error {
 	}
 
 	return response.SuccessOK(c, res)
+}
 
+func (h handler) GetAssessmentsResultUsers(c *fiber.Ctx) error {
+	var req entities.GetAssessmentResultsByCourseIdPayload
+
+	paramsCourseId := c.Params("courseId")
+	if paramsCourseId == "" {
+		err := errs.ErrCourseIdRequired
+		return response.ErrorBadRequest(c, err)
+	}
+
+	courseId, err := uuid.Parse(paramsCourseId)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	req.CoursesId = courseId
+	req.AssessmentCode = c.Query("assessment_code")
+	req.Name = c.Query("name")
+	req.Limit = c.QueryInt("limit", 6)
+	req.Offset = c.QueryInt("offset", 0)
+
+	res, err := h.Service.GetAssessmentsResultUsers(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, res)
 }
 
 func (h handler) CreateUsersAssessment(c *fiber.Ctx) error {
