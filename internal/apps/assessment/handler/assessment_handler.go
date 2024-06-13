@@ -112,6 +112,36 @@ func (h handler) GetFilteredAssessmentResult(c *fiber.Ctx) error {
 	return response.SuccessOK(c, res)
 }
 
+func (h handler) GetTotalFilteredAssessmentResult(c *fiber.Ctx) error {
+	// Get the user id from the context
+	id := c.Locals("id").(string)
+
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		return response.ErrorBadRequest(c, err)
+	}
+
+	var req entities.GetAssessmentResultByAssessmentCodePayload
+	req.UsersId = userId
+	req.AssessmentCode = c.Query("assessment_code")
+
+	res, err := h.Service.GetTotalFilteredAssessmentResult(c.UserContext(), req)
+	if err != nil {
+		errorMapping := errs.ErrorMapping[err]
+		switch errorMapping {
+		case 400:
+			return response.ErrorBadRequest(c, err)
+		case 404:
+			return response.ErrorNotFound(c, err)
+		default:
+			return response.InternalServerError(c, err)
+		}
+	}
+
+	return response.SuccessOK(c, res)
+
+}
+
 func (h handler) CreateUsersAssessment(c *fiber.Ctx) error {
 	// Get the user id from the context
 	id := c.Locals("id").(string)

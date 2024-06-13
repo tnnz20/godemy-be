@@ -26,15 +26,20 @@ func Init(router fiber.Router, db *sql.DB) {
 		handler.GetAssessments,
 	)
 
+	assessment.Post("/assessment",
+		middleware.Protected(),
+		middleware.CheckRoles([]string{entities.ROLE_Student}),
+		handler.CreateAssessment,
+	)
+
 	assessment.Get("/assessment",
 		middleware.Protected(),
 		handler.GetFilteredAssessmentResult,
 	)
 
-	assessment.Post("/assessment",
+	assessment.Get("/assessment/total",
 		middleware.Protected(),
-		middleware.CheckRoles([]string{entities.ROLE_Student}),
-		handler.CreateAssessment,
+		handler.GetTotalFilteredAssessmentResult,
 	)
 
 	assessment.Get("/assessment/users",
