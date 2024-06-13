@@ -12,6 +12,7 @@ type AssessmentResponse struct {
 	CoursesId       uuid.UUID `json:"courses_id"`
 	AssessmentValue float32   `json:"assessment_value"`
 	AssessmentCode  string    `json:"assessment_code"`
+	Status          uint8     `json:"status"`
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 }
@@ -28,4 +29,14 @@ type AssessmentUserResponse struct {
 
 type AssessmentTotalResponse struct {
 	Total int `json:"total"`
+}
+
+type AssessmentResultUsersResponse struct {
+	ID              uuid.UUID `json:"id"`
+	Name            string    `json:"name"`
+	CoursesId       uuid.UUID `json:"courses_id"`
+	AssessmentValue float32   `json:"assessment_value"`
+	AssessmentCode  string    `json:"assessment_code"`
+	Status          uint8     `json:"status"`
+	CreatedAt       time.Time `json:"created_at"`
 }
