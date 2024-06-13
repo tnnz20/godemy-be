@@ -191,31 +191,32 @@ func (r *repository) FindTotalAssessmentsFilteredByCode(ctx context.Context, use
 	return total, nil
 }
 
-func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, assessmentCode string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
+func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
 	query := `
-	SELECT  
-		u.id, 
+	SELECT
+		u.id,
 		u.name,
-		ar.courses_id, 
-		ar.assessment_value, 
-		ar.assessment_code, 
+		ar.courses_id,
+		ar.assessment_value,
+		ar.assessment_code,
 		ar.status,
-		ar.created_at, 
+		ar.created_at
 	FROM 
-		users_assessment_result AS ar
-	JOIN
-		users AS u
+		users_assessment_result ar
+	JOIN 
+		users u ON ar.users_id = u.id
 	WHERE 
-		courses_id = $1 AND
-		assessment_code = $2 AND
-		(u.name ILIKE $3)
+		ar.courses_id = $1 AND 
+		ar.assessment_code = $2 AND 
+		u.name ILIKE $3
 	ORDER BY 
-		created_at DESC AND
-		ar.status = $3
-	LIMIT $4 OFFSET $5
+		ar.created_at DESC, 
+		CASE WHEN ar.status = $4 THEN 1 ELSE 2 END
+	LIMIT $5 OFFSET $6
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, status, model.Limit, model.Offset)
+	wildName := "%" + name + "%"
+	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, wildName, status, model.Limit, model.Offset)
 	if err != nil {
 		return
 	}
@@ -230,6 +231,7 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 			&assessmentUsersResult.CoursesId,
 			&assessmentUsersResult.AssessmentValue,
 			&assessmentUsersResult.AssessmentCode,
+			&assessmentUsersResult.Status,
 			&assessmentUsersResult.CreatedAt,
 		)
 
