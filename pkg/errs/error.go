@@ -36,6 +36,7 @@ var (
 	ErrCourseNotFound          = errors.New("course not found")
 	ErrCourseCodeAlreadyExist  = errors.New("course code already exist")
 	ErrCourseEmpty             = errors.New("course still empty")
+	ErrCourseIdRequired        = errors.New("course id required")
 
 	// Enrollment
 	ErrInvalidProgress          = errors.New("invalid progress must be greater than before")
@@ -80,6 +81,7 @@ var (
 		ErrInvalidCourseCodeLength: 400,
 		ErrCourseCodeRequired:      400,
 		ErrCourseNameRequired:      400,
+		ErrCourseIdRequired:        400,
 
 		ErrCourseEmpty:            404,
 		ErrCourseNotFound:         404,
