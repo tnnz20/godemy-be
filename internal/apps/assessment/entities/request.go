@@ -18,6 +18,11 @@ type GetAssessmentResultByAssessmentCodeRequest struct {
 	ModelPaginationPayload
 }
 
+type GetAssessmentResultByAssessmentCodePayload struct {
+	UsersId        uuid.UUID `json:"users_id"`
+	AssessmentCode string    `query:"assessment_code"`
+}
+
 type CreateUsersAssessmentRequest struct {
 	UsersId        uuid.UUID `json:"users_id"`
 	AssessmentCode string    `json:"assessment_code"`
