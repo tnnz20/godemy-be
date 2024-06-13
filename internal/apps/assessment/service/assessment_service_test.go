@@ -33,8 +33,10 @@ func init() {
 }
 
 const (
-	validUserId                string = "19f75097-e613-4769-a6dd-fe97ccb8e54b"
-	validAssessmentChapterCode string = "chap-3"
+	validUserId                  = "19f75097-e613-4769-a6dd-fe97ccb8e54b"
+	validAssessmentChapterCode   = "chap-3"
+	inValidAssessmentChapterCode = "chap-10"
+	validCourseId                = "6183b21e-de39-44b7-bb39-4b9cadc26847"
 )
 
 func TestCreateAssessmentResult(t *testing.T) {
@@ -151,6 +153,52 @@ func TestGetFilteredAssessmentResult(t *testing.T) {
 	})
 }
 
+func TestGetAssessmentsResultUsers(t *testing.T) {
+	t.Run("Success get assessments result users", func(t *testing.T) {
+		courseId, err := uuid.Parse(validCourseId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.GetAssessmentResultsByCourseIdPayload{
+			CoursesId:      courseId,
+			AssessmentCode: validAssessmentChapterCode,
+			Status:         0,
+			ModelPaginationPayload: entities.ModelPaginationPayload{
+				Limit:  5,
+				Offset: 0,
+			},
+		}
+
+		assessments, err := svc.GetAssessmentsResultUsers(context.Background(), req)
+		require.Nil(t, err)
+		require.NotEmpty(t, assessments)
+		log.Print(assessments)
+	})
+
+	t.Run("Failed get assessments result users, assessment not found", func(t *testing.T) {
+		courseId, err := uuid.Parse(validCourseId)
+		if err != nil {
+			t.Error(err)
+		}
+
+		req := entities.GetAssessmentResultsByCourseIdPayload{
+			CoursesId:      courseId,
+			AssessmentCode: inValidAssessmentChapterCode,
+			Status:         0,
+			ModelPaginationPayload: entities.ModelPaginationPayload{
+				Limit:  5,
+				Offset: 0,
+			},
+		}
+
+		_, err = svc.GetAssessmentsResultUsers(context.Background(), req)
+		require.NotNil(t, err)
+		require.Equal(t, errs.ErrAssessmentNotFound, err)
+		log.Print(err)
+	})
+}
+
 func TestCreateUsersAssessment(t *testing.T) {
 	t.Run("Success create users assessment", func(t *testing.T) {
 		userId, err := uuid.Parse(validUserId)
@@ -231,7 +279,7 @@ func TestGetUsersAssessment(t *testing.T) {
 
 		req := entities.GetUsersAssessmentPayload{
 			UsersId:        userId,
-			AssessmentCode: "chap-10",
+			AssessmentCode: inValidAssessmentChapterCode,
 		}
 
 		_, err = svc.GetUsersAssessment(context.Background(), req)
