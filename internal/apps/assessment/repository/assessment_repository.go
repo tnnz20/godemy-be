@@ -29,10 +29,11 @@ func (r *repository) CreateAssessmentResult(ctx context.Context, assessment enti
 		courses_id,
 		assessment_value,
 		assessment_code,
+		status,
 		created_at,
 		updated_at
 	)
-	VALUES ($1, $2, $3, $4, $5, $6, $7)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 	`
 
 	stmt, err := r.db.PrepareContext(ctx, query)
@@ -48,6 +49,7 @@ func (r *repository) CreateAssessmentResult(ctx context.Context, assessment enti
 		assessment.CoursesId,
 		assessment.AssessmentValue,
 		assessment.AssessmentCode,
+		assessment.Status,
 		assessment.CreatedAt,
 		assessment.UpdatedAt,
 	)
@@ -67,6 +69,7 @@ func (r *repository) FindAssessments(ctx context.Context, usersId uuid.UUID) (as
 		a.courses_id, 
 		a.assessment_value, 
 		a.assessment_code, 
+		a.status,
 		a.created_at, 
 		a.updated_at
 	FROM users_assessment_result AS a
@@ -94,6 +97,7 @@ func (r *repository) FindAssessments(ctx context.Context, usersId uuid.UUID) (as
 			&assessment.CoursesId,
 			&assessment.AssessmentValue,
 			&assessment.AssessmentCode,
+			&assessment.Status,
 			&assessment.CreatedAt,
 			&assessment.UpdatedAt,
 		)
@@ -121,6 +125,7 @@ func (r *repository) FindAssessmentsFilteredByCode(ctx context.Context, usersId 
 		courses_id, 
 		assessment_value, 
 		assessment_code, 
+		status,
 		created_at, 
 		updated_at
 	FROM 
@@ -148,6 +153,7 @@ func (r *repository) FindAssessmentsFilteredByCode(ctx context.Context, usersId 
 			&assessment.CoursesId,
 			&assessment.AssessmentValue,
 			&assessment.AssessmentCode,
+			&assessment.Status,
 			&assessment.CreatedAt,
 			&assessment.UpdatedAt,
 		)
@@ -185,7 +191,7 @@ func (r *repository) FindTotalAssessmentsFilteredByCode(ctx context.Context, use
 	return total, nil
 }
 
-func (r *repository) FindAssessmentsUsersByCode(ctx context.Context, courseId uuid.UUID, assessmentCode string, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
+func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, assessmentCode string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
 	query := `
 	SELECT  
 		u.id, 
@@ -193,20 +199,23 @@ func (r *repository) FindAssessmentsUsersByCode(ctx context.Context, courseId uu
 		ar.courses_id, 
 		ar.assessment_value, 
 		ar.assessment_code, 
+		ar.status,
 		ar.created_at, 
 	FROM 
 		users_assessment_result AS ar
 	JOIN
 		users AS u
 	WHERE 
-		courses_id = $1
-		assessment_code = $2
+		courses_id = $1 AND
+		assessment_code = $2 AND
+		(u.name ILIKE $3)
 	ORDER BY 
-		created_at DESC
-	LIMIT $3 OFFSET $4
+		created_at DESC AND
+		ar.status = $3
+	LIMIT $4 OFFSET $5
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, model.Limit, model.Offset)
+	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, status, model.Limit, model.Offset)
 	if err != nil {
 		return
 	}
