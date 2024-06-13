@@ -59,6 +59,7 @@ CREATE TABLE users_assessment_result(
     courses_id UUID not null,
     assessment_value FLOAT,
     assessment_code varchar(10) not null,
+    status INT,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     FOREIGN KEY (users_id) REFERENCES users(id),
