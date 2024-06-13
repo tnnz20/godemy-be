@@ -166,6 +166,25 @@ func (r *repository) FindAssessmentsFilteredByCode(ctx context.Context, usersId 
 	return
 }
 
+func (r *repository) FindTotalAssessmentsFilteredByCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (total int, err error) {
+	query := `
+	SELECT 
+		COUNT(id)
+	FROM 
+		users_assessment_result
+	WHERE 
+		users_id = $1 AND 
+		assessment_code = $2
+	`
+
+	err = r.db.QueryRowContext(ctx, query, usersId, assessmentCode).Scan(&total)
+	if err != nil {
+		return
+	}
+
+	return total, nil
+}
+
 func (r *repository) FindAssessmentsUsersByCode(ctx context.Context, courseId uuid.UUID, assessmentCode string, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
 	query := `
 	SELECT  

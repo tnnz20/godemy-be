@@ -87,6 +87,25 @@ func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.
 	return
 }
 
+// GetTotalFilteredAssessmentResult is a function to get total assessment by assessment code
+func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultByAssessmentCodePayload) (res entities.AssessmentTotalResponse, err error) {
+	assessments, err := s.Repository.FindTotalAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrAssessmentNotFound
+			return
+		}
+		return entities.AssessmentTotalResponse{}, err
+	}
+
+	res = entities.AssessmentTotalResponse{
+		Total: assessments,
+	}
+
+	return res, err
+
+}
+
 func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentRequest) (err error) {
 
 	NewAssessmentUser := entities.NewAssessmentUser(req.UsersId, req.AssessmentCode, req.RandomArrayId)
