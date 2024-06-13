@@ -28,7 +28,7 @@ func (h handler) CreateAssessment(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.CreateAssessmentRequest
+	var req entities.CreateAssessmentPayload
 	if err := c.BodyParser(&req); err != nil {
 		return response.ErrorBadRequest(c, err)
 	}
@@ -61,7 +61,7 @@ func (h handler) GetAssessments(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetAssessmentRequest
+	var req entities.GetAssessmentPayload
 	req.UsersId = userId
 
 	res, err := h.Service.GetAssessmentsResult(c.UserContext(), req)
@@ -89,7 +89,7 @@ func (h handler) GetFilteredAssessmentResult(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetAssessmentResultByAssessmentCodeRequest
+	var req entities.GetAssessmentResultWithPaginationPayload
 
 	req.AssessmentCode = c.Query("assessment_code")
 	req.Limit = c.QueryInt("limit", 5)
@@ -121,7 +121,7 @@ func (h handler) GetTotalFilteredAssessmentResult(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetAssessmentResultByAssessmentCodePayload
+	var req entities.GetAssessmentResultWithPaginationPayload
 	req.UsersId = userId
 	req.AssessmentCode = c.Query("assessment_code")
 
@@ -151,7 +151,7 @@ func (h handler) CreateUsersAssessment(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.CreateUsersAssessmentRequest
+	var req entities.CreateUsersAssessmentPayload
 	if err := c.BodyParser(&req); err != nil {
 		return response.ErrorBadRequest(c, err)
 	}
@@ -183,7 +183,7 @@ func (h handler) UpdateUsersAssessmentStatus(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.UpdateUsersAssessmentStatusRequest
+	var req entities.UpdateUsersAssessmentStatusPayload
 	if err := c.BodyParser(&req); err != nil {
 		return response.ErrorBadRequest(c, err)
 	}
@@ -214,7 +214,7 @@ func (h handler) GetUsersAssessment(c *fiber.Ctx) error {
 		return response.ErrorBadRequest(c, err)
 	}
 
-	var req entities.GetUsersAssessmentRequest
+	var req entities.GetUsersAssessmentPayload
 	if err := c.QueryParser(&req); err != nil {
 		err = errs.ErrAssessmentCodeRequired
 		return response.ErrorBadRequest(c, err)

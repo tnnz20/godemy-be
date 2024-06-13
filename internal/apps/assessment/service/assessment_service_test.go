@@ -44,7 +44,7 @@ func TestCreateAssessmentResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.CreateAssessmentRequest{
+		req := entities.CreateAssessmentPayload{
 			UsersId:         userId,
 			AssessmentValue: 7,
 			AssessmentCode:  validAssessmentChapterCode,
@@ -60,7 +60,7 @@ func TestCreateAssessmentResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.CreateAssessmentRequest{
+		req := entities.CreateAssessmentPayload{
 			UsersId:         userId,
 			AssessmentValue: 80,
 			AssessmentCode:  validAssessmentChapterCode,
@@ -80,7 +80,7 @@ func TestGetAssessmentsResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentRequest{
+		req := entities.GetAssessmentPayload{
 			UsersId: userId,
 		}
 
@@ -96,7 +96,7 @@ func TestGetAssessmentsResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentRequest{
+		req := entities.GetAssessmentPayload{
 			UsersId: userId,
 		}
 
@@ -114,7 +114,7 @@ func TestGetFilteredAssessmentResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentResultByAssessmentCodeRequest{
+		req := entities.GetAssessmentResultWithPaginationPayload{
 			UsersId:        userId,
 			AssessmentCode: "chap-4",
 			ModelPaginationPayload: entities.ModelPaginationPayload{
@@ -135,7 +135,7 @@ func TestGetFilteredAssessmentResult(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetAssessmentResultByAssessmentCodeRequest{
+		req := entities.GetAssessmentResultWithPaginationPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 			ModelPaginationPayload: entities.ModelPaginationPayload{
@@ -158,7 +158,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.CreateUsersAssessmentRequest{
+		req := entities.CreateUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
@@ -174,7 +174,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.CreateUsersAssessmentRequest{
+		req := entities.CreateUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: "",
 			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
@@ -192,7 +192,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.CreateUsersAssessmentRequest{
+		req := entities.CreateUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
@@ -212,7 +212,7 @@ func TestGetUsersAssessment(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetUsersAssessmentRequest{
+		req := entities.GetUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 		}
@@ -229,7 +229,7 @@ func TestGetUsersAssessment(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.GetUsersAssessmentRequest{
+		req := entities.GetUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: "chap-10",
 		}
@@ -248,7 +248,7 @@ func TestUpdateUsersAssessmentStatus(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.UpdateUsersAssessmentStatusRequest{
+		req := entities.UpdateUsersAssessmentStatusPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 			Status:         5,
@@ -257,7 +257,7 @@ func TestUpdateUsersAssessmentStatus(t *testing.T) {
 		err = svc.UpdateUsersAssessmentStatus(context.Background(), req)
 		require.Nil(t, err)
 
-		getAssessmentReq := entities.GetUsersAssessmentRequest{
+		getAssessmentReq := entities.GetUsersAssessmentPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 		}
@@ -273,7 +273,7 @@ func TestUpdateUsersAssessmentStatus(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.UpdateUsersAssessmentStatusRequest{
+		req := entities.UpdateUsersAssessmentStatusPayload{
 			UsersId:        userId,
 			AssessmentCode: "chap-10",
 			Status:         5,
@@ -291,7 +291,7 @@ func TestUpdateUsersAssessmentStatus(t *testing.T) {
 			t.Error(err)
 		}
 
-		req := entities.UpdateUsersAssessmentStatusRequest{
+		req := entities.UpdateUsersAssessmentStatusPayload{
 			UsersId:        userId,
 			AssessmentCode: validAssessmentChapterCode,
 			Status:         8,
