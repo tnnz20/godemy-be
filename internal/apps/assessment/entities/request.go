@@ -19,8 +19,9 @@ type GetAssessmentResultWithPaginationPayload struct {
 	ModelPaginationPayload
 }
 
-type GetAssessmentResultsByCourseId struct {
+type GetAssessmentResultsByCourseIdPayload struct {
 	CoursesId      uuid.UUID `json:"courses_id"`
+	Name           string    `query:"name"`
 	AssessmentCode string    `query:"assessment_code"`
 	Status         uint8     `query:"status"`
 	ModelPaginationPayload
