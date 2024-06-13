@@ -113,9 +113,37 @@ func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req enti
 
 }
 
-// func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseId) (res []entities.AssessmentResultUsersResponse, err error) {
+func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res []entities.AssessmentResultUsersResponse, err error) {
 
-// }
+	NewAssessmentPagination := entities.NewAssessmentPagination(req.Limit, req.Offset)
+	assessments, err := s.Repository.FindAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode, req.Status, NewAssessmentPagination)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrAssessmentNotFound
+			return
+		}
+		return res, err
+	}
+
+	if len(assessments) == 0 {
+		err = errs.ErrAssessmentNotFound
+		return
+	}
+
+	for _, assessment := range assessments {
+		res = append(res, entities.AssessmentResultUsersResponse{
+			ID:              assessment.Id,
+			Name:            assessment.Name,
+			CoursesId:       assessment.CoursesId,
+			AssessmentValue: assessment.AssessmentValue,
+			AssessmentCode:  assessment.AssessmentCode,
+			Status:          assessment.Status,
+			CreatedAt:       assessment.CreatedAt,
+		})
+	}
+
+	return
+}
 
 func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentPayload) (err error) {
 
