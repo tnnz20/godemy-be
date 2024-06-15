@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -191,8 +192,8 @@ func (r *repository) FindTotalAssessmentsFilteredByCode(ctx context.Context, use
 	return total, nil
 }
 
-func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
-	query := `
+func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode, sort string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
+	query := fmt.Sprintf(`
 	SELECT
 		u.id,
 		u.name,
@@ -207,16 +208,16 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 		users u ON ar.users_id = u.id
 	WHERE 
 		ar.courses_id = $1 AND 
-		ar.assessment_code = $2 AND 
+		ar.assessment_code = $2 OR 
 		u.name ILIKE $3
 	ORDER BY 
 		CASE
 			WHEN ar.status = $4 THEN 1 
 			ELSE 2 
 		END,
-		ar.created_at DESC
+		ar.created_at %s
 	LIMIT $5 OFFSET $6
-	`
+	`, sort)
 
 	wildName := "%" + name + "%"
 
