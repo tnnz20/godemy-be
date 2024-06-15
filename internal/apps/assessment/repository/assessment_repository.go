@@ -210,12 +210,16 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 		ar.assessment_code = $2 AND 
 		u.name ILIKE $3
 	ORDER BY 
-		ar.created_at DESC, 
-		CASE WHEN ar.status = $4 THEN 1 ELSE 2 END
+		CASE
+			WHEN ar.status = $4 THEN 1 
+			ELSE 2 
+		END,
+		ar.created_at DESC
 	LIMIT $5 OFFSET $6
 	`
 
 	wildName := "%" + name + "%"
+
 	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, wildName, status, model.Limit, model.Offset)
 	if err != nil {
 		return
