@@ -13,6 +13,7 @@ type Repository interface {
 	FindAssessmentsFilteredByCode(ctx context.Context, usersId uuid.UUID, assessmentCode string, model entities.AssessmentPagination) (assessments []entities.AssessmentResult, err error)
 	FindTotalAssessmentsFilteredByCode(ctx context.Context, usersId uuid.UUID, assessmentCode string) (total int, err error)
 	FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode, sort string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error)
+	FindTotalAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode string) (total int, err error)
 	FindCoursesEnrollment(ctx context.Context, usersId uuid.UUID) (enrollment entities.Enrollment, err error)
 	CreateUsersAssessment(ctx context.Context, userAssessment entities.AssessmentUser) (err error)
 	FindUsersAssessment(ctx context.Context, usersId uuid.UUID, assessmentCode string) (userAssessment entities.AssessmentUser, err error)

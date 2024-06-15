@@ -12,6 +12,7 @@ type Service interface {
 	GetFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultWithPaginationPayload) (res []entities.AssessmentResponse, err error)
 	GetTotalFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultWithPaginationPayload) (res entities.AssessmentTotalResponse, err error)
 	GetAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res []entities.AssessmentResultUsersResponse, err error)
+	GetTotalAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res entities.AssessmentTotalResponse, err error)
 	CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentPayload) (err error)
 	GetUsersAssessment(ctx context.Context, req entities.GetUsersAssessmentPayload) (res entities.AssessmentUserResponse, err error)
 	UpdateUsersAssessmentStatus(ctx context.Context, req entities.UpdateUsersAssessmentStatusPayload) (err error)
