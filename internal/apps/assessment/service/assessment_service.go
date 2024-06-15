@@ -96,7 +96,7 @@ func (s *service) GetFilteredAssessmentResult(ctx context.Context, req entities.
 
 // GetTotalFilteredAssessmentResult is a function to get total assessment by assessment code
 func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req entities.GetAssessmentResultWithPaginationPayload) (res entities.AssessmentTotalResponse, err error) {
-	assessments, err := s.Repository.FindTotalAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode)
+	total, err := s.Repository.FindTotalAssessmentsFilteredByCode(ctx, req.UsersId, req.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound
@@ -105,8 +105,13 @@ func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req enti
 		return entities.AssessmentTotalResponse{}, err
 	}
 
+	if total == 0 {
+		err = errs.ErrAssessmentNotFound
+		return
+	}
+
 	res = entities.AssessmentTotalResponse{
-		Total: assessments,
+		Total: total,
 	}
 
 	return res, err
@@ -146,7 +151,7 @@ func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.Ge
 }
 
 func (s *service) GetTotalAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res entities.AssessmentTotalResponse, err error) {
-	assessments, err := s.Repository.FindTotalAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode)
+	total, err := s.Repository.FindTotalAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound
@@ -155,8 +160,13 @@ func (s *service) GetTotalAssessmentsResultUsers(ctx context.Context, req entiti
 		return entities.AssessmentTotalResponse{}, err
 	}
 
+	if total == 0 {
+		err = errs.ErrAssessmentNotFound
+		return
+	}
+
 	res = entities.AssessmentTotalResponse{
-		Total: assessments,
+		Total: total,
 	}
 
 	return
