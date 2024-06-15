@@ -193,6 +193,15 @@ func (r *repository) FindTotalAssessmentsFilteredByCode(ctx context.Context, use
 }
 
 func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode, sort string, status uint8, model entities.AssessmentPagination) (assessments []entities.AssessmentUsersResult, err error) {
+
+	var whereClause string
+
+	if name != "" {
+		whereClause = "u.name ILIKE $3"
+	} else {
+		whereClause = "ar.assessment_code = $2"
+	}
+
 	query := fmt.Sprintf(`
 	SELECT
 		u.id,
@@ -207,9 +216,8 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 	JOIN 
 		users u ON ar.users_id = u.id
 	WHERE 
-		ar.courses_id = $1 AND 
-		ar.assessment_code = $2 OR 
-		u.name ILIKE $3
+		ar.courses_id = $1 AND
+		%s
 	ORDER BY 
 		CASE
 			WHEN ar.status = $4 THEN 1 
@@ -217,11 +225,18 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 		END,
 		ar.created_at %s
 	LIMIT $5 OFFSET $6
-	`, sort)
+	`, whereClause, sort)
 
 	wildName := "%" + name + "%"
 
-	rows, err := r.db.QueryContext(ctx, query, courseId, assessmentCode, wildName, status, model.Limit, model.Offset)
+	var rows *sql.Rows
+
+	if name != "" {
+		rows, err = r.db.QueryContext(ctx, query, courseId, assessmentCode, wildName, status, model.Limit, model.Offset)
+	} else {
+		rows, err = r.db.QueryContext(ctx, query, courseId, assessmentCode, status, model.Limit, model.Offset)
+	}
+
 	if err != nil {
 		return
 	}
@@ -252,6 +267,41 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 	}
 
 	return
+}
+
+func (r *repository) FindTotalAssessmentsByCourseId(ctx context.Context, courseId uuid.UUID, name, assessmentCode string) (total int, err error) {
+
+	// Construct the base query
+	query := `
+		SELECT 
+			COUNT(ar.id)
+		FROM 
+			users_assessment_result ar
+		JOIN 
+			users u ON ar.users_id = u.id
+		WHERE 
+			ar.courses_id = $1 AND
+		`
+
+	// Append the appropriate WHERE clause based on the presence of the name parameter
+	var args []interface{}
+	args = append(args, courseId)
+
+	if name != "" {
+		query += "u.name ILIKE $2"
+		args = append(args, "%"+name+"%")
+	} else {
+		query += "ar.assessment_code = $2"
+		args = append(args, assessmentCode)
+	}
+
+	// Execute the query with the appropriate parameters
+	err = r.db.QueryRowContext(ctx, query, args...).Scan(&total)
+	if err != nil {
+		return
+	}
+
+	return total, nil
 }
 
 // FindCoursesEnrollment is a function to get course by user id

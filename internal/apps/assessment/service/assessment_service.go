@@ -145,6 +145,23 @@ func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.Ge
 	return
 }
 
+func (s *service) GetTotalAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res entities.AssessmentTotalResponse, err error) {
+	assessments, err := s.Repository.FindTotalAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = errs.ErrAssessmentNotFound
+			return
+		}
+		return entities.AssessmentTotalResponse{}, err
+	}
+
+	res = entities.AssessmentTotalResponse{
+		Total: assessments,
+	}
+
+	return
+}
+
 func (s *service) CreateUsersAssessment(ctx context.Context, req entities.CreateUsersAssessmentPayload) (err error) {
 
 	NewAssessmentUser := entities.NewAssessmentUser(req.UsersId, req.AssessmentCode, req.RandomArrayId)
