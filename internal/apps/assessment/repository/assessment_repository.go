@@ -197,7 +197,7 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 	var whereClause string
 
 	if name != "" {
-		whereClause = "u.name ILIKE $3"
+		whereClause = "u.name ILIKE $2"
 	} else {
 		whereClause = "ar.assessment_code = $2"
 	}
@@ -220,11 +220,11 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 		%s
 	ORDER BY 
 		CASE
-			WHEN ar.status = $4 THEN 1 
+			WHEN ar.status = $3 THEN 1 
 			ELSE 2 
 		END,
 		ar.created_at %s
-	LIMIT $5 OFFSET $6
+	LIMIT $4 OFFSET $5
 	`, whereClause, sort)
 
 	wildName := "%" + name + "%"
@@ -232,7 +232,7 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 	var rows *sql.Rows
 
 	if name != "" {
-		rows, err = r.db.QueryContext(ctx, query, courseId, assessmentCode, wildName, status, model.Limit, model.Offset)
+		rows, err = r.db.QueryContext(ctx, query, courseId, wildName, status, model.Limit, model.Offset)
 	} else {
 		rows, err = r.db.QueryContext(ctx, query, courseId, assessmentCode, status, model.Limit, model.Offset)
 	}
