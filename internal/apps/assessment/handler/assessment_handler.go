@@ -158,6 +158,7 @@ func (h handler) GetAssessmentsResultUsers(c *fiber.Ctx) error {
 	req.CoursesId = courseId
 	req.AssessmentCode = c.Query("assessment_code")
 	req.Name = c.Query("name")
+	req.Status = uint8(c.QueryInt("status"))
 	req.Limit = c.QueryInt("limit", 6)
 	req.Offset = c.QueryInt("offset", 0)
 
