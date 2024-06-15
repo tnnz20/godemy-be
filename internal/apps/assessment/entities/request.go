@@ -24,6 +24,7 @@ type GetAssessmentResultsByCourseIdPayload struct {
 	Name           string    `query:"name"`
 	AssessmentCode string    `query:"assessment_code"`
 	Status         uint8     `query:"status"`
+	Sort           string    `query:"sort"`
 	ModelPaginationPayload
 }
 
