@@ -63,4 +63,8 @@ func Init(router fiber.Router, db *sql.DB) {
 	assessment.Get("/assessment/:courseId",
 		middleware.Protected(),
 		handler.GetAssessmentsResultUsers)
+
+	assessment.Get("/assessment/:courseId/total",
+		middleware.Protected(),
+		handler.GetTotalAssessmentsResultUsers)
 }
