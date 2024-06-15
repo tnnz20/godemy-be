@@ -116,7 +116,7 @@ func (s *service) GetTotalFilteredAssessmentResult(ctx context.Context, req enti
 func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.GetAssessmentResultsByCourseIdPayload) (res []entities.AssessmentResultUsersResponse, err error) {
 
 	NewAssessmentPagination := entities.NewAssessmentPagination(req.Limit, req.Offset)
-	assessments, err := s.Repository.FindAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode, req.Status, NewAssessmentPagination)
+	assessments, err := s.Repository.FindAssessmentsByCourseId(ctx, req.CoursesId, req.Name, req.AssessmentCode, req.Sort, req.Status, NewAssessmentPagination)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			err = errs.ErrAssessmentNotFound
