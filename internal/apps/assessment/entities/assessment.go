@@ -32,6 +32,7 @@ type AssessmentResult struct {
 
 type AssessmentUsersResult struct {
 	Id              uuid.UUID
+	UsersId         uuid.UUID
 	Name            string
 	CoursesId       uuid.UUID
 	AssessmentValue float32

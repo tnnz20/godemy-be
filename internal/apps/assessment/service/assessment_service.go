@@ -138,6 +138,7 @@ func (s *service) GetAssessmentsResultUsers(ctx context.Context, req entities.Ge
 	for _, assessment := range assessments {
 		res = append(res, entities.AssessmentResultUsersResponse{
 			ID:              assessment.Id,
+			UsersId:         assessment.UsersId,
 			Name:            assessment.Name,
 			CoursesId:       assessment.CoursesId,
 			AssessmentValue: assessment.AssessmentValue,

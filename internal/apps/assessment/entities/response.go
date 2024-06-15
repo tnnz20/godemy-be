@@ -33,6 +33,7 @@ type AssessmentTotalResponse struct {
 
 type AssessmentResultUsersResponse struct {
 	ID              uuid.UUID `json:"id"`
+	UsersId         uuid.UUID `json:"users_id"`
 	Name            string    `json:"name"`
 	CoursesId       uuid.UUID `json:"courses_id"`
 	AssessmentValue float32   `json:"assessment_value"`

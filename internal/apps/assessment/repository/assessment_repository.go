@@ -204,6 +204,7 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 
 	query := fmt.Sprintf(`
 	SELECT
+		ar.id,
 		u.id,
 		u.name,
 		ar.courses_id,
@@ -247,6 +248,7 @@ func (r *repository) FindAssessmentsByCourseId(ctx context.Context, courseId uui
 		var assessmentUsersResult entities.AssessmentUsersResult
 		err = rows.Scan(
 			&assessmentUsersResult.Id,
+			&assessmentUsersResult.UsersId,
 			&assessmentUsersResult.Name,
 			&assessmentUsersResult.CoursesId,
 			&assessmentUsersResult.AssessmentValue,
