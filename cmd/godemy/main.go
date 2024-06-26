@@ -28,9 +28,10 @@ func main() {
 
 	defer db.Close()
 
-	if err := db.Migrate(); err != nil {
-		panic(err)
-	}
+	// Migrate database
+	// if err := db.Migrate(); err != nil {
+	// 	panic(err)
+	// }
 
 	router := fiber.New(fiber.Config{
 		AppName: cfg.App.Name,
