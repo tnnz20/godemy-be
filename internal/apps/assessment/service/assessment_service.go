@@ -177,6 +177,10 @@ func (s *service) CreateUsersAssessment(ctx context.Context, req entities.Create
 
 	NewAssessmentUser := entities.NewAssessmentUser(req.UsersId, req.AssessmentCode, req.RandomArrayId)
 
+	if req.AssessmentCode == "" {
+		return errs.ErrAssessmentCodeRequired
+	}
+
 	if err = NewAssessmentUser.ValidateAssessmentUserCode(); err != nil {
 		return
 	}
