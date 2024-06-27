@@ -8,7 +8,6 @@ import (
 	"github.com/tnnz20/godemy-be/internal/apps/users"
 	"github.com/tnnz20/godemy-be/internal/apps/users/entities"
 	"github.com/tnnz20/godemy-be/pkg/errs"
-	"github.com/tnnz20/godemy-be/pkg/helpers"
 )
 
 type service struct {
@@ -163,14 +162,9 @@ func (s service) UpdateUser(ctx context.Context, req entities.UpdateUserPayload)
 		return
 	}
 
-	time, err := helpers.StringToTime(req.Date)
-	if err != nil {
-		return err
-	}
-
 	NewUser := entities.NewUsersUpdate(
 		req.ID,
-		time,
+		req.Date,
 		req.Name,
 		req.Address,
 		req.Gender,
