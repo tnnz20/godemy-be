@@ -12,8 +12,8 @@ type Courses struct {
 	UsersId    uuid.UUID
 	CourseName string
 	CourseCode string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	CreatedAt  int64
+	UpdatedAt  int64
 }
 
 type CoursesPagination struct {
@@ -27,8 +27,8 @@ func NewCourses(usersId uuid.UUID, courseName, courseCode string) Courses {
 		UsersId:    usersId,
 		CourseName: courseName,
 		CourseCode: courseCode,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		CreatedAt:  time.Now().UnixMilli(),
+		UpdatedAt:  time.Now().UnixMilli(),
 	}
 }
 

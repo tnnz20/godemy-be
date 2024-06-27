@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -11,8 +9,8 @@ type CourseResponse struct {
 	UsersId    uuid.UUID `json:"users_id"`
 	CourseName string    `json:"course_name"`
 	CourseCode string    `json:"course_code"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	CreatedAt  int64     `json:"created_at"`
+	UpdatedAt  int64     `json:"updated_at"`
 }
 
 type CourseEnrollmentResponse struct {
@@ -20,8 +18,8 @@ type CourseEnrollmentResponse struct {
 	UsersId   uuid.UUID `json:"users_id"`
 	CoursesId uuid.UUID `json:"courses_id"`
 	Progress  uint8     `json:"progress"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt int64     `json:"created_at"`
+	UpdatedAt int64     `json:"updated_at"`
 }
 
 type CoursesLengthResponse struct {
@@ -33,7 +31,7 @@ type EnrolledUsersResponse struct {
 	CourseName string    `json:"course_name"`
 	Name       string    `json:"name"`
 	Progress   uint8     `json:"progress"`
-	UpdateAt   time.Time `json:"updated_at"`
+	UpdateAt   int64     `json:"updated_at"`
 }
 
 type EnrolledUsersLengthResponse struct {

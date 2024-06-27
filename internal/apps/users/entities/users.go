@@ -21,13 +21,13 @@ type Users struct {
 	Email      string
 	Password   string
 	Name       string
-	Date       time.Time
+	Date       int64
 	Address    string
 	Gender     string
 	ProfileImg string
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	DeletedAt  time.Time
+	CreatedAt  int64
+	UpdatedAt  int64
+	DeletedAt  int64
 }
 
 func NewUsersRegister(email, password, name string) Users {
@@ -36,12 +36,12 @@ func NewUsersRegister(email, password, name string) Users {
 		Email:     email,
 		Password:  password,
 		Name:      name,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UnixMilli(),
+		UpdatedAt: time.Now().UnixMilli(),
 	}
 }
 
-func NewUsersUpdate(id uuid.UUID, date time.Time, name, address, gender, profileImg string) Users {
+func NewUsersUpdate(id uuid.UUID, date int64, name, address, gender, profileImg string) Users {
 	return Users{
 		ID:         id,
 		Name:       name,
@@ -49,7 +49,7 @@ func NewUsersUpdate(id uuid.UUID, date time.Time, name, address, gender, profile
 		Address:    address,
 		Gender:     gender,
 		ProfileImg: profileImg,
-		UpdatedAt:  time.Now(),
+		UpdatedAt:  time.Now().UnixMilli(),
 	}
 }
 

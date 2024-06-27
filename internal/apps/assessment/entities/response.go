@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -13,8 +11,8 @@ type AssessmentResponse struct {
 	AssessmentValue float32   `json:"assessment_value"`
 	AssessmentCode  string    `json:"assessment_code"`
 	Status          uint8     `json:"status"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	CreatedAt       int64     `json:"created_at"`
+	UpdatedAt       int64     `json:"updated_at"`
 }
 
 type AssessmentUserResponse struct {
@@ -23,8 +21,8 @@ type AssessmentUserResponse struct {
 	AssessmentCode string    `json:"assessment_code"`
 	RandomArrayId  []uint8   `json:"random_array_id"`
 	Status         string    `json:"status"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
+	CreatedAt      int64     `json:"created_at"`
+	UpdatedAt      int64     `json:"updated_at"`
 }
 
 type AssessmentTotalResponse struct {
@@ -39,5 +37,5 @@ type AssessmentResultUsersResponse struct {
 	AssessmentValue float32   `json:"assessment_value"`
 	AssessmentCode  string    `json:"assessment_code"`
 	Status          uint8     `json:"status"`
-	CreatedAt       time.Time `json:"created_at"`
+	CreatedAt       int64     `json:"created_at"`
 }

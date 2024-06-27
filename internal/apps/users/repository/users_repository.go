@@ -89,7 +89,7 @@ func (r repository) InsertUsersRoleWithTX(ctx context.Context, tx *sql.Tx, role 
 func (r repository) FindUserByEmail(ctx context.Context, email string) (user entities.Users, err error) {
 
 	var (
-		nullableDate       sql.NullTime
+		nullableDate       sql.NullInt64
 		nullableAddress    sql.NullString
 		nullableGender     sql.NullString
 		nullableProfileImg sql.NullString
@@ -130,7 +130,7 @@ func (r repository) FindUserByEmail(ctx context.Context, email string) (user ent
 	}
 
 	if nullableDate.Valid {
-		user.Date = nullableDate.Time
+		user.Date = nullableDate.Int64
 	}
 
 	if nullableAddress.Valid {
@@ -170,7 +170,7 @@ func (r repository) FindRoleByUserID(ctx context.Context, userID uuid.UUID) (rol
 
 func (r repository) FindUserByUserId(ctx context.Context, userId uuid.UUID) (user entities.Users, err error) {
 	var (
-		nullableDate       sql.NullTime
+		nullableDate       sql.NullInt64
 		nullableAddress    sql.NullString
 		nullableGender     sql.NullString
 		nullableProfileImg sql.NullString
@@ -209,7 +209,7 @@ func (r repository) FindUserByUserId(ctx context.Context, userId uuid.UUID) (use
 	}
 
 	if nullableDate.Valid {
-		user.Date = nullableDate.Time
+		user.Date = nullableDate.Int64
 	}
 
 	if nullableAddress.Valid {

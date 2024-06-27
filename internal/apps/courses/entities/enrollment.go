@@ -12,8 +12,8 @@ type Enrollment struct {
 	UsersId   uuid.UUID
 	CoursesId uuid.UUID
 	Progress  uint8
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt int64
+	UpdatedAt int64
 }
 
 func NewEnrollment(usersId, coursesId uuid.UUID) Enrollment {
@@ -22,15 +22,15 @@ func NewEnrollment(usersId, coursesId uuid.UUID) Enrollment {
 		UsersId:   usersId,
 		CoursesId: coursesId,
 		Progress:  0,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: time.Now().UnixMilli(),
+		UpdatedAt: time.Now().UnixMilli(),
 	}
 }
 
 func (e *Enrollment) UpdateProgress(progress uint8) (err error) {
 	if e.Progress < progress {
 		e.Progress = progress
-		e.UpdatedAt = time.Now()
+		e.UpdatedAt = time.Now().UnixMilli()
 
 		return
 	}

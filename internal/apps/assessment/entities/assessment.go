@@ -26,8 +26,8 @@ type AssessmentResult struct {
 	AssessmentValue float32
 	AssessmentCode  string
 	Status          uint8
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	CreatedAt       int64
+	UpdatedAt       int64
 }
 
 type AssessmentUsersResult struct {
@@ -38,8 +38,8 @@ type AssessmentUsersResult struct {
 	AssessmentValue float32
 	AssessmentCode  string
 	Status          uint8
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	CreatedAt       int64
+	UpdatedAt       int64
 }
 
 func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, assessmentCode string, status uint8) AssessmentResult {
@@ -50,8 +50,8 @@ func NewAssessmentResult(userId, coursesId uuid.UUID, assessmentValue float32, a
 		AssessmentValue: assessmentValue,
 		AssessmentCode:  "chap-" + assessmentCode,
 		Status:          status,
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
+		CreatedAt:       time.Now().UnixMilli(),
+		UpdatedAt:       time.Now().UnixMilli(),
 	}
 }
 
@@ -75,8 +75,8 @@ type AssessmentUser struct {
 	AssessmentCode string
 	RandomArrayId  []uint8
 	Status         string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	CreatedAt      int64
+	UpdatedAt      int64
 }
 
 func NewAssessmentUser(userId uuid.UUID, assessmentCode string, randomArrayId []uint8) AssessmentUser {
@@ -86,8 +86,8 @@ func NewAssessmentUser(userId uuid.UUID, assessmentCode string, randomArrayId []
 		AssessmentCode: "chap-" + assessmentCode,
 		RandomArrayId:  randomArrayId,
 		Status:         AssessmentStatusMapping[1],
-		CreatedAt:      time.Now(),
-		UpdatedAt:      time.Now(),
+		CreatedAt:      time.Now().UnixMilli(),
+		UpdatedAt:      time.Now().UnixMilli(),
 	}
 }
 

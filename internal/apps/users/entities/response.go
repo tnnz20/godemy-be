@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
 
@@ -14,10 +12,10 @@ type UserResponse struct {
 	ID         uuid.UUID `json:"id"`
 	Name       string    `json:"name"`
 	Email      string    `json:"email"`
-	Date       time.Time `json:"date"`
+	Date       int64     `json:"date"`
 	Address    string    `json:"address"`
 	Gender     string    `json:"gender"`
 	ProfileImg string    `json:"profile_img"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	CreatedAt  int64     `json:"created_at"`
+	UpdatedAt  int64     `json:"updated_at"`
 }

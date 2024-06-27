@@ -23,7 +23,7 @@ type GetUserPayload struct {
 type UpdateUserPayload struct {
 	ID         uuid.UUID `json:"id"`
 	Name       string    `json:"name"`
-	Date       string    `json:"date"`
+	Date       int64     `json:"date"`
 	Address    string    `json:"address"`
 	Gender     string    `json:"gender"`
 	ProfileImg string    `json:"profile_img"`
