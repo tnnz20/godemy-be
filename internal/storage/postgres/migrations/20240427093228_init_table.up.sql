@@ -3,13 +3,13 @@ CREATE TABLE users(
     email VARCHAR(255) not null,
     password VARCHAR(255) not null,
     name VARCHAR(255) not null,
-    date INT,
+    date BIGINT,
     address VARCHAR(255),
     gender VARCHAR(255),
     profile_img VARCHAR(255),
-    created_at INT,
-    updated_at INT,
-    deleted_at INT,
+    created_at BIGINT,
+    updated_at BIGINT,
+    deleted_at BIGINT,
     PRIMARY KEY (id)
 );
 
@@ -24,8 +24,8 @@ CREATE TABLE courses(
     users_id UUID not null,
     course_name VARCHAR(255),
     course_code VARCHAR(10) UNIQUE,
-    created_at INT,
-    updated_at INT,
+    created_at BIGINT,
+    updated_at BIGINT,
     PRIMARY KEY (id),
     FOREIGN KEY (users_id) REFERENCES users(id)
 );
@@ -35,8 +35,8 @@ CREATE TABLE course_enrollment(
     users_id UUID not null,
     courses_id UUID,
     progress INT DEFAULT 0,
-    created_at INT,
-    updated_at INT,
+    created_at BIGINT,
+    updated_at BIGINT,
     PRIMARY KEY (id),
     FOREIGN KEY (users_id) REFERENCES users(id),
     FOREIGN KEY (courses_id) REFERENCES courses(id)
@@ -48,8 +48,8 @@ CREATE TABLE users_assessment(
     assessment_code varchar(10) not null,
     random_array_id integer[],
     status VARCHAR(255),
-    created_at INT,
-    updated_at INT,
+    created_at BIGINT,
+    updated_at BIGINT,
     FOREIGN KEY (users_id) REFERENCES users(id)
 );
 
@@ -60,8 +60,8 @@ CREATE TABLE users_assessment_result(
     assessment_value FLOAT,
     assessment_code varchar(10) not null,
     status INT,
-    created_at INT,
-    updated_at INT,
+    created_at BIGINT,
+    updated_at BIGINT,
     FOREIGN KEY (users_id) REFERENCES users(id),
     FOREIGN KEY (courses_id) REFERENCES courses(id)
 );
