@@ -33,10 +33,10 @@ func init() {
 }
 
 const (
-	validUserId                  = "19f75097-e613-4769-a6dd-fe97ccb8e54b"
+	validUserId                  = "d94821f3-acb5-4c6d-bbac-d388566ccaca"
 	validAssessmentChapterCode   = "chap-3"
 	inValidAssessmentChapterCode = "chap-10"
-	validCourseId                = "6183b21e-de39-44b7-bb39-4b9cadc26847"
+	validCourseId                = "f0e87b88-47c2-4baa-be5d-23fddc03e638"
 )
 
 func TestCreateAssessmentResult(t *testing.T) {
@@ -48,8 +48,8 @@ func TestCreateAssessmentResult(t *testing.T) {
 
 		req := entities.CreateAssessmentPayload{
 			UsersId:         userId,
-			AssessmentValue: 7,
-			AssessmentCode:  validAssessmentChapterCode,
+			AssessmentValue: 80,
+			AssessmentCode:  "3",
 		}
 
 		err = svc.CreateAssessmentResult(context.Background(), req)
@@ -118,7 +118,7 @@ func TestGetFilteredAssessmentResult(t *testing.T) {
 
 		req := entities.GetAssessmentResultWithPaginationPayload{
 			UsersId:        userId,
-			AssessmentCode: "chap-4",
+			AssessmentCode: "chap-1",
 			ModelPaginationPayload: entities.ModelPaginationPayload{
 				Limit:  5,
 				Offset: 0,
@@ -208,7 +208,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 
 		req := entities.CreateUsersAssessmentPayload{
 			UsersId:        userId,
-			AssessmentCode: validAssessmentChapterCode,
+			AssessmentCode: "2",
 			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
 		}
 
@@ -242,7 +242,7 @@ func TestCreateUsersAssessment(t *testing.T) {
 
 		req := entities.CreateUsersAssessmentPayload{
 			UsersId:        userId,
-			AssessmentCode: validAssessmentChapterCode,
+			AssessmentCode: "2",
 			RandomArrayId:  []uint8{1, 2, 3, 4, 5},
 		}
 

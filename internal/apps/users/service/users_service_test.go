@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -73,7 +74,7 @@ func TestServiceRegisterAuth(t *testing.T) {
 }
 
 const (
-	ValidId = "cd7ddb0d-03e6-4524-a010-7219adad233d"
+	ValidId = "c70e6eb7-b39f-45da-83b7-1b417451e220"
 )
 
 func TestServiceLoginAuth(t *testing.T) {
@@ -184,10 +185,11 @@ func TestServiceUpdateUser(t *testing.T) {
 			t.Error(err)
 		}
 
+		time := time.Now().UnixMilli()
 		req := entities.UpdateUserPayload{
 			ID:         userId,
 			Name:       "Jhon Doe rq",
-			Date:       "2021-04-01",
+			Date:       time,
 			Address:    "Jakarta Barat",
 			Gender:     "male",
 			ProfileImg: "",

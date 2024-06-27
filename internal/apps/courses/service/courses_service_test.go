@@ -33,10 +33,10 @@ func init() {
 }
 
 var (
-	ValidCourseCode    = "go-wlDqAUx"
-	validCourseName    = "go-fundamental-1"
-	ValidUserIdTeacher = "28126e28-f696-4af5-9bfc-d5c9b7d952d2"
-	ValidUserIdStudent = "0c550f03-79d1-4f55-aeac-770f1aefa818"
+	ValidCourseCode    = "go-YAEFrbF"
+	validCourseName    = "go-fund-test"
+	ValidUserIdTeacher = "f25ab595-9fd3-4dae-b401-c950c7181909"
+	ValidUserIdStudent = "d94821f3-acb5-4c6d-bbac-d388566ccaca"
 )
 
 var ErrParsingUUID = "Error Parsing UUID: "
@@ -123,8 +123,6 @@ func TestGetCoursesService(t *testing.T) {
 		var reqPagination entities.GetCoursesByUsersIdWithPaginationPayload
 		reqPagination.UsersId = userId
 		reqPagination.ModelPaginationPayload.GenerateDefaultValue()
-
-		log.Println(reqPagination)
 
 		courses, err := svc.GetCoursesByUsersIdWithPagination(context.Background(), reqPagination)
 		require.Nil(t, err)
