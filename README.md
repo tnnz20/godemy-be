@@ -1,66 +1,36 @@
-# Godemy Backend
+# Godemy Back-end
 
-## About Godemy
+Godemy is an open-source **e-learning** platform designed to teach Golang, especially focusing on fundamental programming concepts. This platform uses `Next.js` for the front-end and `Golang` for the back-end.
 
-Godemy is learning platform for my skripsi, and this repository will hold anything about the backend.
+this repository hold the Back-end service from Godemy
 
-## ERD
+## Getting Started
 
-## API Endpoint
+Follow these instructions to get a copy of the project running on your local machine.
 
-> Note
+### Prerequisites
 
-- ** optionals query
-- \* required query
+- Golang v1.22.1
+- [Golang Migrate](https://github.com/golang-migrate/migrate)
+- PostgreSQL v16.2
 
-<details>
-<summary>Users</summary>
+### Installation
 
-| Method | Endpoint           | Param / query    | JWT Token | Description                  |
-| ------ | ------------------ | ---------------- | --------- | ---------------------------- |
-| POST   | /api/users/sign-up | ** ?role=teacher | NO        | Registration user            |
-| GET    | /api/users/profile | -                | YES       | Get user profile from userId |
+1. Clone this repository
+2. Copy the config yaml example file to config-local.yaml:
+3. Install Dependencies using `go mod tidy`
+4. Migrate database using golang migrate in `internal/storage/migrations`
 
-</details>
+### Run Godemy Back-end
 
-<details>
-<summary>Auth</summary>
+here the command to run this project using `make`
 
-| Method | Endpoint          | Param / query | JWT Token | Description |
-| ------ | ----------------- | ------------- | --------- | ----------- |
-| GET    | /api/auth/sign-in | -             | NO        | Login user  |
+```bash
+make server  ----> run golang server
+```
 
-</details>
+or
 
-<details>
-<summary>Teacher</summary>
-
-| Method | Endpoint                            | Param / query | JWT Token | Description                         |
-| ------ | ----------------------------------- | ------------- | --------- | ----------------------------------- |
-| GET    | /api/teachers/teacher               | -             | YES       | Get Teacher from userId             |
-| GET    | /api/teachers/teacher/classes       | -             | YES       | Get all class from teacherId        |
-| GET    | /api/teachers/teacher/classes/class | -             | YES       | Get list student who has same class |
-
-</details>
-
-<details>
-<summary>Class</summary>
-
-| Method | Endpoint                   | Param / query | JWT Token | Description                  |
-| ------ | -------------------------- | ------------- | --------- | ---------------------------- |
-| GET    | /api/classes               | -             | NO        | Get all class                |
-| POST   | /api/classes               | -             | YES       | Create class using teacherId |
-| PATCH  | /api/classes/class/student | -             | YES       | Update Class Student         |
-
-</details>
-
-<details>
-<summary>Student</summary>
-
-| Method | Endpoint                         | Param / query | JWT Token | Description                             |
-| ------ | -------------------------------- | ------------- | --------- | --------------------------------------- |
-| GET    | /api/students/student            | -             | YES       | Get student from userId                 |
-| PATCH  | /api/students/student/threshold  | -             | YES       | Increment threshold student             |
-| POST   | /api/students/student/assessment | -             | YES       | Assign value from assessment to student |
-
-</details>
+```bash
+go run cmd/godemy/main.go
+```
